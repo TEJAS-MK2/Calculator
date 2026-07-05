@@ -1,6 +1,8 @@
 const display = document.getElementById('display');
 const history = document.getElementById('display-history');
+const memoryPill = document.getElementById('memory-pill');
 let expression = '';
+let memoryValue = 0;
 
 function updateDisplay(value) {
   display.textContent = value;
@@ -8,6 +10,24 @@ function updateDisplay(value) {
 
 function updateHistory(value) {
   history.textContent = value;
+}
+
+function updateMemoryPill() {
+  memoryPill.textContent = `M: ${memoryValue === 0 ? '0' : memoryValue}`;
+}
+
+function evaluateExpression(expr) {
+  const sanitized = expr.replace(/π/g, String(Math.PI)).replace(/[^0-9.+\-*/()]/g, '');
+  if (!sanitized) {
+    throw new Error('Empty');
+  }
+
+  const result = Function(`"use strict"; return (${sanitized})`)();
+  if (!Number.isFinite(result)) {
+    throw new Error('Invalid');
+  }
+
+  return result;
 }
 
 function clearDisplay() {
@@ -104,16 +124,75 @@ function applyPercent() {
   updateHistory(expression || '0');
 }
 
+function insertPi() {
+  if (!expression || /[+\-*/]$/.test(expression)) {
+    expression += 'π';
+  } else {
+    expression += 'π';
+  }
+  updateDisplay(expression);
+  updateHistory(expression);
+}
+
+function memoryClear() {
+  memoryValue = 0;
+  updateMemoryPill();
+  updateHistory('MC');
+}
+
+function memoryRecall() {
+  expression = String(memoryValue);
+  updateDisplay(expression);
+  updateHistory(`MR ${expression}`);
+}
+
+function memoryAdd() {
+  try {
+    const currentValue = Number(evaluateExpression(expression || '0'));
+    memoryValue += currentValue;
+    updateMemoryPill();
+    updateHistory(`M+ ${currentValue}`);
+  } catch {
+    updateHistory('Error');
+  }
+}
+
+function memorySubtract() {
+  try {
+    const currentValue = Number(evaluateExpression(expression || '0'));
+    memoryValue -= currentValue;
+    updateMemoryPill();
+    updateHistory(`M- ${currentValue}`);
+  } catch {
+    updateHistory('Error');
+  }
+}
+
+function applyScientific(action) {
+  try {
+    const currentValue = Number(evaluateExpression(expression || '0'));
+    let nextValue = currentValue;
+
+    if (action === 'sqrt') {
+      nextValue = Math.sqrt(currentValue);
+    } else if (action === 'square') {
+      nextValue = currentValue * currentValue;
+    } else if (action === 'reciprocal') {
+      nextValue = 1 / currentValue;
+    }
+
+    expression = String(nextValue);
+    updateDisplay(expression);
+    updateHistory(`${action} ${expression}`);
+  } catch {
+    updateDisplay('Error');
+    updateHistory('Error');
+  }
+}
+
 function calculate() {
   try {
-    const sanitized = expression.replace(/[^0-9.+\-*/]/g, '');
-    if (!sanitized) {
-      throw new Error('Empty');
-    }
-    const result = Function(`"use strict"; return (${sanitized})`)();
-    if (!Number.isFinite(result)) {
-      throw new Error('Invalid');
-    }
+    const result = evaluateExpression(expression);
     expression = String(result);
     updateDisplay(expression);
     updateHistory('= ' + expression);
@@ -137,6 +216,18 @@ function handleButtonClick(event) {
     toggleSign();
   } else if (action === 'percent') {
     applyPercent();
+  } else if (action === 'memory-clear') {
+    memoryClear();
+  } else if (action === 'memory-recall') {
+    memoryRecall();
+  } else if (action === 'memory-add') {
+    memoryAdd();
+  } else if (action === 'memory-subtract') {
+    memorySubtract();
+  } else if (action === 'sqrt' || action === 'square' || action === 'reciprocal') {
+    applyScientific(action);
+  } else if (action === 'pi') {
+    insertPi();
   } else if (action === 'equals') {
     calculate();
   } else if (value !== undefined) {
@@ -144,7 +235,7 @@ function handleButtonClick(event) {
   }
 }
 
-document.querySelectorAll('.btn').forEach((button) => {
+document.querySelectorAll('.btn, .chip').forEach((button) => {
   button.addEventListener('click', handleButtonClick);
 });
 
@@ -158,6 +249,7 @@ document.addEventListener('keydown', (event) => {
   if (keyMap[key]) {
     const button = document.querySelector(`[data-action="${keyMap[key]}"]`);
     if (button) {
+      event.preventDefault();
       button.click();
     }
     return;
@@ -166,6 +258,7 @@ document.addEventListener('keydown', (event) => {
   if (key === 'Backspace') {
     const button = document.querySelector('[data-action="backspace"]');
     if (button) {
+      event.preventDefault();
       button.click();
     }
     return;
@@ -174,7 +267,10 @@ document.addEventListener('keydown', (event) => {
   if (/^[0-9.+\-*/]$/.test(key)) {
     const button = document.querySelector(`[data-value="${key}"]`);
     if (button) {
+      event.preventDefault();
       button.click();
     }
   }
 });
+
+updateMemoryPill();
