@@ -87,6 +87,71 @@ body::before {
   to { transform: translateY(10px) scale(1.05); }
 }
 
+.toolbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.menu-wrap {
+  position: relative;
+}
+
+.menu-btn {
+  border: none;
+  border-radius: 999px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  color: #f8fafc;
+  background: linear-gradient(145deg, rgba(51, 65, 85, 0.95), rgba(30, 41, 59, 0.94));
+  box-shadow: 0 8px 16px rgba(2, 6, 23, 0.2);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.menu-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(2, 6, 23, 0.28);
+}
+
+.menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 180px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(125, 211, 252, 0.15);
+  background: rgba(15, 23, 42, 0.94);
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.32);
+  display: none;
+  z-index: 5;
+}
+
+.menu-panel.open {
+  display: block;
+}
+
+.menu-item {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f8fafc;
+  background: transparent;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.08);
+}
+
 .display-shell {
   position: relative;
   z-index: 1;
@@ -115,6 +180,11 @@ body::before {
   text-transform: uppercase;
   background: rgba(255,255,255,0.08);
   color: rgba(248, 250, 252, 0.8);
+}
+
+.badge-soft {
+  background: linear-gradient(145deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.2));
+  color: #dbeafe;
 }
 
 .display-history {

@@ -9,9 +9,19 @@
   <body>
     <main class="app">
       <section class="calculator" aria-label="calculator">
+        <div class="toolbar">
+          <span class="badge">AI Calc</span>
+          <div class="menu-wrap">
+            <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">☰</button>
+            <div class="menu-panel" id="menu-panel" role="menu" aria-label="Calculator menu">
+              <button class="menu-item" id="about-btn" role="menuitem">About</button>
+            </div>
+          </div>
+        </div>
+
         <div class="display-shell">
           <div class="display-meta">
-            <span class="badge">AI Calc</span>
+            <span class="badge badge-soft">Advanced</span>
             <span class="memory-pill" id="memory-pill">M: 0</span>
           </div>
           <div class="display-history" id="display-history">0</div>

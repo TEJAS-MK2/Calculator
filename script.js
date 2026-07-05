@@ -1,6 +1,9 @@
 const display = document.getElementById('display');
 const history = document.getElementById('display-history');
 const memoryPill = document.getElementById('memory-pill');
+const menuBtn = document.getElementById('menu-btn');
+const menuPanel = document.getElementById('menu-panel');
+const aboutBtn = document.getElementById('about-btn');
 let expression = '';
 let memoryValue = 0;
 
@@ -203,6 +206,21 @@ function calculate() {
   }
 }
 
+function openMenu() {
+  menuPanel.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded', menuPanel.classList.contains('open'));
+}
+
+function showAbout() {
+  updateDisplay('Made by');
+  updateHistory('Pijush Chakraborty');
+  expression = '';
+  setTimeout(() => {
+    updateDisplay('0');
+    updateHistory('0');
+  }, 1400);
+}
+
 function handleButtonClick(event) {
   const button = event.currentTarget;
   const action = button.dataset.action;
@@ -230,6 +248,8 @@ function handleButtonClick(event) {
     insertPi();
   } else if (action === 'equals') {
     calculate();
+  } else if (action === 'about') {
+    showAbout();
   } else if (value !== undefined) {
     appendValue(value);
   }
@@ -237,6 +257,20 @@ function handleButtonClick(event) {
 
 document.querySelectorAll('.btn, .chip').forEach((button) => {
   button.addEventListener('click', handleButtonClick);
+});
+
+menuBtn.addEventListener('click', openMenu);
+aboutBtn.addEventListener('click', () => {
+  showAbout();
+  menuPanel.classList.remove('open');
+  menuBtn.setAttribute('aria-expanded', 'false');
+});
+
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.menu-wrap')) {
+    menuPanel.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+  }
 });
 
 document.addEventListener('keydown', (event) => {
