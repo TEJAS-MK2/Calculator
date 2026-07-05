@@ -1,10 +1,15 @@
 # Modern Calculator
 A polished, modern calculator website built with HTML, CSS, and JavaScript.
 
+## Live Demo
+Visit the GitHub Pages site here:
+https://tejas-mk2.github.io/Calculator/
+
 ## Features
 - Responsive glassmorphism UI
+- Smooth animations and premium visual effects
 - Keyboard support
-- Advanced button controls for sign and percent
+- Advanced controls for sign, percent, memory, and scientific-style operations
 
-## Preview
-Open the site locally by serving the repository root, or visit the GitHub Pages deployment after publishing.
+## Run Locally
+Open the site by serving the repository root with a simple static server, or open the index.html file in a browser.
