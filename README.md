@@ -8,7 +8,7 @@ https://tejas-mk2.github.io/Calculator/
 ## Showcase
 This calculator features a futuristic dark interface, animated controls, and a refined glassmorphism design.
 
-![Calculator UI](https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80)
+![Calculator UI](./calculator-screenshot.png)
 
 ## Highlights
 - Modern glassmorphism interface
