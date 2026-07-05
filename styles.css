@@ -78,7 +78,7 @@ body::before {
 }
 
 .app {
-  width: min(100%, 480px);
+  width: min(100%, 500px);
   margin: auto;
 }
 
@@ -161,6 +161,8 @@ body::before {
   border: 1px solid rgba(125, 211, 252, 0.16);
   backdrop-filter: blur(10px);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .menu-wrap {
@@ -175,7 +177,7 @@ body::before {
   height: 42px;
   cursor: pointer;
   color: var(--text);
-  background: linear-gradient(145deg, rgba(51, 65, 85, 0.96), rgba(30, 41, 59, 0.94));
+  background: linear-gradient(145deg, var(--surface-2), rgba(30, 41, 59, 0.94));
   box-shadow: 0 10px 20px rgba(2, 6, 23, 0.22);
   transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
@@ -421,6 +423,17 @@ body.modal-open {
   touch-action: manipulation;
 }
 
+.chip:focus-visible,
+.btn-secondary:focus-visible,
+.btn:focus-visible,
+.theme-toggle:focus-visible,
+.menu-btn:focus-visible,
+.menu-item:focus-visible,
+.modal-close:focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.75);
+  outline-offset: 2px;
+}
+
 .chip,
 .btn-secondary {
   padding: 10px 0;
@@ -501,6 +514,15 @@ body.modal-open {
   grid-column: span 2;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @media (max-width: 640px) {
   body {
     padding: 10px;
@@ -514,6 +536,10 @@ body.modal-open {
 
   .toolbar {
     margin-bottom: 10px;
+  }
+
+  .toolbar-actions {
+    gap: 10px;
   }
 
   .display-shell {
