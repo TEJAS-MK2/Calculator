@@ -11,11 +11,14 @@
       <section class="calculator" aria-label="calculator">
         <div class="toolbar">
           <span class="badge">AI Calc</span>
-          <div class="menu-wrap">
-            <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-panel">☰</button>
-            <div class="menu-panel" id="menu-panel" role="menu" aria-label="Calculator menu">
-              <button class="menu-item" id="about-btn" type="button" role="menuitem">About</button>
-              <button class="menu-item" id="copy-btn" type="button" role="menuitem">Copy result</button>
+          <div class="toolbar-actions">
+            <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light theme">☀️</button>
+            <div class="menu-wrap">
+              <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-panel">☰</button>
+              <div class="menu-panel" id="menu-panel" role="menu" aria-label="Calculator menu">
+                <button class="menu-item" id="about-btn" type="button" role="menuitem">About</button>
+                <button class="menu-item" id="copy-btn" type="button" role="menuitem">Copy result</button>
+              </div>
             </div>
           </div>
         </div>
@@ -56,6 +59,13 @@
           <button class="btn btn-secondary" data-action="abs">abs</button>
           <button class="btn btn-secondary" data-action="tenx">10ˣ</button>
           <button class="btn btn-secondary" data-action="ans">Ans</button>
+        </div>
+
+        <div class="secondary-row" aria-label="extra shortcuts">
+          <button class="btn btn-secondary" data-action="power">xʸ</button>
+          <button class="btn btn-secondary" data-action="mod">mod</button>
+          <button class="btn btn-secondary" data-action="euler">e</button>
+          <button class="btn btn-secondary" data-action="random">Rand</button>
         </div>
 
         <div class="buttons">

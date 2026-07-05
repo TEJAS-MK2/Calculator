@@ -5,9 +5,11 @@ const menuBtn = document.getElementById('menu-btn');
 const menuPanel = document.getElementById('menu-panel');
 const aboutBtn = document.getElementById('about-btn');
 const copyBtn = document.getElementById('copy-btn');
+const themeToggle = document.getElementById('theme-toggle');
 const aboutModal = document.getElementById('about-modal');
 const modalCloseBtn = document.getElementById('modal-close');
 let expression = '';
+let currentTheme = localStorage.getItem('calculator-theme') || 'dark';
 let memoryValue = 0;
 let lastResult = 0;
 
@@ -24,7 +26,11 @@ function updateMemoryPill() {
 }
 
 function evaluateExpression(expr) {
-  const sanitized = expr.replace(/π/g, String(Math.PI)).replace(/[^0-9.+\-*/()]/g, '');
+  const sanitized = expr
+    .replace(/π/g, String(Math.PI))
+    .replace(/\be\b/g, String(Math.E))
+    .replace(/\^/g, '**')
+    .replace(/[^0-9.+\-*/()%^()]/g, '');
   if (!sanitized) {
     throw new Error('Empty');
   }
@@ -161,13 +167,33 @@ function applyPercent() {
 }
 
 function insertPi() {
-  if (!expression || /[+\-*/]$/.test(expression)) {
-    expression += 'π';
-  } else {
-    expression += 'π';
-  }
+  expression += 'π';
   updateDisplay(expression);
   updateHistory(expression);
+}
+
+function insertEuler() {
+  expression += 'e';
+  updateDisplay(expression);
+  updateHistory(expression);
+}
+
+function insertPower() {
+  expression += '^';
+  updateDisplay(expression);
+  updateHistory(expression);
+}
+
+function insertModulo() {
+  expression += '%';
+  updateDisplay(expression);
+  updateHistory(expression);
+}
+
+function insertRandom() {
+  expression = String(Math.random());
+  updateDisplay(expression);
+  updateHistory('Rand');
 }
 
 function memoryClear() {
@@ -310,6 +336,19 @@ function showAbout() {
   closeMenu();
 }
 
+function applyTheme(theme) {
+  currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  document.body.setAttribute('data-theme', theme);
+  themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+  themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  localStorage.setItem('calculator-theme', theme);
+}
+
+function toggleTheme() {
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
 function handleButtonClick(event) {
   const button = event.currentTarget;
   const action = button.dataset.action;
@@ -331,14 +370,20 @@ function handleButtonClick(event) {
     memoryAdd();
   } else if (action === 'memory-subtract') {
     memorySubtract();
-  } else if (action === 'sqrt' || action === 'square' || action === 'reciprocal' || action === 'exp' || action === 'factorial' || action === 'negate') {
+  } else if (['sqrt', 'square', 'reciprocal', 'exp', 'factorial', 'negate', 'sin', 'cos', 'tan', 'log', 'ln', 'abs', 'tenx', 'ans'].includes(action)) {
     applyScientific(action);
   } else if (action === 'pi') {
     insertPi();
+  } else if (action === 'euler') {
+    insertEuler();
+  } else if (action === 'power') {
+    insertPower();
+  } else if (action === 'mod') {
+    insertModulo();
+  } else if (action === 'random') {
+    insertRandom();
   } else if (action === 'clear-entry') {
     clearEntry();
-  } else if (action === 'pi') {
-    insertPi();
   } else if (action === 'copy-result') {
     copyResult();
   } else if (action === 'equals') {
@@ -372,6 +417,11 @@ copyBtn.addEventListener('click', (event) => {
   event.stopPropagation();
   copyResult();
   closeMenu();
+});
+
+themeToggle.addEventListener('click', (event) => {
+  event.stopPropagation();
+  toggleTheme();
 });
 
 modalCloseBtn.addEventListener('click', () => {
