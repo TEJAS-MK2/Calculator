@@ -8,6 +8,7 @@ const copyBtn = document.getElementById('copy-btn');
 const themeToggle = document.getElementById('theme-toggle');
 const aboutModal = document.getElementById('about-modal');
 const modalCloseBtn = document.getElementById('modal-close');
+const calculator = document.querySelector('.calculator');
 let expression = '';
 let currentTheme = localStorage.getItem('calculator-theme') || 'dark';
 let memoryValue = 0;
@@ -353,7 +354,11 @@ function toggleTheme() {
 }
 
 function handleButtonClick(event) {
-  const button = event.currentTarget;
+  const button = event.target.closest('button');
+  if (!button) {
+    return;
+  }
+
   const action = button.dataset.action;
   const value = button.dataset.value;
 
@@ -397,6 +402,36 @@ function handleButtonClick(event) {
     appendValue(value);
   }
 }
+
+calculator.addEventListener('click', handleButtonClick);
+menuBtn.addEventListener('click', () => {
+  if (menuPanel.classList.contains('open')) {
+    closeMenu();
+  } else {
+    openMenu();
+  }
+});
+aboutBtn.addEventListener('click', showAbout);
+copyBtn.addEventListener('click', copyResult);
+themeToggle.addEventListener('click', toggleTheme);
+modalCloseBtn.addEventListener('click', closeAboutModal);
+aboutModal.addEventListener('click', (event) => {
+  if (event.target === aboutModal) {
+    closeAboutModal();
+  }
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    closeMenu();
+    closeAboutModal();
+  }
+});
+document.addEventListener('click', (event) => {
+  if (!menuPanel.contains(event.target) && !menuBtn.contains(event.target)) {
+    closeMenu();
+  }
+});
+applyTheme(currentTheme);
 
 document.querySelectorAll('.btn, .chip').forEach((button) => {
   button.addEventListener('click', handleButtonClick);
