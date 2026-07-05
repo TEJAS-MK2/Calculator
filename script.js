@@ -6,6 +6,7 @@ const menuPanel = document.getElementById('menu-panel');
 const aboutBtn = document.getElementById('about-btn');
 let expression = '';
 let memoryValue = 0;
+let lastResult = 0;
 
 function updateDisplay(value) {
   display.textContent = value;
@@ -37,6 +38,35 @@ function clearDisplay() {
   expression = '';
   updateDisplay('0');
   updateHistory('0');
+}
+
+function insertAnswer() {
+  const value = String(lastResult ?? 0);
+  if (expression === '' || /[+\-*/]$/.test(expression)) {
+    expression += value;
+  } else {
+    expression += value;
+  }
+  updateDisplay(expression);
+  updateHistory(`Ans ${value}`);
+}
+
+function copyResult() {
+  const value = display.textContent;
+  if (!value || value === '0') {
+    updateHistory('Nothing to copy');
+    return;
+  }
+
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(value).then(() => {
+      updateHistory('Copied');
+    }).catch(() => {
+      updateHistory('Copy failed');
+    });
+  } else {
+    updateHistory('Copy unavailable');
+  }
 }
 
 function backspace() {
@@ -195,6 +225,23 @@ function applyScientific(action) {
       nextValue = fact;
     } else if (action === 'negate') {
       nextValue = -currentValue;
+    } else if (action === 'sin') {
+      nextValue = Math.sin((currentValue * Math.PI) / 180);
+    } else if (action === 'cos') {
+      nextValue = Math.cos((currentValue * Math.PI) / 180);
+    } else if (action === 'tan') {
+      nextValue = Math.tan((currentValue * Math.PI) / 180);
+    } else if (action === 'log') {
+      nextValue = Math.log10(currentValue);
+    } else if (action === 'ln') {
+      nextValue = Math.log(currentValue);
+    } else if (action === 'abs') {
+      nextValue = Math.abs(currentValue);
+    } else if (action === 'tenx') {
+      nextValue = Math.pow(10, currentValue);
+    } else if (action === 'ans') {
+      insertAnswer();
+      return;
     }
 
     expression = String(nextValue);
@@ -220,6 +267,7 @@ function clearEntry() {
 function calculate() {
   try {
     const result = evaluateExpression(expression);
+    lastResult = result;
     expression = String(result);
     updateDisplay(expression);
     updateHistory('= ' + expression);
@@ -280,6 +328,8 @@ function handleButtonClick(event) {
     clearEntry();
   } else if (action === 'pi') {
     insertPi();
+  } else if (action === 'copy-result') {
+    copyResult();
   } else if (action === 'equals') {
     calculate();
   } else if (action === 'about') {
