@@ -1,29 +1,34 @@
 # Modern Calculator
 
-A polished, feature-rich calculator website built with HTML, CSS, and JavaScript. It combines a sleek glassmorphism-inspired interface with responsive behavior, scientific operations, memory shortcuts, and a modern theme switcher for both light and dark modes.
+A polished, feature-rich calculator website built with HTML, CSS, and JavaScript. The experience combines a premium glassmorphism-inspired interface with responsive design, scientific operations, memory tools, and a modern light/dark theme switcher.
 
 ## Live Demo
-Visit the live project here:
+Explore the live project here:
 https://tejas-mk2.github.io/Calculator/
 
 ## Preview
-A refined, premium user experience with animated controls, a futuristic interface, and a clean, modern layout.
+A refined, futuristic interface with smooth animations, elegant controls, and a clean layout designed for both desktop and mobile use.
 
 ![Calculator UI](./calculator-screenshot.png)
 
 ## Features
 - Modern glassmorphism-inspired interface
-- Smooth animations and interactive button feedback
+- Smooth animations and tactile button feedback
 - Light and dark theme support
-- Scientific calculator functions and memory tools
-- Responsive, mobile-friendly layout for desktop and phone screens
+- Scientific calculator functions and memory shortcuts
+- Responsive, mobile-friendly layout for phones and tablets
 
 ## Tech Stack
 - HTML
 - CSS
 - JavaScript
 
+## Run Locally
+1. Clone the repository.
+2. Open the project folder in your browser or serve it with a simple local server.
+3. Launch index.html to view the calculator.
+
 ## About
-Built by Pijush Chakraborty as a modern web-based calculator experience with both style and functionality in mind.
+Built by Pijush Chakraborty as a modern web-based calculator experience that balances aesthetics, usability, and performance.
 
 
