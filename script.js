@@ -232,7 +232,13 @@ function calculate() {
 
 function openMenu() {
   menuPanel.classList.toggle('open');
-  menuBtn.setAttribute('aria-expanded', menuPanel.classList.contains('open'));
+  const isOpen = menuPanel.classList.contains('open');
+  menuBtn.setAttribute('aria-expanded', String(isOpen));
+}
+
+function closeMenu() {
+  menuPanel.classList.remove('open');
+  menuBtn.setAttribute('aria-expanded', 'false');
 }
 
 function showAbout() {
@@ -287,17 +293,20 @@ document.querySelectorAll('.btn, .chip').forEach((button) => {
   button.addEventListener('click', handleButtonClick);
 });
 
-menuBtn.addEventListener('click', openMenu);
-aboutBtn.addEventListener('click', () => {
+menuBtn.addEventListener('click', (event) => {
+  event.stopPropagation();
+  openMenu();
+});
+
+aboutBtn.addEventListener('click', (event) => {
+  event.stopPropagation();
   showAbout();
-  menuPanel.classList.remove('open');
-  menuBtn.setAttribute('aria-expanded', 'false');
+  closeMenu();
 });
 
 document.addEventListener('click', (event) => {
   if (!event.target.closest('.menu-wrap')) {
-    menuPanel.classList.remove('open');
-    menuBtn.setAttribute('aria-expanded', 'false');
+    closeMenu();
   }
 });
 
