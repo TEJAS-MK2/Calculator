@@ -4,6 +4,9 @@ const memoryPill = document.getElementById('memory-pill');
 const menuBtn = document.getElementById('menu-btn');
 const menuPanel = document.getElementById('menu-panel');
 const aboutBtn = document.getElementById('about-btn');
+const copyBtn = document.getElementById('copy-btn');
+const aboutModal = document.getElementById('about-modal');
+const modalCloseBtn = document.getElementById('modal-close');
 let expression = '';
 let memoryValue = 0;
 let lastResult = 0;
@@ -279,24 +282,32 @@ function calculate() {
 }
 
 function openMenu() {
-  menuPanel.classList.toggle('open');
-  const isOpen = menuPanel.classList.contains('open');
-  menuBtn.setAttribute('aria-expanded', String(isOpen));
+  menuPanel.classList.add('open');
+  menuBtn.classList.add('active');
+  menuBtn.setAttribute('aria-expanded', 'true');
 }
 
 function closeMenu() {
   menuPanel.classList.remove('open');
+  menuBtn.classList.remove('active');
   menuBtn.setAttribute('aria-expanded', 'false');
 }
 
+function openAboutModal() {
+  aboutModal.classList.add('open');
+  aboutModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+}
+
+function closeAboutModal() {
+  aboutModal.classList.remove('open');
+  aboutModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+}
+
 function showAbout() {
-  updateDisplay('Made by');
-  updateHistory('Pijush Chakraborty');
-  expression = '';
-  setTimeout(() => {
-    updateDisplay('0');
-    updateHistory('0');
-  }, 1400);
+  openAboutModal();
+  closeMenu();
 }
 
 function handleButtonClick(event) {
@@ -345,13 +356,32 @@ document.querySelectorAll('.btn, .chip').forEach((button) => {
 
 menuBtn.addEventListener('click', (event) => {
   event.stopPropagation();
-  openMenu();
+  if (menuPanel.classList.contains('open')) {
+    closeMenu();
+  } else {
+    openMenu();
+  }
 });
 
 aboutBtn.addEventListener('click', (event) => {
   event.stopPropagation();
   showAbout();
+});
+
+copyBtn.addEventListener('click', (event) => {
+  event.stopPropagation();
+  copyResult();
   closeMenu();
+});
+
+modalCloseBtn.addEventListener('click', () => {
+  closeAboutModal();
+});
+
+aboutModal.addEventListener('click', (event) => {
+  if (event.target === aboutModal) {
+    closeAboutModal();
+  }
 });
 
 document.addEventListener('click', (event) => {
@@ -362,6 +392,11 @@ document.addEventListener('click', (event) => {
 
 document.addEventListener('keydown', (event) => {
   const key = event.key;
+  if (key === 'Escape') {
+    closeMenu();
+    closeAboutModal();
+    return;
+  }
   const keyMap = {
     Enter: 'equals',
     Escape: 'clear',

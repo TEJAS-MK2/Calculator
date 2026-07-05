@@ -12,9 +12,10 @@
         <div class="toolbar">
           <span class="badge">AI Calc</span>
           <div class="menu-wrap">
-            <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+            <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-panel">☰</button>
             <div class="menu-panel" id="menu-panel" role="menu" aria-label="Calculator menu">
               <button class="menu-item" id="about-btn" type="button" role="menuitem">About</button>
+              <button class="menu-item" id="copy-btn" type="button" role="menuitem">Copy result</button>
             </div>
           </div>
         </div>
@@ -84,6 +85,20 @@
         </div>
       </section>
     </main>
+
+    <div class="modal-backdrop" id="about-modal" aria-hidden="true">
+      <div class="about-card" role="dialog" aria-modal="true" aria-labelledby="about-title">
+        <button class="modal-close" id="modal-close" type="button" aria-label="Close about">✕</button>
+        <div class="about-icon">✦</div>
+        <h2 id="about-title">About this calculator</h2>
+        <p>Crafted as a sleek, premium calculator with scientific tools, smooth motion, and a polished glass interface. Built by Pijush Chakraborty.</p>
+        <div class="about-features">
+          <span>Scientific</span>
+          <span>Memory</span>
+          <span>Responsive</span>
+        </div>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>
