@@ -320,9 +320,12 @@ function closeMenu() {
 }
 
 function openAboutModal() {
-  aboutModal.classList.add('open');
-  aboutModal.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('modal-open');
+  closeMenu();
+  setTimeout(() => {
+    aboutModal.classList.add('open');
+    aboutModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+  }, 0);
 }
 
 function closeAboutModal() {
