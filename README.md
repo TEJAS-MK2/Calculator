@@ -17,5 +17,4 @@ This calculator features a futuristic dark interface, animated controls, and a r
 - Memory shortcuts and scientific-style operations
 - Responsive layout for desktop and mobile
 
-## Run Locally
-Serve the project root with a simple static server, or open the index.html file directly in your browser.
+
