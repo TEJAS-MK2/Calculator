@@ -23,11 +23,6 @@ A refined, futuristic interface with smooth animations, elegant controls, and a 
 - CSS
 - JavaScript
 
-## Run Locally
-1. Clone the repository.
-2. Open the project folder in your browser or serve it with a simple local server.
-3. Launch index.html to view the calculator.
-
 ## About
 Built by Pijush Chakraborty as a modern web-based calculator experience that balances aesthetics, usability, and performance.
 
