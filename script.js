@@ -182,6 +182,19 @@ function applyScientific(action) {
       nextValue = currentValue * currentValue;
     } else if (action === 'reciprocal') {
       nextValue = 1 / currentValue;
+    } else if (action === 'exp') {
+      nextValue = Math.exp(currentValue);
+    } else if (action === 'factorial') {
+      if (!Number.isInteger(currentValue) || currentValue < 0) {
+        throw new Error('Invalid');
+      }
+      let fact = 1;
+      for (let i = 2; i <= currentValue; i += 1) {
+        fact *= i;
+      }
+      nextValue = fact;
+    } else if (action === 'negate') {
+      nextValue = -currentValue;
     }
 
     expression = String(nextValue);
@@ -191,6 +204,17 @@ function applyScientific(action) {
     updateDisplay('Error');
     updateHistory('Error');
   }
+}
+
+function clearEntry() {
+  const match = expression.match(/(-?\d+(?:\.\d*)?)$/);
+  if (match && match.index !== undefined) {
+    expression = expression.slice(0, match.index);
+  } else {
+    expression = '';
+  }
+  updateDisplay(expression || '0');
+  updateHistory(expression || '0');
 }
 
 function calculate() {
@@ -242,8 +266,12 @@ function handleButtonClick(event) {
     memoryAdd();
   } else if (action === 'memory-subtract') {
     memorySubtract();
-  } else if (action === 'sqrt' || action === 'square' || action === 'reciprocal') {
+  } else if (action === 'sqrt' || action === 'square' || action === 'reciprocal' || action === 'exp' || action === 'factorial' || action === 'negate') {
     applyScientific(action);
+  } else if (action === 'pi') {
+    insertPi();
+  } else if (action === 'clear-entry') {
+    clearEntry();
   } else if (action === 'pi') {
     insertPi();
   } else if (action === 'equals') {
