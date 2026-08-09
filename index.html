@@ -3,28 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Modern Calculator</title>
-    <link rel="stylesheet" href="/Calculator/styles.css" />
+    <title>Modern Calculator - AI Calc</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4NWNqy7JhskqFuk3QkZYRN8Yrz60heuchRapknLPXnArXfsqDILOrPrsDOJrRXl/HxIJteo2QkmkCmklzkzofQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
   <body>
     <main class="app">
       <section class="calculator" aria-label="calculator">
+        <!-- Top Toolbar -->
         <div class="toolbar">
-          <span class="badge">AI Calc</span>
+          <span class="badge">⚡ AI Calc</span>
           <div class="toolbar-actions">
+            <button class="history-btn" id="history-btn" type="button" aria-label="View calculation history" title="History">📋</button>
             <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light theme">☀️</button>
-            <button class="history-btn" id="history-btn" type="button" aria-label="View calculation history">📋</button>
             <div class="menu-wrap">
               <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-panel">☰</button>
               <div class="menu-panel" id="menu-panel" role="menu" aria-label="Calculator menu">
                 <button class="menu-item" id="about-btn" type="button" role="menuitem">About</button>
                 <button class="menu-item" id="copy-btn" type="button" role="menuitem">Copy result</button>
-                <button class="menu-item" id="clear-history-btn" type="button" role="menuitem">Clear History</button>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Display Section -->
         <div class="display-shell">
           <div class="display-meta">
             <span class="badge badge-soft">Advanced</span>
@@ -34,6 +36,7 @@
           <div class="display" id="display">0</div>
         </div>
 
+        <!-- Memory Shortcuts -->
         <div class="feature-bar" aria-label="memory shortcuts">
           <button class="chip" data-action="memory-clear">MC</button>
           <button class="chip" data-action="memory-recall">MR</button>
@@ -41,6 +44,7 @@
           <button class="chip" data-action="memory-subtract">M−</button>
         </div>
 
+        <!-- Scientific Shortcuts Row 1 -->
         <div class="secondary-row" aria-label="scientific shortcuts">
           <button class="btn btn-secondary" data-action="sqrt">√</button>
           <button class="btn btn-secondary" data-action="square">x²</button>
@@ -52,6 +56,7 @@
           <button class="btn btn-secondary" data-action="clear-entry">CE</button>
         </div>
 
+        <!-- Advanced Shortcuts Row 2 -->
         <div class="secondary-row" aria-label="advanced shortcuts">
           <button class="btn btn-secondary" data-action="sin">sin</button>
           <button class="btn btn-secondary" data-action="cos">cos</button>
@@ -63,6 +68,7 @@
           <button class="btn btn-secondary" data-action="ans">Ans</button>
         </div>
 
+        <!-- Extra Shortcuts Row 3 -->
         <div class="secondary-row" aria-label="extra shortcuts">
           <button class="btn btn-secondary" data-action="power">xʸ</button>
           <button class="btn btn-secondary" data-action="mod">mod</button>
@@ -70,6 +76,7 @@
           <button class="btn btn-secondary" data-action="random">Rand</button>
         </div>
 
+        <!-- Main Calculator Buttons -->
         <div class="buttons">
           <button class="btn btn-accent" data-action="clear">C</button>
           <button class="btn btn-accent" data-action="backspace">⌫</button>
@@ -98,41 +105,74 @@
       </section>
     </main>
 
-    <!-- History Panel -->
-    <div class="history-panel" id="history-panel" aria-label="Calculation history" aria-hidden="true">
+    <!-- History Panel (Slide-out) -->
+    <div class="history-overlay" id="history-overlay" aria-hidden="true"></div>
+    <div class="history-panel" id="history-panel" aria-hidden="true">
       <div class="history-header">
         <h3>Calculation History</h3>
         <button class="history-close" id="history-close" type="button" aria-label="Close history">✕</button>
       </div>
-      <div class="history-list" id="history-list">
-        <p class="empty-history">No calculations yet</p>
-      </div>
+      <div class="history-list" id="history-list"></div>
+      <button class="clear-history-btn" id="clear-history-btn">Clear History</button>
     </div>
-
-    <!-- History Overlay -->
-    <div class="history-overlay" id="history-overlay" aria-hidden="true"></div>
 
     <!-- About Modal -->
     <div class="modal-backdrop" id="about-modal" aria-hidden="true">
       <div class="about-card" role="dialog" aria-modal="true" aria-labelledby="about-title">
         <button class="modal-close" id="modal-close" type="button" aria-label="Close about">✕</button>
         <div class="about-icon">✦</div>
-        <h2 id="about-title">About this calculator</h2>
-        <p>Crafted as a sleek, premium calculator with scientific tools, smooth animations powered by anime.js, and a polished glass interface. Built by Pijush Chakraborty.</p>
+        <h2 id="about-title">About AI Calculator</h2>
+        <p class="about-subtitle">A Modern Web Calculator Experience</p>
+        <p>Crafted with precision and elegance, this premium calculator combines scientific functionality with a stunning glassmorphism interface. Featuring smooth anime.js animations, real-time calculations, and memory operations.</p>
+        
         <div class="about-features">
-          <span>Scientific</span>
-          <span>Memory</span>
-          <span>Responsive</span>
-          <span>Anime.js</span>
-          <span>History</span>
+          <span>🧮 Scientific</span>
+          <span>💾 Memory</span>
+          <span>📱 Responsive</span>
+          <span>🎨 Glassmorphism</span>
+          <span>⚡ Lightning Fast</span>
+          <span>🌓 Dark/Light</span>
         </div>
+        
+        <div class="about-creator">
+          <p class="creator-label">Created by</p>
+          <p class="creator-name">Pijush Chakraborty</p>
+          <div class="creator-links">
+            <a href="https://github.com/TEJAS-MK2" target="_blank" rel="noopener noreferrer" title="GitHub">GitHub</a>
+          </div>
+        </div>
+        
+        <div class="about-stats">
+          <div class="stat-item">
+            <div class="stat-value">8</div>
+            <div class="stat-label">Scientific Functions</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">∞</div>
+            <div class="stat-label">Calculations</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">50</div>
+            <div class="stat-label">History Saved</div>
+          </div>
+        </div>
+        
+        <p class="about-version">v2.0 • Built with HTML, CSS, JavaScript & Anime.js</p>
       </div>
     </div>
 
     <!-- Toast Notification -->
-    <div class="toast" id="toast" role="status" aria-live="polite" aria-hidden="true"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="/Calculator/script.js"></script>
+    <!-- Floating Particles (Decorative) -->
+    <div class="particles-container">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
+
+    <script src="script.js"></script>
   </body>
 </html>
