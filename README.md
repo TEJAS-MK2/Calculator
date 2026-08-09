@@ -1,4 +1,4 @@
-# Modern Calculator ✨
+# Modern Calculator 
 
 A polished, feature-rich calculator website built with HTML, CSS, and JavaScript. The experience combines a premium glassmorphism-inspired interface with responsive design, scientific operations, and smooth animations powered by **anime.js**.
 
@@ -11,7 +11,7 @@ A refined, futuristic interface with smooth animations, elegant controls, and a 
 
 ![Calculator UI](./calculator-screenshot.png)
 
-## ✨ Features
+##  Features
 
 ### Core Functionality
 - **Scientific Calculator** - Full scientific operations (sin, cos, tan, log, ln, sqrt, factorial, etc.)
@@ -42,39 +42,39 @@ A refined, futuristic interface with smooth animations, elegant controls, and a 
 - **Anime.js** - Animation library for smooth transitions
 - **LocalStorage API** - Data persistence
 
-## 🚀 New Updates (v2.0)
+##  New Updates (v2.0)
 
 ### Animation Enhancements
-- ✅ Anime.js integration for all UI animations
-- ✅ Display number scale animations
-- ✅ Button press animations with scale effect
-- ✅ History panel slide animation
-- ✅ Menu dropdown animations
-- ✅ Toast notifications with bounce effect
-- ✅ Theme toggle rotation animation
-- ✅ Glowing box-shadow animation loop
+-  Anime.js integration for all UI animations
+-  Display number scale animations
+-  Button press animations with scale effect
+-  History panel slide animation
+-  Menu dropdown animations
+-  Toast notifications with bounce effect
+-  Theme toggle rotation animation
+-  Glowing box-shadow animation loop
 
 ### New Features
-- ✅ **Calculation History Panel** - Slide-out panel showing last 50 calculations
-- ✅ **History Overlay** - Click to load past results
-- ✅ **Clear History** - Remove all calculations from history
-- ✅ **History Timestamps** - See when each calculation was performed
-- ✅ **Toast Notifications** - Non-intrusive feedback messages
-- ✅ **Enhanced Error Messages** - Better error handling with user-friendly messages
-- ✅ **Memory Notifications** - Feedback for M+, M-, MC operations
-- ✅ **Copy Confirmation** - Toast shows when result is copied
+-  **Calculation History Panel** - Slide-out panel showing last 50 calculations
+-  **History Overlay** - Click to load past results
+-  **Clear History** - Remove all calculations from history
+-  **History Timestamps** - See when each calculation was performed
+-  **Toast Notifications** - Non-intrusive feedback messages
+-  **Enhanced Error Messages** - Better error handling with user-friendly messages
+-  **Memory Notifications** - Feedback for M+, M-, MC operations
+-  **Copy Confirmation** - Toast shows when result is copied
 
 ### Improvements
-- ✅ Better error handling and validation
-- ✅ Improved memory value formatting
-- ✅ Random number generation with 4 decimal places
-- ✅ Division by zero validation
-- ✅ Negative number validation for sqrt and log
-- ✅ Factorial validation for non-integers
-- ✅ Smoother animations with easing functions
-- ✅ Better accessibility with aria-hidden attributes
+-  Better error handling and validation
+-  Improved memory value formatting
+-  Random number generation with 4 decimal places
+-  Division by zero validation
+-  Negative number validation for sqrt and log
+-  Factorial validation for non-integers
+-  Smoother animations with easing functions
+-  Better accessibility with aria-hidden attributes
 
-## 🎮 How to Use
+##  How to Use
 
 ### Basic Calculations
 1. Click number buttons to enter values
@@ -111,7 +111,7 @@ A refined, futuristic interface with smooth animations, elegant controls, and a 
 - **Small (360px)**: Extra compact with minimal padding
 - **Landscape**: Optimized for landscape orientation
 
-## 🔒 Error Handling
+##  Error Handling
 The calculator includes comprehensive error handling:
 - Empty expression validation
 - Division by zero prevention
@@ -121,44 +121,36 @@ The calculator includes comprehensive error handling:
 - Type validation for all inputs
 - Try-catch blocks around critical functions
 
-## 💾 Data Persistence
+##  Data Persistence
 - **Theme Preference**: Saved to localStorage
 - **Calculation History**: Last 50 calculations stored in localStorage
 - **Memory Value**: Session-based (cleared on page reload)
 
-## 🎨 Customization
+##  Customization
 You can customize the calculator by modifying:
 - **Colors**: CSS custom properties in `:root`
 - **Animations**: Anime.js configuration in script.js
 - **Font**: Change the font-family in styles.css
 - **Layout**: Modify grid layouts in styles.css
 
-## 🐛 Known Limitations
+##  Known Limitations
 - Memory value is not persistent (clears on page reload)
 - Very large numbers may display in scientific notation
 - History is limited to 50 most recent calculations
 - Trigonometric functions use degrees (not radians)
 
-## 🚀 Future Enhancements
-- [ ] Export calculation history as PDF/CSV
-- [ ] Keyboard numpad support
-- [ ] More scientific functions (hyperbolic, matrices)
-- [ ] Calculation statistics
-- [ ] Dark mode animations refinement
-- [ ] PWA support for offline use
-
-## 📝 About
+##  About
 Built by **Pijush Chakraborty** as a modern web-based calculator experience that balances aesthetics, usability, and performance.
 
-## 📄 License
+##  License
 Licensed under the Apache License 2.0. See LICENSE file for details.
 
-## 🤝 Contributing
+##  Contributing
 Contributions, issues, and feature requests are welcome!
 
-## 📞 Support
+##  Support
 For issues or questions, please open an issue on GitHub.
 
 ---
 
-**Enjoy calculating with style!** ✨
+**Enjoy calculating with style!** 
