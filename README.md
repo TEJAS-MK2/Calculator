@@ -2,11 +2,11 @@
 
 A polished, feature-rich calculator website built with HTML, CSS, and JavaScript. The experience combines a premium glassmorphism-inspired interface with responsive design, scientific operations, and smooth animations powered by **anime.js**.
 
-## 🌐 Live Demo
+##  Live Demo
 Explore the live project here:
 https://tejas-mk2.github.io/Calculator/
 
-## 📸 Preview
+##  Preview
 A refined, futuristic interface with smooth animations, elegant controls, and a clean layout designed for both desktop and mobile use.
 
 ![Calculator UI](./calculator-screenshot.png)
@@ -35,7 +35,7 @@ A refined, futuristic interface with smooth animations, elegant controls, and a 
 - Logarithms: `log` (base 10), `ln` (natural)
 - Other: `abs`, `exp`, `10ˣ`, `Rand`, `Ans`
 
-## 🛠 Tech Stack
+##  Tech Stack
 - **HTML5** - Semantic markup with ARIA labels
 - **CSS3** - Glassmorphism design, responsive grid layouts
 - **JavaScript (ES6+)** - Modern JavaScript with error handling
@@ -92,7 +92,7 @@ A refined, futuristic interface with smooth animations, elegant controls, and a 
 - Operation applies to current display value
 
 ### History
-- Click 📋 icon to open history panel
+- Added an  history panel
 - Click any history item to load that result
 - Click "Clear History" to remove all calculations
 
@@ -104,7 +104,7 @@ A refined, futuristic interface with smooth animations, elegant controls, and a 
 - **Backspace**: Delete last digit
 - **Escape**: Clear or close panels
 
-## 📱 Responsive Breakpoints
+##  Responsive Breakpoints
 - **Desktop**: Full calculator with all features visible
 - **Tablet (640px)**: Optimized button sizes
 - **Mobile (380px)**: Compact layout with adjusted font sizes
@@ -128,7 +128,7 @@ The calculator includes comprehensive error handling:
 
 ##  Customization
 You can customize the calculator by modifying:
-- **Colors**: CSS custom properties in `:root`
+- **Colors**: CSS custom properties in :root
 - **Animations**: Anime.js configuration in script.js
 - **Font**: Change the font-family in styles.css
 - **Layout**: Modify grid layouts in styles.css
