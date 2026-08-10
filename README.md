@@ -1,107 +1,85 @@
-# Calculator
+# Modern Calculator
 
-A clean, responsive web calculator built with **HTML, CSS, and JavaScript**. It features a minimal black-and-white interface, keyboard support, smooth interactions, and a lightweight client-side calculation engine.
+A polished, responsive calculator website built with HTML, CSS, and JavaScript. The interface combines a clean dark aesthetic with smooth animations, responsive controls, keyboard support, and reliable error handling.
 
 ## Live Demo
 
-**GitHub Pages:**
+Explore the live project here:
+
 https://tejas-mk2.github.io/Calculator/
+
+## Preview
+
+A clean calculator interface designed for desktop and mobile use.
+
+![Calculator UI](./calculator-screenshot.png)
 
 ## Features
 
+### Core Functionality
 - Basic arithmetic: addition, subtraction, multiplication, and division
-- Decimal number support
-- Backspace, clear, and all-clear controls
-- Division-by-zero error handling
-- Keyboard input support
-- Responsive layout for desktop and mobile devices
-- Button press animations
-- Secondary display for the current operation
+- Decimal calculations
+- Clear and all-clear controls
+- Backspace support
+- Keyboard input
+- Responsive design for desktop, tablet, and mobile
+
+### User Experience
+- Smooth button animations
+- Floating calculator animation
+- Dark, minimalist interface
+- Error handling for invalid calculations
+- Division-by-zero protection
 - Automatic formatting for very large and very small numbers
-- No backend required for the live calculator
+- Accessibility labels and keyboard navigation
 
 ## Keyboard Shortcuts
 
-| Key | Action |
-|---|---|
-| `0-9` | Enter numbers |
-| `+` | Addition |
-| `-` | Subtraction |
-| `*` | Multiplication |
-| `/` | Division |
-| `.` | Decimal |
-| `Enter` / `=` | Calculate |
-| `Backspace` | Delete the last digit |
-| `Escape` | All clear |
-| `C` | Clear current input |
+- **Numbers**: `0–9`
+- **Operators**: `+`, `-`, `*`, `/`
+- **Decimal**: `.`
+- **Enter** or `=`: Calculate
+- **Backspace**: Delete the last digit
+- **Escape**: Clear all
+- **C**: Clear current input
 
 ## Tech Stack
 
-- **HTML5** — calculator structure and semantic controls
-- **CSS3** — responsive layout, styling, animations, and accessibility states
-- **JavaScript (ES6+)** — calculator state and arithmetic logic
-- **GitHub Pages** — static website hosting
-
-## Project Structure
-
-```text
-Calculator/
-├── index.html                 # Calculator interface
-├── styles.css                 # Main stylesheet
-├── script.js                  # Calculator logic
-├── .github/workflows/
-│   └── deploy.yml             # GitHub Pages deployment workflow
-├── app.py                     # Optional Flask server
-├── main.py                    # Flask entry point
-├── static/                    # Flask static assets
-└── templates/                 # Flask templates
-```
-
-The **GitHub Pages version uses the root `index.html`, `styles.css`, and `script.js`**. The Flask files are retained for optional local/server-side use and are not required for the static Pages deployment.
-
-## Running Locally
-
-### Option 1 — Open directly
-
-Open `index.html` in a modern web browser.
-
-### Option 2 — Use Flask
-
-If Python and Flask are installed:
-
-```bash
-python app.py
-```
-
-Then open:
-
-```text
-http://localhost:5000
-```
-
-For production deployments, do not expose Flask's development server or enable `debug=True` publicly.
+- **HTML5** — Semantic page structure
+- **CSS3** — Responsive layout, animations, and styling
+- **JavaScript (ES6+)** — Calculator logic and interaction
+- **Bootstrap 5** — Responsive utility classes
+- **Font Awesome** — Calculator icons
 
 ## Error Handling
 
-The calculator handles common input errors, including:
+The calculator handles common calculation errors, including:
 
 - Division by zero
 - Invalid numeric input
-- Floating-point rounding artifacts
-- Interrupted error states
+- Very large and very small results
+- Floating-point rounding issues
 
-## Browser Support
+## GitHub Pages
 
-The calculator is designed for modern browsers that support ES6 JavaScript, CSS Grid, and standard DOM APIs.
-
-## Contributing
-
-Contributions, bug reports, and feature requests are welcome. Open an issue or submit a pull request on GitHub.
+The project is deployed as a static website through GitHub Pages. The calculator runs entirely in the browser, so no server-side backend is required for the live demo.
 
 ## About
 
-Built by **Pijush Chakraborty**.
+Built by **Pijush Chakraborty** as a modern web-based calculator focused on simplicity, responsiveness, and usability.
 
 ## License
 
-Licensed under the **Apache License 2.0**. See [`LICENSE`](./LICENSE) for details.
+Licensed under the Apache License 2.0. See the `LICENSE` file for details.
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome. Please open an issue or pull request on GitHub.
+
+## Support
+
+For issues or questions, please open an issue on GitHub.
+
+---
+
+**Enjoy calculating with style!**
