@@ -10,18 +10,78 @@ class Calculator {
         this.errorTimeout = null;
         this.initializeEventListeners();
         this.updateDisplay();
+        this.animateEntrance();
     }
 
     initializeEventListeners() {
         document.querySelectorAll('.btn').forEach(button => {
             button.addEventListener('click', (e) => {
                 this.handleButtonClick(e.currentTarget);
-                this.addButtonAnimation(e.currentTarget);
+                this.animateButton(e.currentTarget);
             });
         });
         document.addEventListener('keydown', (e) => this.handleKeyPress(e));
         document.querySelectorAll('.btn').forEach(button => {
             button.addEventListener('contextmenu', (e) => e.preventDefault());
+        });
+    }
+
+    animateEntrance() {
+        if (typeof anime === 'undefined') return;
+
+        anime({
+            targets: '.calculator-header, .calculator, .calculator-footer',
+            opacity: [0, 1],
+            translateY: [24, 0],
+            duration: 700,
+            delay: anime.stagger(90),
+            easing: 'easeOutCubic'
+        });
+
+        anime({
+            targets: '.button-grid .btn',
+            opacity: [0, 1],
+            scale: [0.85, 1],
+            duration: 450,
+            delay: anime.stagger(35, { start: 250 }),
+            easing: 'easeOutBack'
+        });
+    }
+
+    animateButton(button) {
+        if (!button || typeof anime === 'undefined') return;
+
+        anime.remove(button);
+        anime({
+            targets: button,
+            scale: [1, 0.9, 1.04, 1],
+            duration: 300,
+            easing: 'easeOutQuad'
+        });
+    }
+
+    animateDisplay() {
+        if (typeof anime === 'undefined') return;
+
+        anime.remove(this.displayPrimary);
+        anime({
+            targets: this.displayPrimary,
+            scale: [1, 1.035, 1],
+            duration: 220,
+            easing: 'easeOutQuad'
+        });
+    }
+
+    animateResult() {
+        if (typeof anime === 'undefined') return;
+
+        anime.remove(this.displayPrimary);
+        anime({
+            targets: this.displayPrimary,
+            scale: [0.9, 1.08, 1],
+            opacity: [0.4, 1],
+            duration: 500,
+            easing: 'easeOutElastic(1, .6)'
         });
     }
 
@@ -145,6 +205,7 @@ class Calculator {
             this.waitingForOperand = false;
             this.justCalculated = true;
             this.updateDisplay();
+            this.animateResult();
         }
     }
 
@@ -171,6 +232,7 @@ class Calculator {
     updateDisplay() {
         this.displayPrimary.textContent = this.formatNumber(this.currentInput);
         this.displayPrimary.classList.remove('display-error');
+        this.animateDisplay();
     }
 
     updateSecondaryDisplay(showResult = false) {
@@ -220,23 +282,12 @@ class Calculator {
         }
     }
 
-    addButtonAnimation(button) {
-        if (!button) return;
-        button.classList.add('btn-active');
-        setTimeout(() => button.classList.remove('btn-active'), 200);
-    }
-
     highlightButton(selector) {
         const button = document.querySelector(selector);
-        if (button) this.addButtonAnimation(button);
+        if (button) this.animateButton(button);
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     new Calculator();
-    const calculator = document.querySelector('.calculator');
-    if (calculator) calculator.style.animation = 'float 6s ease-in-out infinite';
-    const style = document.createElement('style');
-    style.textContent = '@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }';
-    document.head.appendChild(style);
 });
