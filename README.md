@@ -16,7 +16,7 @@
 ## Demo
 
 <p align="center">
-  <img src="./calculator-demo.gif" alt="Calculator working demo" width="720">
+  <img src="./calculator-demo-matching.gif" alt="Calculator working demo" width="720">
 </p>
 
 <p align="center"><em>See the calculator in action.</em></p>
