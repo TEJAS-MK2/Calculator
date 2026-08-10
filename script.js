@@ -1,110 +1,50 @@
 class Calculator {
     constructor() {
-        this.primary = document.getElementById('displayPrimary');
-        this.secondary = document.getElementById('displaySecondary');
-        this.scientificToggle = document.getElementById('scientificToggle');
-        this.scientificPanel = document.getElementById('scientificPanel');
-        this.historyToggle = document.getElementById('historyToggle');
-        this.historyPanel = document.getElementById('historyPanel');
-        this.historyList = document.getElementById('historyList');
-        this.historyCount = document.getElementById('historyCount');
-        this.clearHistoryButton = document.getElementById('clearHistory');
-        this.memoryDisplay = document.getElementById('memoryValue');
-        this.themeToggle = document.getElementById('themeToggle');
-        this.current = '0'; this.previous = null; this.operator = null;
-        this.waiting = false; this.justCalculated = false; this.errorTimer = null;
-        this.history = this.readHistory(); this.memory = this.readMemory(); this.theme = this.readTheme();
-        this.bindEvents(); this.applyTheme(false); this.renderHistory(); this.renderMemory(); this.render(false); this.animateEntrance();
+        this.primary=document.getElementById('displayPrimary');this.secondary=document.getElementById('displaySecondary');this.preview=document.getElementById('expressionPreview');this.scientificToggle=document.getElementById('scientificToggle');this.scientificPanel=document.getElementById('scientificPanel');this.historyToggle=document.getElementById('historyToggle');this.historyPanel=document.getElementById('historyPanel');this.historyList=document.getElementById('historyList');this.historyCount=document.getElementById('historyCount');this.clearHistoryButton=document.getElementById('clearHistory');this.memoryDisplay=document.getElementById('memoryValue');this.themeToggle=document.getElementById('themeToggle');
+        this.current='0';this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=false;this.errorTimer=null;this.history=this.readHistory();this.memory=this.readMemory();this.theme=this.readTheme();this.bindEvents();this.applyTheme(false);this.renderHistory();this.renderMemory();this.render(false);this.updatePreview();this.animateEntrance();
     }
-    bindEvents() {
-        document.querySelectorAll('.btn, .memory-button').forEach(button => button.addEventListener('click', () => { this.handleAction(button.dataset.action, button.dataset.number); this.animateButton(button); }));
-        this.scientificToggle?.addEventListener('click', () => this.toggleScientific());
-        this.historyToggle?.addEventListener('click', () => this.toggleHistory());
-        this.clearHistoryButton?.addEventListener('click', () => this.clearHistory());
-        this.themeToggle?.addEventListener('click', () => this.toggleTheme());
-        document.addEventListener('keydown', event => this.keyboard(event));
-        const media = window.matchMedia('(prefers-color-scheme: light)');
-        media.addEventListener?.('change', () => { if (this.theme === 'system') this.applyTheme(false); });
-    }
-    readTheme() { try { const value = localStorage.getItem('calculatorTheme'); return ['dark','light','system'].includes(value) ? value : 'dark'; } catch { return 'dark'; } }
-    saveTheme() { try { localStorage.setItem('calculatorTheme', this.theme); } catch {} }
-    resolvedTheme() { return this.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : this.theme; }
-    applyTheme(animate = true) {
-        const resolved = this.resolvedTheme();
-        document.documentElement.dataset.theme = resolved;
-        if (!this.themeToggle) return;
-        const icons = { dark: 'fa-moon', light: 'fa-sun', system: 'fa-circle-half-stroke' };
-        this.themeToggle.innerHTML = `<i class="fas ${icons[this.theme]}"></i>`;
-        this.themeToggle.setAttribute('aria-label', `Theme: ${this.theme}. Click to change`);
-        this.themeToggle.title = `Theme: ${this.theme}`;
-        if (animate) this.animateThemeChange();
-    }
-    toggleTheme() { this.theme = { dark:'light', light:'system', system:'dark' }[this.theme]; this.saveTheme(); this.applyTheme(); }
-    readHistory() { try { const value = JSON.parse(localStorage.getItem('calculatorHistory') || '[]'); return Array.isArray(value) ? value.slice(0,50) : []; } catch { return []; } }
-    saveHistory() { try { localStorage.setItem('calculatorHistory', JSON.stringify(this.history)); } catch {} }
-    readMemory() { try { const value = Number(localStorage.getItem('calculatorMemory') || 0); return Number.isFinite(value) ? value : 0; } catch { return 0; } }
-    saveMemory() { try { localStorage.setItem('calculatorMemory', String(this.memory)); } catch {} }
-    renderMemory() { if (this.memoryDisplay) this.memoryDisplay.textContent = this.format(this.memory); }
-    memoryAction(action) {
-        this.cancelError(); const value = Number(this.current);
-        if (action === 'memory-clear') this.memory = 0;
-        else if (action === 'memory-recall') { this.current = String(this.memory); this.waiting = false; this.justCalculated = true; this.secondary.textContent = 'Memory recall'; }
-        else if (action === 'memory-add') { if (!Number.isFinite(value)) return this.showError('Invalid number'); this.memory = this.round(this.memory + value); }
-        else if (action === 'memory-subtract') { if (!Number.isFinite(value)) return this.showError('Invalid number'); this.memory = this.round(this.memory - value); }
-        else if (action === 'memory-store') { if (!Number.isFinite(value)) return this.showError('Invalid number'); this.memory = this.round(value); }
-        else return;
-        this.saveMemory(); this.renderMemory(); this.render(); this.animateMemoryAction(action);
-    }
-    handleAction(action, number) {
-        if (number !== undefined) return this.inputNumber(number);
-        if (!action) return;
-        if (action.startsWith('memory-')) return this.memoryAction(action);
-        if (action === 'decimal') return this.decimal(); if (action === 'equals') return this.calculate();
-        if (action === 'clear') return this.clearCurrent(); if (action === 'clear-all') return this.clearAll(); if (action === 'backspace') return this.backspace();
-        if (['add','subtract','multiply','divide'].includes(action)) return this.setOperator(action);
-        if (['sin','cos','tan','log','ln','sqrt','square','reciprocal','percent','factorial'].includes(action)) return this.scientific(action);
-        if (action === 'pi') return this.constant(Math.PI, 'π'); if (action === 'e') return this.constant(Math.E, 'e');
-    }
-    inputNumber(number) { this.cancelError(); if (this.waiting || this.justCalculated) { this.current = number; this.waiting = false; this.justCalculated = false; if (!this.operator) this.secondary.textContent = ''; } else this.current = this.current === '0' ? number : this.current + number; this.render(); }
-    decimal() { this.cancelError(); if (this.waiting || this.justCalculated) { this.current = '0.'; this.waiting = false; this.justCalculated = false; this.secondary.textContent = ''; } else if (!this.current.includes('.')) this.current += '.'; this.render(); }
-    setOperator(next) { this.cancelError(); const value = Number(this.current); if (!Number.isFinite(value)) return this.showError('Invalid number'); if (this.previous === null) this.previous = value; else if (this.operator && !this.waiting) { const result = this.compute(); if (result === null) return; this.current = String(result); this.previous = result; } this.operator = next; this.waiting = true; this.justCalculated = false; this.updateSecondary(); this.render(); }
-    compute() { const a = Number(this.previous), b = Number(this.current); if (!Number.isFinite(a) || !Number.isFinite(b)) return null; switch (this.operator) { case 'add': return this.round(a+b); case 'subtract': return this.round(a-b); case 'multiply': return this.round(a*b); case 'divide': if (b === 0) { this.showError('Cannot divide by zero'); return null; } return this.round(a/b); default: return null; } }
-    calculate() { this.cancelError(); if (this.previous === null || !this.operator || this.waiting) return; const left=this.format(this.previous), right=this.format(this.current), symbol=this.symbol(this.operator), result=this.compute(); if (result===null) return; this.addHistory(`${left} ${symbol} ${right}`, result); this.secondary.textContent=`${left} ${symbol} ${right} =`; this.current=String(result); this.previous=null; this.operator=null; this.waiting=false; this.justCalculated=true; this.render(); this.animateResult(); }
-    scientific(type) {
-        this.cancelError(); const value=Number(this.current); if(!Number.isFinite(value)) return this.showError('Invalid number'); let result;
-        switch(type){
-            case 'sin': result=Math.sin(value*Math.PI/180); break; case 'cos': result=Math.cos(value*Math.PI/180); break;
-            case 'tan': { const r=value*Math.PI/180; if(Math.abs(Math.cos(r))<1e-12)return this.showError('Undefined tan'); result=Math.tan(r); break; }
-            case 'log': if(value<=0)return this.showError('log requires > 0'); result=Math.log10(value); break;
-            case 'ln': if(value<=0)return this.showError('ln requires > 0'); result=Math.log(value); break;
-            case 'sqrt': if(value<0)return this.showError('√ requires ≥ 0'); result=Math.sqrt(value); break; case 'square': result=value*value; break;
-            case 'reciprocal': if(value===0)return this.showError('Cannot divide by zero'); result=1/value; break; case 'percent': result=value/100; break;
-            case 'factorial': if(!Number.isInteger(value)||value<0||value>170)return this.showError('Use an integer 0–170'); result=1; for(let i=2;i<=value;i++)result*=i; break; default:return;
-        }
-        this.current=String(this.round(result)); this.justCalculated=true; this.waiting=false; this.secondary.textContent=`${type}(${this.format(value)})`; this.render(); this.animateResult();
-    }
-    constant(value,name){this.cancelError();this.current=String(this.round(value));this.justCalculated=true;this.waiting=false;this.secondary.textContent=name;this.render();this.animateResult();}
-    clearCurrent(){this.cancelError();this.current='0';this.render();}
-    clearAll(){this.cancelError();this.current='0';this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=false;this.secondary.textContent='';this.render();}
-    backspace(){this.cancelError();if(this.waiting||this.justCalculated)return;this.current=this.current.length>1?this.current.slice(0,-1):'0';this.render();}
+    bindEvents(){document.querySelectorAll('.btn,.memory-button').forEach(b=>b.addEventListener('click',()=>{this.handleAction(b.dataset.action,b.dataset.number);this.animateButton(b);}));this.scientificToggle?.addEventListener('click',()=>this.toggleScientific());this.historyToggle?.addEventListener('click',()=>this.toggleHistory());this.clearHistoryButton?.addEventListener('click',()=>this.clearHistory());this.themeToggle?.addEventListener('click',()=>this.toggleTheme());document.addEventListener('keydown',e=>this.keyboard(e));const media=window.matchMedia('(prefers-color-scheme: light)');media.addEventListener?.('change',()=>{if(this.theme==='system')this.applyTheme(false);});}
+    readTheme(){try{const v=localStorage.getItem('calculatorTheme');return['dark','light','system'].includes(v)?v:'dark';}catch{return'dark';}}
+    saveTheme(){try{localStorage.setItem('calculatorTheme',this.theme);}catch{}}
+    resolvedTheme(){return this.theme==='system'?(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):this.theme;}
+    applyTheme(animate=true){const r=this.resolvedTheme();document.documentElement.dataset.theme=r;if(!this.themeToggle)return;const icons={dark:'fa-moon',light:'fa-sun',system:'fa-circle-half-stroke'};this.themeToggle.innerHTML=`<i class="fas ${icons[this.theme]}"></i>`;this.themeToggle.setAttribute('aria-label',`Theme: ${this.theme}. Click to change`);this.themeToggle.title=`Theme: ${this.theme}`;if(animate)this.animateThemeChange();}
+    toggleTheme(){this.theme={dark:'light',light:'system',system:'dark'}[this.theme];this.saveTheme();this.applyTheme();}
+    readHistory(){try{const v=JSON.parse(localStorage.getItem('calculatorHistory')||'[]');return Array.isArray(v)?v.slice(0,50):[];}catch{return[];}}
+    saveHistory(){try{localStorage.setItem('calculatorHistory',JSON.stringify(this.history));}catch{}}
+    readMemory(){try{const v=Number(localStorage.getItem('calculatorMemory')||0);return Number.isFinite(v)?v:0;}catch{return 0;}}
+    saveMemory(){try{localStorage.setItem('calculatorMemory',String(this.memory));}catch{}}
+    renderMemory(){if(this.memoryDisplay)this.memoryDisplay.textContent=this.format(this.memory);}
+    memoryAction(a){this.cancelError();const v=Number(this.current);if(a==='memory-clear')this.memory=0;else if(a==='memory-recall'){this.current=String(this.memory);this.waiting=false;this.justCalculated=true;this.secondary.textContent='Memory recall';}else if(a==='memory-add'){if(!Number.isFinite(v))return this.showError('Invalid number');this.memory=this.round(this.memory+v);}else if(a==='memory-subtract'){if(!Number.isFinite(v))return this.showError('Invalid number');this.memory=this.round(this.memory-v);}else if(a==='memory-store'){if(!Number.isFinite(v))return this.showError('Invalid number');this.memory=this.round(v);}else return;this.saveMemory();this.renderMemory();this.render();this.updatePreview();this.animateMemoryAction(a);}
+    handleAction(a,n){if(n!==undefined)return this.inputNumber(n);if(!a)return;if(a.startsWith('memory-'))return this.memoryAction(a);if(a==='decimal')return this.decimal();if(a==='equals')return this.calculate();if(a==='clear')return this.clearCurrent();if(a==='clear-all')return this.clearAll();if(a==='backspace')return this.backspace();if(['add','subtract','multiply','divide'].includes(a))return this.setOperator(a);if(['sin','cos','tan','log','ln','sqrt','square','reciprocal','percent','factorial'].includes(a))return this.scientific(a);if(a==='pi')return this.constant(Math.PI,'π');if(a==='e')return this.constant(Math.E,'e');}
+    inputNumber(n){this.cancelError();if(this.waiting||this.justCalculated){this.current=n;this.waiting=false;this.justCalculated=false;if(!this.operator)this.secondary.textContent='';}else this.current=this.current==='0'?n:this.current+n;this.render();this.updatePreview();}
+    decimal(){this.cancelError();if(this.waiting||this.justCalculated){this.current='0.';this.waiting=false;this.justCalculated=false;this.secondary.textContent='';}else if(!this.current.includes('.'))this.current+='.';this.render();this.updatePreview();}
+    setOperator(next){this.cancelError();const v=Number(this.current);if(!Number.isFinite(v))return this.showError('Invalid number');if(this.previous===null)this.previous=v;else if(this.operator&&!this.waiting){const r=this.compute();if(r===null)return;this.current=String(r);this.previous=r;}this.operator=next;this.waiting=true;this.justCalculated=false;this.updateSecondary();this.render();this.updatePreview();}
+    compute(){const a=Number(this.previous),b=Number(this.current);if(!Number.isFinite(a)||!Number.isFinite(b))return null;switch(this.operator){case'add':return this.round(a+b);case'subtract':return this.round(a-b);case'multiply':return this.round(a*b);case'divide':if(b===0){this.showError('Cannot divide by zero');return null;}return this.round(a/b);default:return null;}}
+    calculate(){this.cancelError();if(this.previous===null||!this.operator||this.waiting)return;const left=this.format(this.previous),right=this.format(this.current),symbol=this.symbol(this.operator),r=this.compute();if(r===null)return;this.addHistory(`${left} ${symbol} ${right}`,r);this.secondary.textContent=`${left} ${symbol} ${right} =`;this.current=String(r);this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=true;this.render();this.updatePreview();this.animateResult();}
+    scientific(type){this.cancelError();const v=Number(this.current);if(!Number.isFinite(v))return this.showError('Invalid number');let r;switch(type){case'sin':r=Math.sin(v*Math.PI/180);break;case'cos':r=Math.cos(v*Math.PI/180);break;case'tan':{const x=v*Math.PI/180;if(Math.abs(Math.cos(x))<1e-12)return this.showError('Undefined tan');r=Math.tan(x);break;}case'log':if(v<=0)return this.showError('log requires > 0');r=Math.log10(v);break;case'ln':if(v<=0)return this.showError('ln requires > 0');r=Math.log(v);break;case'sqrt':if(v<0)return this.showError('√ requires ≥ 0');r=Math.sqrt(v);break;case'square':r=v*v;break;case'reciprocal':if(v===0)return this.showError('Cannot divide by zero');r=1/v;break;case'percent':r=v/100;break;case'factorial':if(!Number.isInteger(v)||v<0||v>170)return this.showError('Use an integer 0–170');r=1;for(let i=2;i<=v;i++)r*=i;break;default:return;}this.current=String(this.round(r));this.justCalculated=true;this.waiting=false;this.secondary.textContent=`${type}(${this.format(v)})`;this.render();this.updatePreview();this.animateResult();}
+    constant(v,name){this.cancelError();this.current=String(this.round(v));this.justCalculated=true;this.waiting=false;this.secondary.textContent=name;this.render();this.updatePreview();this.animateResult();}
+    clearCurrent(){this.cancelError();this.current='0';this.render();this.updatePreview();}
+    clearAll(){this.cancelError();this.current='0';this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=false;this.secondary.textContent='';this.render();this.updatePreview();}
+    backspace(){this.cancelError();if(this.waiting||this.justCalculated)return;this.current=this.current.length>1?this.current.slice(0,-1):'0';this.render();this.updatePreview();}
     updateSecondary(){if(this.previous!==null&&this.operator)this.secondary.textContent=`${this.format(this.previous)} ${this.symbol(this.operator)}`;}
-    symbol(operator){return{add:'+',subtract:'−',multiply:'×',divide:'÷'}[operator]||'';}
+    symbol(o){return{add:'+',subtract:'−',multiply:'×',divide:'÷'}[o]||'';}
+    updatePreview(){if(!this.preview)return;let text='';if(this.previous!==null&&this.operator){const left=this.format(this.previous);const op=this.symbol(this.operator);if(this.waiting)text=`${left} ${op}`;else text=`${left} ${op} ${this.format(this.current)}`;}else if(!this.justCalculated&&this.current!=='0'){text=this.format(this.current);}this.preview.textContent=text;this.preview.classList.toggle('active',Boolean(text));}
     render(animate=true){this.primary.textContent=this.format(this.current);this.primary.classList.remove('display-error');if(animate)this.animateDisplay();}
-    format(value){const n=Number(value);if(!Number.isFinite(n))return'Error';if(Math.abs(n)>=1e10||(Math.abs(n)<1e-6&&n!==0))return n.toExponential(6);return n.toLocaleString('en-US',{maximumFractionDigits:8,useGrouping:false});}
-    round(value){return Number.isFinite(value)?Math.round((value+Number.EPSILON)*1e8)/1e8:value;}
+    format(v){const n=Number(v);if(!Number.isFinite(n))return'Error';if(Math.abs(n)>=1e10||(Math.abs(n)<1e-6&&n!==0))return n.toExponential(6);return n.toLocaleString('en-US',{maximumFractionDigits:8,useGrouping:false});}
+    round(v){return Number.isFinite(v)?Math.round((v+Number.EPSILON)*1e8)/1e8:v;}
     addHistory(expression,result){this.history.unshift({expression,result:String(result),time:Date.now()});this.history=this.history.slice(0,50);this.saveHistory();this.renderHistory();this.animateHistoryItem();}
-    renderHistory(){this.historyCount.textContent=String(this.history.length);if(!this.history.length){this.historyList.innerHTML='<div class="history-empty">No calculations yet</div>';return;}this.historyList.innerHTML='';this.history.forEach(entry=>{const button=document.createElement('button');button.type='button';button.className='history-item';const exp=document.createElement('span'),res=document.createElement('span');exp.className='history-expression';res.className='history-result';exp.textContent=entry.expression;res.textContent='= '+this.format(entry.result);button.append(exp,res);button.addEventListener('click',()=>{this.current=entry.result;this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=true;this.secondary.textContent='';this.render();this.toggleHistory(false);this.animateResult();});this.historyList.appendChild(button);});}
+    renderHistory(){this.historyCount.textContent=String(this.history.length);if(!this.history.length){this.historyList.innerHTML='<div class="history-empty">No calculations yet</div>';return;}this.historyList.innerHTML='';this.history.forEach(e=>{const b=document.createElement('button');b.type='button';b.className='history-item';const x=document.createElement('span'),r=document.createElement('span');x.className='history-expression';r.className='history-result';x.textContent=e.expression;r.textContent='= '+this.format(e.result);b.append(x,r);b.addEventListener('click',()=>{this.current=e.result;this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=true;this.secondary.textContent='';this.render();this.updatePreview();this.toggleHistory(false);this.animateResult();});this.historyList.appendChild(b);});}
     clearHistory(){this.history=[];this.saveHistory();this.renderHistory();}
     toggleHistory(force){const open=typeof force==='boolean'?force:!this.historyPanel.classList.contains('is-open');this.historyPanel.classList.toggle('is-open',open);this.historyPanel.setAttribute('aria-hidden',String(!open));this.historyToggle.setAttribute('aria-expanded',String(open));if(open)this.animateHistoryPanel();}
     toggleScientific(){const open=this.scientificPanel.classList.toggle('is-open');this.scientificPanel.setAttribute('aria-hidden',String(!open));this.scientificToggle.setAttribute('aria-expanded',String(open));this.scientificToggle.innerHTML=open?'<i class="fas fa-flask"></i> Hide Scientific Mode':'<i class="fas fa-flask"></i> Scientific Mode';if(open)this.animateScientificPanel();}
-    keyboard(event){const key=event.key;if(/^[0-9]$/.test(key)){event.preventDefault();this.inputNumber(key);return;}const actions={'+':'add','-':'subtract','*':'multiply','/':'divide','.':'decimal','=':'equals',Enter:'equals',Escape:'clear-all',Backspace:'backspace',c:'clear',C:'clear'};if(actions[key]){event.preventDefault();this.handleAction(actions[key]);}}
-    showError(message){this.cancelError();this.primary.textContent='Error';this.primary.classList.add('display-error');this.secondary.textContent=message;this.errorTimer=setTimeout(()=>{this.errorTimer=null;this.clearAll();},2000);}
+    keyboard(e){const k=e.key;if(/^[0-9]$/.test(k)){e.preventDefault();this.inputNumber(k);return;}const a={'+':'add','-':'subtract','*':'multiply','/':'divide','.':'decimal','=':'equals',Enter:'equals',Escape:'clear-all',Backspace:'backspace',c:'clear',C:'clear'};if(a[k]){e.preventDefault();this.handleAction(a[k]);}}
+    showError(m){this.cancelError();this.primary.textContent='Error';this.primary.classList.add('display-error');this.secondary.textContent=m;this.preview.textContent='';this.preview.classList.remove('active');this.errorTimer=setTimeout(()=>{this.errorTimer=null;this.clearAll();},2000);}
     cancelError(){if(this.errorTimer!==null){clearTimeout(this.errorTimer);this.errorTimer=null;}}
     animateEntrance(){if(typeof anime!=='function')return;anime.timeline({easing:'easeOutExpo'}).add({targets:'.calculator-header',opacity:[0,1],translateY:[-30,0],duration:650}).add({targets:'.calculator',opacity:[0,1],scale:[.96,1],translateY:[24,0],duration:700,offset:'-=450'}).add({targets:'.calculator-footer',opacity:[0,1],translateY:[12,0],duration:400,offset:'-=400'}).add({targets:'.button-grid .btn',opacity:[0,1],translateY:[18,0],scale:[.88,1],duration:520,delay:anime.stagger(35,{grid:[4,5],from:'center'}),easing:'easeOutBack',offset:'-=260'});}
-    animateButton(button){if(typeof anime!=='function')return;anime.remove(button);anime({targets:button,scale:[.94,1.08,1],duration:360,easing:'easeOutElastic(1,.55)'});}
+    animateButton(b){if(typeof anime!=='function')return;anime.remove(b);anime({targets:b,scale:[.94,1.08,1],duration:360,easing:'easeOutElastic(1,.55)'});}
     animateDisplay(){if(typeof anime!=='function')return;anime.remove(this.primary);anime({targets:this.primary,scale:[1,.985,1.015,1],duration:260,easing:'easeOutCubic'});}
     animateResult(){if(typeof anime!=='function')return;anime.remove(this.primary);anime({targets:this.primary,opacity:[.2,1],scale:[.82,1.08,1],translateY:[8,0],duration:600,easing:'easeOutElastic(1,.5)'});}
-    animateMemoryAction(action){if(typeof anime!=='function')return;anime.remove('.memory-panel');anime({targets:'.memory-panel',scale:[1,.985,1.02,1],duration:420,easing:'easeOutElastic(1,.6)'});if(action==='memory-recall')this.animateResult();}
+    animateMemoryAction(a){if(typeof anime!=='function')return;anime.remove('.memory-panel');anime({targets:'.memory-panel',scale:[1,.985,1.02,1],duration:420,easing:'easeOutElastic(1,.6)'});if(a==='memory-recall')this.animateResult();}
     animateHistoryPanel(){if(typeof anime!=='function')return;anime.remove('.history-item,.history-empty');anime({targets:'.history-item,.history-empty',opacity:[0,1],translateX:[-18,0],scale:[.96,1],duration:420,delay:anime.stagger(45),easing:'easeOutCubic'});}
     animateHistoryItem(){if(typeof anime!=='function')return;anime({targets:'.history-item:first-child',opacity:[0,1],translateX:[-20,0],scale:[.94,1],duration:500,easing:'easeOutBack'});}
     animateScientificPanel(){if(typeof anime!=='function')return;anime.remove('.scientific-panel .btn');anime({targets:'.scientific-panel .btn',opacity:[0,1],translateY:[-14,0],scale:[.82,1],duration:500,delay:anime.stagger(45,{grid:[4,3],from:'center'}),easing:'easeOutBack'});}
