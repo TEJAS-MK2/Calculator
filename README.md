@@ -1,85 +1,102 @@
 # Modern Calculator
 
-A polished, responsive calculator website built with HTML, CSS, and JavaScript. The interface combines a clean dark aesthetic with smooth animations, responsive controls, keyboard support, and reliable error handling.
+<p align="center">
+  <strong>A clean, responsive calculator for the web.</strong><br>
+  Built with HTML, CSS, and JavaScript.
+</p>
 
-## Live Demo
-
-Explore the live project here:
-
-https://tejas-mk2.github.io/Calculator/
-
-## Preview
-
-A clean calculator interface designed for desktop and mobile use.
-
-![Calculator UI](./calculator-screenshot.png)
-
-## Features
-
-### Core Functionality
-- Basic arithmetic: addition, subtraction, multiplication, and division
-- Decimal calculations
-- Clear and all-clear controls
-- Backspace support
-- Keyboard input
-- Responsive design for desktop, tablet, and mobile
-
-### User Experience
-- Smooth button animations
-- Floating calculator animation
-- Dark, minimalist interface
-- Error handling for invalid calculations
-- Division-by-zero protection
-- Automatic formatting for very large and very small numbers
-- Accessibility labels and keyboard navigation
-
-## Keyboard Shortcuts
-
-- **Numbers**: `0–9`
-- **Operators**: `+`, `-`, `*`, `/`
-- **Decimal**: `.`
-- **Enter** or `=`: Calculate
-- **Backspace**: Delete the last digit
-- **Escape**: Clear all
-- **C**: Clear current input
-
-## Tech Stack
-
-- **HTML5** — Semantic page structure
-- **CSS3** — Responsive layout, animations, and styling
-- **JavaScript (ES6+)** — Calculator logic and interaction
-- **Bootstrap 5** — Responsive utility classes
-- **Font Awesome** — Calculator icons
-
-## Error Handling
-
-The calculator handles common calculation errors, including:
-
-- Division by zero
-- Invalid numeric input
-- Very large and very small results
-- Floating-point rounding issues
-
-## GitHub Pages
-
-The project is deployed as a static website through GitHub Pages. The calculator runs entirely in the browser, so no server-side backend is required for the live demo.
-
-## About
-
-Built by **Pijush Chakraborty** as a modern web-based calculator focused on simplicity, responsiveness, and usability.
-
-## License
-
-Licensed under the Apache License 2.0. See the `LICENSE` file for details.
-
-## Contributing
-
-Contributions, issues, and feature requests are welcome. Please open an issue or pull request on GitHub.
-
-## Support
-
-For issues or questions, please open an issue on GitHub.
+<p align="center">
+  <a href="https://tejas-mk2.github.io/Calculator/">Live Demo</a> ·
+  <a href="https://github.com/TEJAS-MK2/Calculator/issues">Report a Bug</a> ·
+  <a href="https://github.com/TEJAS-MK2/Calculator/pulls">Contribute</a>
+</p>
 
 ---
 
-**Enjoy calculating with style!**
+## Demo
+
+> **Animated demo:** `calculator-demo.gif`
+>
+> The demo GIF is ready to upload to the repository root. Once uploaded, this section can display it directly.
+
+![Calculator UI](./calculator-screenshot.png)
+
+## Highlights
+
+- **Fast & responsive** — designed for desktop, tablet, and mobile
+- **Clean interface** — focused layout with a modern dark aesthetic
+- **Keyboard friendly** — use your keyboard for numbers and operations
+- **Smooth interactions** — subtle button and interface animations
+- **Reliable calculations** — floating-point rounding and validation
+- **Error protection** — handles invalid input and division by zero
+- **Accessible controls** — semantic buttons, labels, and keyboard navigation
+
+## Calculator
+
+| Category | Operations |
+|---|---|
+| Arithmetic | `+` `−` `×` `÷` |
+| Input | `0–9` `.` |
+| Controls | `AC` `C` `Backspace` `=` |
+| Keyboard | Numbers, operators, `Enter`, `Backspace`, `Escape`, `C` |
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|---|---|
+| `0–9` | Enter number |
+| `+` `-` `*` `/` | Choose operator |
+| `.` | Decimal point |
+| `Enter` / `=` | Calculate |
+| `Backspace` | Delete last digit |
+| `Escape` | Clear all |
+| `C` | Clear current input |
+
+## Tech Stack
+
+- **HTML5** — structure and accessibility
+- **CSS3** — responsive layout, styling, and animations
+- **JavaScript (ES6+)** — calculator engine and interaction
+- **Bootstrap 5** — responsive utility classes
+- **Font Awesome** — interface icons
+
+## Design
+
+The calculator uses a minimal dark visual system with:
+
+- Responsive CSS grid
+- Rounded controls and display panels
+- Subtle hover and press states
+- Floating calculator animation
+- Mobile-friendly sizing
+
+## GitHub Pages
+
+The calculator is deployed as a static website through GitHub Pages and runs entirely in the browser.
+
+**Live:** https://tejas-mk2.github.io/Calculator/
+
+## Error Handling
+
+The calculator protects against common problems such as:
+
+- Division by zero
+- Invalid numeric input
+- Floating-point precision artifacts
+- Very large or very small results
+
+## About
+
+Built by **Pijush Chakraborty** as a modern web calculator focused on simplicity, responsiveness, and usability.
+
+## License
+
+Licensed under the Apache License 2.0. See [`LICENSE`](./LICENSE) for details.
+
+## Contributing
+
+Contributions, bug reports, and feature requests are welcome. Open an issue or submit a pull request.
+
+---
+
+<p align="center"><strong>Calculate with style.</strong></p>
