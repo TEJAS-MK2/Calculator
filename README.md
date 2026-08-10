@@ -21,8 +21,6 @@
 
 <p align="center"><em>See the calculator in action.</em></p>
 
-![Calculator UI](./calculator-screenshot.png)
-
 ## Highlights
 
 - **Fast & responsive** — designed for desktop, tablet, and mobile
