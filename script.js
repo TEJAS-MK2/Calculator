@@ -2,6 +2,8 @@ class Calculator {
     constructor() {
         this.displayPrimary = document.getElementById('displayPrimary');
         this.displaySecondary = document.getElementById('displaySecondary');
+        this.scientificToggle = document.getElementById('scientificToggle');
+        this.scientificPanel = document.getElementById('scientificPanel');
         this.currentInput = '0';
         this.previousInput = '';
         this.operator = null;
@@ -20,15 +22,37 @@ class Calculator {
                 this.animateButton(e.currentTarget);
             });
         });
+
+        this.scientificToggle.addEventListener('click', () => this.toggleScientificMode());
         document.addEventListener('keydown', (e) => this.handleKeyPress(e));
         document.querySelectorAll('.btn').forEach(button => {
             button.addEventListener('contextmenu', (e) => e.preventDefault());
         });
     }
 
+    toggleScientificMode() {
+        const open = this.scientificPanel.classList.toggle('is-open');
+        this.scientificPanel.setAttribute('aria-hidden', String(!open));
+        this.scientificToggle.setAttribute('aria-expanded', String(open));
+        this.scientificToggle.innerHTML = open
+            ? '<i class="fas fa-flask"></i> Hide Scientific Mode'
+            : '<i class="fas fa-flask"></i> Scientific Mode';
+
+        if (typeof anime !== 'undefined' && open) {
+            anime({
+                targets: '.scientific-panel .btn',
+                opacity: [0, 1],
+                translateY: [-8, 0],
+                scale: [.9, 1],
+                duration: 300,
+                delay: anime.stagger(30),
+                easing: 'easeOutCubic'
+            });
+        }
+    }
+
     animateEntrance() {
         if (typeof anime === 'undefined') return;
-
         anime({
             targets: '.calculator-header, .calculator, .calculator-footer',
             opacity: [0, 1],
@@ -37,7 +61,6 @@ class Calculator {
             delay: anime.stagger(90),
             easing: 'easeOutCubic'
         });
-
         anime({
             targets: '.button-grid .btn',
             opacity: [0, 1],
@@ -50,7 +73,6 @@ class Calculator {
 
     animateButton(button) {
         if (!button || typeof anime === 'undefined') return;
-
         anime.remove(button);
         anime({
             targets: button,
@@ -62,7 +84,6 @@ class Calculator {
 
     animateDisplay() {
         if (typeof anime === 'undefined') return;
-
         anime.remove(this.displayPrimary);
         anime({
             targets: this.displayPrimary,
@@ -74,7 +95,6 @@ class Calculator {
 
     animateResult() {
         if (typeof anime === 'undefined') return;
-
         anime.remove(this.displayPrimary);
         anime({
             targets: this.displayPrimary,
@@ -125,7 +145,82 @@ class Calculator {
             case 'clear': this.clear(); break;
             case 'clear-all': this.clearAll(); break;
             case 'backspace': this.backspace(); break;
+            case 'sin': this.scientificFunction('sin'); break;
+            case 'cos': this.scientificFunction('cos'); break;
+            case 'tan': this.scientificFunction('tan'); break;
+            case 'log': this.scientificFunction('log'); break;
+            case 'ln': this.scientificFunction('ln'); break;
+            case 'sqrt': this.scientificFunction('sqrt'); break;
+            case 'square': this.scientificFunction('square'); break;
+            case 'reciprocal': this.scientificFunction('reciprocal'); break;
+            case 'percent': this.scientificFunction('percent'); break;
+            case 'pi': this.insertConstant(Math.PI, 'π'); break;
+            case 'e': this.insertConstant(Math.E, 'e'); break;
+            case 'factorial': this.scientificFunction('factorial'); break;
         }
+    }
+
+    scientificFunction(type) {
+        this.cancelErrorReset();
+        const value = parseFloat(this.currentInput);
+        if (!Number.isFinite(value)) return this.showError('Invalid number');
+
+        let result;
+        switch (type) {
+            case 'sin': result = Math.sin(this.toRadians(value)); break;
+            case 'cos': result = Math.cos(this.toRadians(value)); break;
+            case 'tan':
+                if (Math.abs(Math.cos(this.toRadians(value))) < 1e-12) return this.showError('Undefined tan');
+                result = Math.tan(this.toRadians(value));
+                break;
+            case 'log':
+                if (value <= 0) return this.showError('log requires > 0');
+                result = Math.log10(value);
+                break;
+            case 'ln':
+                if (value <= 0) return this.showError('ln requires > 0');
+                result = Math.log(value);
+                break;
+            case 'sqrt':
+                if (value < 0) return this.showError('√ requires ≥ 0');
+                result = Math.sqrt(value);
+                break;
+            case 'square': result = value ** 2; break;
+            case 'reciprocal':
+                if (value === 0) return this.showError('Cannot divide by zero');
+                result = 1 / value;
+                break;
+            case 'percent': result = value / 100; break;
+            case 'factorial':
+                if (!Number.isInteger(value) || value < 0 || value > 170) return this.showError('Use an integer 0–170');
+                result = 1;
+                for (let i = 2; i <= value; i++) result *= i;
+                break;
+            default: return;
+        }
+
+        this.currentInput = String(this.roundResult(result));
+        this.justCalculated = true;
+        this.waitingForOperand = false;
+        this.clearSecondaryDisplay();
+        this.updateDisplay();
+        this.animateResult();
+    }
+
+    insertConstant(value, symbol) {
+        this.cancelErrorReset();
+        this.currentInput = String(this.roundResult(value));
+        this.justCalculated = true;
+        this.waitingForOperand = false;
+        this.displaySecondary.textContent = symbol;
+        this.updateDisplay();
+    }
+
+    toRadians(degrees) { return degrees * Math.PI / 180; }
+
+    roundResult(result) {
+        if (!Number.isFinite(result)) return result;
+        return Math.round((result + Number.EPSILON) * 100000000) / 100000000;
     }
 
     inputNumber(digit) {
@@ -190,7 +285,7 @@ class Calculator {
                 break;
             default: return null;
         }
-        return Math.round((result + Number.EPSILON) * 100000000) / 100000000;
+        return this.roundResult(result);
     }
 
     calculate() {
