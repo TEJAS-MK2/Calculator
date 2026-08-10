@@ -15,9 +15,11 @@
 
 ## Demo
 
-> **Animated demo:** `calculator-demo.gif`
->
-> The demo GIF is ready to upload to the repository root. Once uploaded, this section can display it directly.
+<p align="center">
+  <img src="./calculator-demo.gif" alt="Calculator working demo" width="720">
+</p>
+
+<p align="center"><em>See the calculator in action.</em></p>
 
 ![Calculator UI](./calculator-screenshot.png)
 
