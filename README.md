@@ -1,156 +1,107 @@
-# Modern Calculator 
+# Calculator
 
-A polished, feature-rich calculator website built with HTML, CSS, and JavaScript. The experience combines a premium glassmorphism-inspired interface with responsive design, scientific operations, and smooth animations powered by **anime.js**.
+A clean, responsive web calculator built with **HTML, CSS, and JavaScript**. It features a minimal black-and-white interface, keyboard support, smooth interactions, and a lightweight client-side calculation engine.
 
-##  Live Demo
-Explore the live project here:
+## Live Demo
+
+**GitHub Pages:**
 https://tejas-mk2.github.io/Calculator/
 
-##  Preview
-A refined, futuristic interface with smooth animations, elegant controls, and a clean layout designed for both desktop and mobile use.
+## Features
 
-![Calculator UI](./calculator-screenshot.png)
+- Basic arithmetic: addition, subtraction, multiplication, and division
+- Decimal number support
+- Backspace, clear, and all-clear controls
+- Division-by-zero error handling
+- Keyboard input support
+- Responsive layout for desktop and mobile devices
+- Button press animations
+- Secondary display for the current operation
+- Automatic formatting for very large and very small numbers
+- No backend required for the live calculator
 
-##  Features
+## Keyboard Shortcuts
 
-### Core Functionality
-- **Scientific Calculator** - Full scientific operations (sin, cos, tan, log, ln, sqrt, factorial, etc.)
-- **Memory Operations** - MC, MR, M+, M- for storing and recalling values
-- **Calculation History** - View, search, and reuse past calculations
-- **Light/Dark Theme** - Smooth theme toggle with anime.js animations
-- **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices
+| Key | Action |
+|---|---|
+| `0-9` | Enter numbers |
+| `+` | Addition |
+| `-` | Subtraction |
+| `*` | Multiplication |
+| `/` | Division |
+| `.` | Decimal |
+| `Enter` / `=` | Calculate |
+| `Backspace` | Delete the last digit |
+| `Escape` | All clear |
+| `C` | Clear current input |
 
-### Advanced Features
-- **Anime.js Animations** - Smooth, performant animations for all interactions
-- **Toast Notifications** - Real-time feedback for actions (copy, memory operations, errors)
-- **Error Handling** - Comprehensive error checking and validation
-- **Keyboard Support** - Full keyboard support (numbers, operators, Enter, Backspace, Escape)
-- **LocalStorage Support** - Persistent calculation history and theme preference
-- **Accessibility** - ARIA labels, semantic HTML, keyboard navigation
+## Tech Stack
 
-### Scientific Operations
-- Basic: `+`, `-`, `*`, `/`, `%`
-- Advanced: `√`, `x²`, `1/x`, `π`, `e`, `^`, `!`
-- Trigonometry: `sin`, `cos`, `tan` (in degrees)
-- Logarithms: `log` (base 10), `ln` (natural)
-- Other: `abs`, `exp`, `10ˣ`, `Rand`, `Ans`
+- **HTML5** — calculator structure and semantic controls
+- **CSS3** — responsive layout, styling, animations, and accessibility states
+- **JavaScript (ES6+)** — calculator state and arithmetic logic
+- **GitHub Pages** — static website hosting
 
-##  Tech Stack
-- **HTML5** - Semantic markup with ARIA labels
-- **CSS3** - Glassmorphism design, responsive grid layouts
-- **JavaScript (ES6+)** - Modern JavaScript with error handling
-- **Anime.js** - Animation library for smooth transitions
-- **LocalStorage API** - Data persistence
+## Project Structure
 
-##  New Updates (v2.0)
+```text
+Calculator/
+├── index.html                 # Calculator interface
+├── styles.css                 # Main stylesheet
+├── script.js                  # Calculator logic
+├── .github/workflows/
+│   └── deploy.yml             # GitHub Pages deployment workflow
+├── app.py                     # Optional Flask server
+├── main.py                    # Flask entry point
+├── static/                    # Flask static assets
+└── templates/                 # Flask templates
+```
 
-### Animation Enhancements
--  Anime.js integration for all UI animations
--  Display number scale animations
--  Button press animations with scale effect
--  History panel slide animation
--  Menu dropdown animations
--  Toast notifications with bounce effect
--  Theme toggle rotation animation
--  Glowing box-shadow animation loop
+The **GitHub Pages version uses the root `index.html`, `styles.css`, and `script.js`**. The Flask files are retained for optional local/server-side use and are not required for the static Pages deployment.
 
-### New Features
--  **Calculation History Panel** - Slide-out panel showing last 50 calculations
--  **History Overlay** - Click to load past results
--  **Clear History** - Remove all calculations from history
--  **History Timestamps** - See when each calculation was performed
--  **Toast Notifications** - Non-intrusive feedback messages
--  **Enhanced Error Messages** - Better error handling with user-friendly messages
--  **Memory Notifications** - Feedback for M+, M-, MC operations
--  **Copy Confirmation** - Toast shows when result is copied
+## Running Locally
 
-### Improvements
--  Better error handling and validation
--  Improved memory value formatting
--  Random number generation with 4 decimal places
--  Division by zero validation
--  Negative number validation for sqrt and log
--  Factorial validation for non-integers
--  Smoother animations with easing functions
--  Better accessibility with aria-hidden attributes
+### Option 1 — Open directly
 
-##  How to Use
+Open `index.html` in a modern web browser.
 
-### Basic Calculations
-1. Click number buttons to enter values
-2. Click operator buttons (+, -, *, /)
-3. Click = to calculate
+### Option 2 — Use Flask
 
-### Memory Functions
-- **MC** - Clear memory
-- **MR** - Recall memory value
-- **M+** - Add current value to memory
-- **M−** - Subtract current value from memory
+If Python and Flask are installed:
 
-### Scientific Operations
-- Click any scientific button (√, sin, cos, etc.)
-- Operation applies to current display value
+```bash
+python app.py
+```
 
-### History
-- Added an  history panel
-- Click any history item to load that result
-- Click "Clear History" to remove all calculations
+Then open:
 
-### Keyboard Shortcuts
-- **Numbers**: 0-9
-- **Operators**: +, -, *, /
-- **Decimal**: .
-- **Enter**: Calculate (=)
-- **Backspace**: Delete last digit
-- **Escape**: Clear or close panels
+```text
+http://localhost:5000
+```
 
-##  Responsive Breakpoints
-- **Desktop**: Full calculator with all features visible
-- **Tablet (640px)**: Optimized button sizes
-- **Mobile (380px)**: Compact layout with adjusted font sizes
-- **Small (360px)**: Extra compact with minimal padding
-- **Landscape**: Optimized for landscape orientation
+For production deployments, do not expose Flask's development server or enable `debug=True` publicly.
 
-##  Error Handling
-The calculator includes comprehensive error handling:
-- Empty expression validation
-- Division by zero prevention
-- Invalid factorial detection
-- Negative number validation for sqrt/log
-- Non-finite result detection
-- Type validation for all inputs
-- Try-catch blocks around critical functions
+## Error Handling
 
-##  Data Persistence
-- **Theme Preference**: Saved to localStorage
-- **Calculation History**: Last 50 calculations stored in localStorage
-- **Memory Value**: Session-based (cleared on page reload)
+The calculator handles common input errors, including:
 
-##  Customization
-You can customize the calculator by modifying:
-- **Colors**: CSS custom properties in :root
-- **Animations**: Anime.js configuration in script.js
-- **Font**: Change the font-family in styles.css
-- **Layout**: Modify grid layouts in styles.css
+- Division by zero
+- Invalid numeric input
+- Floating-point rounding artifacts
+- Interrupted error states
 
-##  Known Limitations
-- Memory value is not persistent (clears on page reload)
-- Very large numbers may display in scientific notation
-- History is limited to 50 most recent calculations
-- Trigonometric functions use degrees (not radians)
+## Browser Support
 
-##  About
-Built by **Pijush Chakraborty** as a modern web-based calculator experience that balances aesthetics, usability, and performance.
+The calculator is designed for modern browsers that support ES6 JavaScript, CSS Grid, and standard DOM APIs.
 
-##  License
-Licensed under the Apache License 2.0. See LICENSE file for details.
+## Contributing
 
-##  Contributing
-Contributions, issues, and feature requests are welcome!
+Contributions, bug reports, and feature requests are welcome. Open an issue or submit a pull request on GitHub.
 
-##  Support
-For issues or questions, please open an issue on GitHub.
+## About
 
----
+Built by **Pijush Chakraborty**.
 
-**Enjoy calculating with style!** 
+## License
+
+Licensed under the **Apache License 2.0**. See [`LICENSE`](./LICENSE) for details.
