@@ -1,113 +1,55 @@
-# Contributor Covenant Code of Conduct
+# Code of Conduct
 
-## Our Pledge
+## Our Commitment
 
-We as members, contributors, and leaders pledge to make participation in our
-community a harassment-free experience for everyone, regardless of age, body
-size, visible or invisible disability, ethnicity, sex characteristics, gender
-identity and expression, level of experience, education, socio-economic status,
-nationality, personal appearance, race, religion, or sexual identity
-and orientation.
+We want the **TEJAS-MK2 Calculator** project to be a welcoming, respectful, and constructive place for everyone who participates.
 
-We pledge to act and interact in ways that contribute to an open, welcoming,
-diverse, inclusive, and healthy community.
+By participating in this project, you agree to:
 
-## Our Standards
+- Treat other people with respect and kindness.
+- Welcome constructive discussion and different viewpoints.
+- Give and receive technical feedback professionally.
+- Focus criticism on ideas, code, and decisions rather than individuals.
+- Take responsibility for mistakes and help resolve problems constructively.
 
-Examples of behavior that contributes to a positive environment for our
-community include:
+## Unacceptable Behavior
 
-* Demonstrating empathy and kindness toward other people
-* Being respectful of differing opinions, viewpoints, and experiences
-* Giving and gracefully accepting constructive feedback
-* Accepting responsibility and apologizing to those affected by our mistakes,
-  and learning from the experience
-* Focusing on what is best not just for us as individuals, but for the
-  overall community
+The following behavior is not acceptable:
 
-Examples of unacceptable behavior include:
+- Harassment, discrimination, threats, or personal attacks.
+- Hate speech or derogatory comments targeting individuals or groups.
+- Sexualized language, unwanted sexual attention, or sexual harassment.
+- Trolling, intimidation, deliberate disruption, or repeated bad-faith behavior.
+- Publishing someone's private or personal information without permission.
+- Malicious behavior intended to damage the project, its contributors, or its users.
+- Any other conduct that would reasonably be considered inappropriate in a professional open-source community.
 
-* The use of sexualized language or imagery, and sexual attention or
-  advances of any kind
-* Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or email
-  address, without their explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
-  professional setting
+## Project Spaces
 
-## Enforcement Responsibilities
-
-Community leaders are responsible for clarifying and enforcing our standards of
-acceptable behavior and will take appropriate and fair corrective action in
-response to any behavior that they deem inappropriate, threatening, offensive,
-or harmful.
-
-Community leaders have the right and responsibility to remove, edit, or reject
-comments, commits, code, wiki edits, issues, and other contributions that are
-not aligned to this Code of Conduct, and will communicate reasons for moderation
-decisions when appropriate.
-
-## Scope
-
-This Code of Conduct applies within all community spaces, and also applies when
-an individual is officially representing the community in public spaces.
-Examples of representing our community include using an official e-mail address,
-posting via an official social media account, or acting as an appointed
-representative at an online or offline event.
+This Code of Conduct applies to the repository, issues, pull requests, discussions, reviews, and other project spaces. It also applies when someone is representing this project or its community in public.
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at
-Omarchyhyprland@gmail.com .
-All complaints will be reviewed and investigated promptly and fairly.
+Project maintainers are responsible for interpreting and enforcing this Code of Conduct. They may remove, edit, or reject contributions that violate these standards and may take appropriate action, including warnings, temporary restrictions, or permanent bans from project spaces.
 
-All community leaders are obligated to respect the privacy and security of the
-reporter of any incident.
+Enforcement decisions will be made fairly and proportionately to the circumstances.
 
-## Enforcement Guidelines
+## Reporting a Problem
 
-Community leaders will follow these Community Impact Guidelines in determining
-the consequences for any action they deem in violation of this Code of Conduct:
+If you experience or witness behavior that violates this Code of Conduct, please report it privately to the project maintainer through the repository's available contact or reporting channels.
 
-### 1. Correction
+When reporting an incident, please include enough information to understand what happened and, when possible, links or other relevant context. Please do not publicly disclose private information about the people involved.
 
-**Community Impact**: Use of inappropriate language or other behavior deemed
-unprofessional or unwelcome in the community.
+Reports will be handled as confidentially as reasonably possible.
 
-**Consequence**: A private, written warning from community leaders, providing
-clarity around the nature of the violation and an explanation of why the
-behavior was inappropriate. A public apology may be requested.
+## Scope of Enforcement
 
-### 2. Warning
+Maintainers may take action when conduct is clearly connected to the project, its contributors, or its community, including conduct occurring outside the repository when someone is acting in an official project capacity.
 
-**Community Impact**: A violation through a single incident or series
-of actions.
+## Attribution
 
-**Consequence**: A warning with consequences for continued behavior. No
-interaction with the people involved, including unsolicited interaction with
-those enforcing the Code of Conduct, for a specified period of time. This
-includes avoiding interactions in community spaces as well as external channels
-like social media. Violating these terms may lead to a temporary or
-permanent ban.
+This Code of Conduct is adapted from the principles and structure of the [Contributor Covenant](https://www.contributor-covenant.org/), with project-specific language for this repository.
 
-### 3. Temporary Ban
+## Questions
 
-**Community Impact**: A serious violation of community standards, including
-sustained inappropriate behavior.
-
-**Consequence**: A temporary ban from any sort of interaction or public
-communication with the community for a specified period of time. No public or
-private interaction with the people involved, including unsolicited interaction
-with those enforcing the Code of Conduct, is allowed during this period.
-Violating these terms may lead to a permanent ban.
-
-### 4. Permanent Ban
-
-**Community Impact**: Demonstrating a pattern of violation of community
-standards, including sustained inappropriate behavior,  harassment of an
-individual, or aggression toward or disparagement of classes of individuals.
-
-**Consequence**: A permanent ban from any sort of public interaction within
-the community.
+If you have questions about this Code of Conduct or how it applies to a particular situation, open a GitHub issue or contact the project maintainer privately when the matter is sensitive.
