@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>A clean, responsive calculator for the web.</strong><br>
-  Built with HTML, CSS, and JavaScript.
+  Built with HTML, CSS, JavaScript, and Anime.js.
 </p>
 
 <p align="center">
@@ -25,8 +25,8 @@
 
 - **Fast & responsive** — designed for desktop, tablet, and mobile
 - **Clean interface** — focused layout with a modern dark aesthetic
+- **Anime.js animations** — smooth entrance, button, display, and result transitions
 - **Keyboard friendly** — use your keyboard for numbers and operations
-- **Smooth interactions** — subtle button and interface animations
 - **Reliable calculations** — floating-point rounding and validation
 - **Error protection** — handles invalid input and division by zero
 - **Accessible controls** — semantic buttons, labels, and keyboard navigation
@@ -55,10 +55,21 @@
 ## Tech Stack
 
 - **HTML5** — structure and accessibility
-- **CSS3** — responsive layout, styling, and animations
+- **CSS3** — responsive layout, styling, and visual effects
 - **JavaScript (ES6+)** — calculator engine and interaction
+- **Anime.js 3.2.2** — UI and micro-interactions
 - **Bootstrap 5** — responsive utility classes
 - **Font Awesome** — interface icons
+
+## Animations
+
+Anime.js powers the calculator's interactive motion:
+
+- Staggered calculator entrance
+- Button press feedback
+- Display value transitions
+- Elastic result animation
+- Keyboard-triggered button feedback
 
 ## Design
 
@@ -67,8 +78,8 @@ The calculator uses a minimal dark visual system with:
 - Responsive CSS grid
 - Rounded controls and display panels
 - Subtle hover and press states
-- Floating calculator animation
 - Mobile-friendly sizing
+- Lightweight JavaScript-driven motion
 
 ## GitHub Pages
 
@@ -87,7 +98,7 @@ The calculator protects against common problems such as:
 
 ## About
 
-Built by **Pijush Chakraborty** as a modern web calculator focused on simplicity, responsiveness, and usability.
+Built by **Pijush Chakraborty** as a modern web calculator focused on simplicity, responsiveness, usability, and polished interaction.
 
 ## License
 
