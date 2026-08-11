@@ -1,96 +1,48 @@
 # Modern Calculator
 
-## 1. Overview
+Modern Calculator is a responsive web calculator with a clean UI, scientific capabilities, reusable calculation engines, persistent history, themes, PWA support, and smooth Anime.js motion.
 
-Modern Calculator is a responsive web calculator with a clean UI, scientific capabilities, an advanced calculation engine, persistent history, themes, PWA support, and smooth Anime.js motion.
+**Live:** https://tejas-mk2.github.io/Calculator/
 
-**Live on GitHub Pages:**
-
-**https://tejas-mk2.github.io/Calculator/**
-
-### Demo
-
-<p align="center">
-  <img src="./calculator-demo-fixed.gif" alt="Modern Calculator demo" width="360">
-</p>
-
-The project is built with HTML, CSS, and JavaScript and is deployed using GitHub Pages.
-
----
-
-## 2. UI
-
-The UI is designed to keep the everyday calculator simple while making advanced functionality accessible from the sidebar.
-
-- Clean, responsive calculator interface
-- Sidebar-based feature navigation
-- Feature modes transform the calculator instead of opening separate sidebar panels
-- Dark, Light, and System themes
-- Responsive mobile layout
-- Keyboard support
-- Calculation history
-- Smooth Anime.js interactions
-- Subtle result animations without answer jitter
-- Ripple and button interaction effects
-- `prefers-reduced-motion` support
-- PWA/offline support
-
-The main calculator stays focused on everyday calculations, while advanced tools are available when needed.
-
----
-
-## 3. Features
+## Features
 
 ### Core calculator
 
 - Addition, subtraction, multiplication, and division
-- Decimal calculations
-- Parentheses
+- Decimal calculations and parentheses
 - Unary operators
 - Backspace, Clear Entry, and Clear All
-- Keyboard input
-- Error handling
+- Keyboard support
+- Typed error handling
 
 ### Scientific calculator
 
-- `sin`, `cos`, `tan`
-- Inverse and hyperbolic trigonometry
-- `sqrt`, `cbrt`, and roots
-- `log`, `ln`, `log2`
-- `exp`, `pow`
+- `sin`, `cos`, `tan`, inverse and hyperbolic trigonometry
+- `sqrt`, `cbrt`, roots, `log`, `ln`, `log2`, `exp`, and `pow`
 - `abs`, `floor`, `ceil`, `round`
 - `min`, `max`, `sum`, `product`, `mean`
-- GCD / LCM
-- Factorial and percentage helpers
+- GCD, LCM, factorial, and percentage helpers
 - DEG / RAD / GRAD angle modes
-- Mathematical constants such as π, e, τ, and φ
+- π, e, τ, and φ constants
 
 ### Advanced tools
 
 - Exact rational arithmetic
-- Statistics
-- Mean, median, variance, and standard deviation
-- Matrix operations
-- Determinant, inverse, and transpose
+- Statistics and regression
+- Matrix operations, determinants, inverse, and transpose
 - Numerical methods
-- Regression
-- Number theory
-- Combinatorics
-- Vector and matrix utilities
-- Interpolation and polynomial utilities
+- Number theory and combinatorics
+- Vector and polynomial utilities
 
-### History & themes
+### UI and PWA
 
-- Persistent calculation history
-- Quick result recall
+- Sidebar-based advanced features
 - Dark, Light, and System themes
-- Theme-aware feature panels and controls
-
-### PWA
-
-- Installable web application
-- Service-worker support
-- Offline application-shell caching
+- Responsive mobile layout
+- Persistent calculation history
+- Smooth Anime.js interactions
+- `prefers-reduced-motion` support
+- Installable PWA and offline application-shell caching
 
 ### Security
 
@@ -100,78 +52,43 @@ The main calculator stays focused on everyday calculations, while advanced tools
 - Typed calculation errors
 - Mathematical domain and finite-number validation
 
----
+## Packages
 
-## 4. Packages
+The repository currently publishes **7 package targets** through GitHub Actions: Docker/OCI, npm, NuGet, Maven, Gradle/Maven, PyPI, and RubyGems. The reusable calculation engines are versioned at **0.6.0**.
 
-The repository has **6 published GitHub Packages entries** covering the web application container and reusable calculation engines across JavaScript, Java/Maven, Gradle, and .NET.
+**Package hub:** https://github.com/TEJAS-MK2/Calculator/packages
 
-**All published packages:**
-
-https://github.com/TEJAS-MK2/Calculator/packages
-
-### 4.1 `calculator` — Docker / OCI container
+### 1. Docker / OCI — `calculator`
 
 Container image for the Modern Calculator web application, served by Nginx.
 
-**Package:**
-
-https://github.com/TEJAS-MK2/Calculator/packages
-
-**Image:**
-
-```text
-ghcr.io/tejas-mk2/calculator:latest
-```
-
-**Pull:**
-
 ```bash
 docker pull ghcr.io/tejas-mk2/calculator:latest
-```
-
-**Run:**
-
-```bash
 docker run --rm -p 8080:80 ghcr.io/tejas-mk2/calculator:latest
 ```
 
-Then open `http://localhost:8080`.
+Open `http://localhost:8080`.
 
-**Build locally:**
+Build locally:
 
 ```bash
 docker build -t calculator .
 docker run --rm -p 8080:80 calculator
 ```
 
-The container exposes port `80` and contains the calculator UI plus the browser calculation engine.
+### 2. npm / JavaScript — `@tejas-mk2/calculator-core`
 
----
+Advanced dependency-free JavaScript/ESM calculation engine.
 
-### 4.2 `@tejas-mk2/calculator-core` — npm / JavaScript
+**Version:** `0.6.0`
 
-The main reusable JavaScript/ESM calculation engine. It provides expression parsing, scientific functions, exact rational arithmetic, statistics, numerical methods, regression, vectors, matrices, and number theory.
-
-**npm:**
-
-https://www.npmjs.com/package/@tejas-mk2/calculator-core
-
-**Source:**
-
-https://github.com/TEJAS-MK2/Calculator/tree/main/packages/calculator-core
-
-**GitHub Packages:**
-
-https://github.com/TEJAS-MK2/Calculator/packages
-
-**Install from npm:**
+Install:
 
 ```bash
 npm install @tejas-mk2/calculator-core
 ```
 
-**Use it:**
+Use:
 
 ```js
 import { evaluate, evaluateExact } from '@tejas-mk2/calculator-core';
@@ -180,7 +97,7 @@ console.log(evaluate('2 + 3 * 4'));
 console.log(evaluateExact('1 / 3 + 1 / 6').toString());
 ```
 
-**Advanced API:**
+Advanced API:
 
 ```js
 import {
@@ -192,17 +109,7 @@ import {
 } from '@tejas-mk2/calculator-core/advanced';
 ```
 
-**Install from GitHub Packages:**
-
-```ini
-@tejas-mk2:registry=https://npm.pkg.github.com
-```
-
-```bash
-npm install @tejas-mk2/calculator-core
-```
-
-**Run tests:**
+Test:
 
 ```bash
 cd packages/calculator-core
@@ -210,51 +117,26 @@ npm install
 npm test
 ```
 
-**Inspect the package:**
+### 3. NuGet / .NET — `Pijush.Calculator`
 
-```bash
-npm pack --dry-run
-```
+Dependency-free C# decimal/scientific calculation engine.
 
----
+**Version:** `0.6.0`  
+**Requirement:** .NET 8+
 
-### 4.3 `Pijush.Calculator` — NuGet / .NET
-
-Dependency-free C# decimal/scientific calculation engine for .NET applications.
-
-**Package:**
-
-`Pijush.Calculator`
-
-**GitHub Packages:**
-
-https://github.com/TEJAS-MK2/Calculator/packages
-
-**Registry:**
+GitHub Packages source:
 
 ```text
 https://nuget.pkg.github.com/TEJAS-MK2/index.json
 ```
 
-**Requirements:** .NET 8+
-
-**Configure the GitHub Packages source:**
+Install:
 
 ```bash
-dotnet nuget add source https://nuget.pkg.github.com/TEJAS-MK2/index.json \
-  --name github \
-  --username YOUR_GITHUB_USERNAME \
-  --password YOUR_GITHUB_TOKEN \
-  --store-password-in-clear-text
+dotnet add package Pijush.Calculator --version 0.6.0
 ```
 
-**Install:**
-
-```bash
-dotnet add package Pijush.Calculator --version YOUR_VERSION
-```
-
-**Use it:**
+Example:
 
 ```csharp
 using Pijush.Calculator;
@@ -264,7 +146,7 @@ Console.WriteLine(Calculator.Power(2m, 10));
 Console.WriteLine(Calculator.Sine(90, true));
 ```
 
-**Test and build the package from this repository:**
+Test and pack:
 
 ```bash
 cd nuget-package
@@ -272,60 +154,30 @@ dotnet test tests/Calculator.Tests.csproj
 dotnet pack Pijush.Calculator.csproj -c Release
 ```
 
-**Run it in an application:**
+### 4. Maven / Java — `io.github.tejas-mk2:pijush-calculator`
 
-```bash
-dotnet run
-```
+Advanced dependency-free Java engine using `BigDecimal` and `DECIMAL128` precision.
 
-The package is a library, so `dotnet run` is executed from a consuming console/application project after adding the package reference.
+**Version:** `0.6.0`  
+**Requirement:** Java 17+
 
----
-
-### 4.4 `pijush-calculator` — Apache Maven / Java
-
-Advanced dependency-free Java decimal/scientific engine using `BigDecimal` with `DECIMAL128` precision.
-
-**Coordinates:**
-
-```text
-io.github.tejas-mk2:pijush-calculator:0.1.1
-```
-
-**GitHub Packages:**
-
-https://github.com/TEJAS-MK2/Calculator/packages
-
-**Maven registry:**
+Repository:
 
 ```text
 https://maven.pkg.github.com/TEJAS-MK2/Calculator
 ```
 
-**Requirements:** Java 17+
-
-**Add the repository:**
-
-```xml
-<repositories>
-  <repository>
-    <id>github</id>
-    <url>https://maven.pkg.github.com/TEJAS-MK2/Calculator</url>
-  </repository>
-</repositories>
-```
-
-**Add the dependency:**
+Maven dependency:
 
 ```xml
 <dependency>
   <groupId>io.github.tejas-mk2</groupId>
   <artifactId>pijush-calculator</artifactId>
-  <version>0.1.1</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 
-**Build and test:**
+Build and test:
 
 ```bash
 cd java-package
@@ -333,60 +185,28 @@ mvn test
 mvn package
 ```
 
-**Run a consuming Java application:**
+### 5. Gradle / Java — `io.github.tejasmk2.gradle:pijush-calculator-gradle`
 
-```bash
-mvn compile
-mvn exec:java -Dexec.mainClass="your.package.Main"
-```
+Gradle-published Java calculation engine.
 
-The package itself is a Java library; `mvn package` builds the JAR and `mvn exec:java` runs a consuming application when the Maven Exec plugin is configured.
+**Version:** `0.6.0`  
+**Requirement:** Java 17+
 
----
-
-### 4.5 `io.github.tejasmk2.gradle.pijush-calculator-gradle` — Gradle / Java
-
-Gradle-published Java calculation engine. The GitHub Packages entry corresponds to the Gradle publication:
-
-```text
-io.github.tejasmk2.gradle:pijush-calculator-gradle:0.1.1
-```
-
-**GitHub Packages:**
-
-https://github.com/TEJAS-MK2/Calculator/packages
-
-**Maven-compatible registry:**
+Repository:
 
 ```text
 https://maven.pkg.github.com/TEJAS-MK2/Calculator
 ```
 
-**Requirements:** Java 17+
-
-**Add the repository:**
-
-```gradle
-repositories {
-    maven {
-        url = uri("https://maven.pkg.github.com/TEJAS-MK2/Calculator")
-        credentials {
-            username = System.getenv("USERNAME")
-            password = System.getenv("GITHUB_TOKEN")
-        }
-    }
-}
-```
-
-**Add the dependency:**
+Gradle dependency:
 
 ```gradle
 dependencies {
-    implementation "io.github.tejasmk2.gradle:pijush-calculator-gradle:0.1.1"
+    implementation "io.github.tejasmk2.gradle:pijush-calculator-gradle:0.6.0"
 }
 ```
 
-**Build and test:**
+Build and test:
 
 ```bash
 cd gradle-package
@@ -394,102 +214,73 @@ gradle test
 gradle build
 ```
 
-**Run a consuming Gradle application:**
+### 6. PyPI / Python — `pijush-calculator`
+
+Advanced dependency-free Python numerical engine with scientific functions, statistics, combinatorics, and reusable mathematical utilities.
+
+**Version:** `0.6.0`  
+**Requirement:** Python 3.9+
+
+Install:
 
 ```bash
-gradle run
+pip install pijush-calculator==0.6.0
 ```
 
-Use `gradle run` from a Gradle application project after adding the library dependency and configuring the `application` plugin/main class.
-
----
-
-### 4.6 `io.github.tejas-mk2.pijush-calculator` — Java/Maven GitHub Packages entry
-
-This is the GitHub Packages entry associated with the Java Maven publication of `pijush-calculator`.
-
-**GitHub Packages:**
-
-https://github.com/TEJAS-MK2/Calculator/packages
-
-**Maven coordinates:**
-
-```text
-io.github.tejas-mk2:pijush-calculator:0.1.1
-```
-
-**Registry:**
-
-```text
-https://maven.pkg.github.com/TEJAS-MK2/Calculator
-```
-
-**Install in Maven:**
-
-```xml
-<repositories>
-  <repository>
-    <id>github</id>
-    <url>https://maven.pkg.github.com/TEJAS-MK2/Calculator</url>
-  </repository>
-</repositories>
-```
-
-```xml
-<dependency>
-  <groupId>io.github.tejas-mk2</groupId>
-  <artifactId>pijush-calculator</artifactId>
-  <version>0.1.1</version>
-</dependency>
-```
-
-**Build/test the source:**
+Build and test from source:
 
 ```bash
-cd java-package
-mvn test
-mvn package
+cd python-package
+python -m pip install -e .
+python -m pytest
+python -m build
 ```
 
-This publication uses the same Java calculation engine and Maven registry; the package name shown by GitHub Packages can differ from the Maven group/artifact coordinate.
+### 7. RubyGems / Ruby — `pijush-calculator`
 
----
+Dependency-free Ruby calculation engine with arithmetic, scientific functions, statistics, combinatorics, and explicit error handling.
 
-### Package summary
+**Version:** `0.6.0`  
+**Requirement:** Ruby 3.0+
 
-| Published package | Ecosystem | Install / build tool | Main purpose |
-|---|---|---|---|
-| `calculator` | Docker / OCI | Docker | Containerized web calculator |
-| `@tejas-mk2/calculator-core` | npm | npm | JavaScript/ESM calculation engine |
-| `Pijush.Calculator` | NuGet | .NET CLI | C# calculation engine |
-| `pijush-calculator` | Maven | Maven | Java calculation engine |
-| `io.github.tejasmk2.gradle.pijush-calculator-gradle` | Gradle/Maven | Gradle | Gradle-published Java engine |
-| `io.github.tejas-mk2.pijush-calculator` | Maven/Java | Maven | Java GitHub Packages publication entry |
+Install:
 
-**Package hub:**
+```bash
+gem install pijush-calculator -v 0.6.0
+```
 
-https://github.com/TEJAS-MK2/Calculator/packages
+Build and test from source:
 
----
+```bash
+cd ruby-gem
+gem build pijush-calculator.gemspec
+ruby -Ilib -Itest test/test_pijush_calculator.rb
+```
 
-## 5. Project Purpose
+## Package summary
 
-This Calculator project is **primarily a hobbyist project**.
+| Target | Ecosystem | Package | Version | Build / install |
+|---|---|---|---|---|
+| Calculator container | Docker / OCI | `ghcr.io/tejas-mk2/calculator` | `latest` / tagged | Docker |
+| Calculator core | npm | `@tejas-mk2/calculator-core` | `0.6.0` | npm |
+| C# engine | NuGet | `Pijush.Calculator` | `0.6.0` | .NET CLI |
+| Java engine | Maven | `io.github.tejas-mk2:pijush-calculator` | `0.6.0` | Maven |
+| Java engine | Gradle/Maven | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | `0.6.0` | Gradle |
+| Python engine | PyPI | `pijush-calculator` | `0.6.0` | pip |
+| Ruby engine | RubyGems | `pijush-calculator` | `0.6.0` | gem |
 
-The browser calculator is a practical way to experiment with UI design, interaction, PWA development, testing, and JavaScript. However, the **main goal of the project is not to build the world's most advanced calculator UI**.
+## Development
 
-The main goal is to create **serious, powerful, reusable calculation engines**.
+Run the browser application locally using a static server or the project's development workflow. Package-specific commands are documented above.
 
-The calculation engine is intended to grow into a capable mathematical foundation for calculators, applications, CLIs, educational tools, numerical software, and other projects that need reliable mathematical computation.
+Before publishing a release, all calculation engines must pass their test suites. GitHub Actions validates the engines before publishing packages.
 
-The UI is the demonstration layer. The **calculation engine is the long-term focus**.
+## Project purpose
 
----
+This Calculator project is primarily a hobbyist project. The browser calculator is the demonstration layer; the long-term focus is building serious, powerful, reusable calculation engines for calculators, applications, CLIs, educational tools, numerical software, and other projects that need reliable mathematical computation.
 
 ## License
 
-The main calculator project is licensed under Apache-2.0. The `@tejas-mk2/calculator-core` package is licensed under MIT. The Java and .NET calculation packages document their own package licenses.
-
----
+The main calculator project is licensed under Apache-2.0. The `@tejas-mk2/calculator-core` package, Java package, and .NET package document their own package licenses. The Python and Ruby packages are MIT licensed.
 
 <p align="center"><strong>Simple interface. Serious calculation engine.</strong></p>
