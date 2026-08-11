@@ -1,12 +1,12 @@
 {
-  "name": "Aesthetic Calculator",
+  "name": "Modern Calculator",
   "short_name": "Calculator",
-  "description": "A fast, modern calculator with scientific functions, memory and history.",
+  "description": "A fast, modern calculator with calculation history, clear controls, and theme switching.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#090b10",
+  "theme_color": "#090b10",
   "categories": ["utilities", "productivity"]
 }
