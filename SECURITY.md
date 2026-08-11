@@ -2,13 +2,13 @@
 
 ## Scope
 
-The **TEJAS-MK2 Calculator** project includes the client-side calculator, calculation libraries, package registries, GitHub Actions workflows, GitHub Pages deployment, service worker, and container image.
+The **TEJAS-MK2 Calculator** project includes the client-side calculator, calculation engine, GitHub Actions workflows, GitHub Pages deployment, service worker, and repository configuration.
 
-Security reports may concern application code, calculation logic, dependencies, package supply chain, CI/CD, registry configuration, container images, workflow permissions, or repository configuration.
+Security reports may concern application code, calculation logic, dependencies, CI/CD, workflow permissions, cache behavior, or GitHub Pages configuration.
 
 ## Supported Versions
 
-The latest version on `main` is the primary supported development version. Published package versions are immutable; security fixes for published artifacts should use a new package version.
+The latest version on `main` is the primary supported development version.
 
 ## Reporting a Vulnerability
 
@@ -23,7 +23,7 @@ If you are unsure whether a report is security-sensitive, report it privately fi
 When safe to provide, include:
 
 - Concise vulnerability description.
-- Affected component, file, package, workflow, dependency, or configuration.
+- Affected component, file, workflow, dependency, or configuration.
 - Affected version or commit.
 - Reproduction steps or a minimal proof of concept.
 - Expected and actual behavior.
@@ -40,9 +40,7 @@ Examples include:
 - Unsafe calculation/expression parsing or dynamic code execution.
 - `eval()`, `Function()`, or similar dangerous execution mechanisms.
 - Dependency vulnerabilities or compromised dependencies.
-- npm, RubyGems, PyPI, Maven, Gradle, NuGet, or GitHub Packages configuration.
 - GitHub Actions workflow injection or excessive permissions.
-- Container/Docker image supply-chain issues.
 - Accidental credential or secret exposure.
 - Service-worker and cache behavior with security implications.
 - GitHub Pages or repository configuration exposing protected resources.
@@ -65,16 +63,21 @@ If a credential or secret is accidentally committed:
 1. Revoke or rotate it immediately.
 2. Notify the maintainer privately.
 3. Remove it from repository history when appropriate.
-4. Inspect Actions, package registries, containers, and deployments for unauthorized use.
+4. Inspect GitHub Actions and deployments for unauthorized use.
 5. Do not assume deleting the file from the latest commit makes the secret safe.
 
-Never commit registry tokens, PyPI tokens, GitHub tokens, private keys, passwords, or credentials to source code, package artifacts, documentation, or workflow files.
+Never commit tokens, private keys, passwords, or credentials to source code, documentation, or workflow files.
 
-## Package and Release Security
+## GitHub Pages and Actions Security
 
-Publishing should be automated and least-privilege wherever practical. Review package and workflow changes carefully, keep versions synchronized with source changes, and use short-lived credentials or OIDC where supported.
+The website uses GitHub Pages as its only deployment target. The deployment workflow should:
 
-Package releases are immutable. Security fixes should be released under a new version rather than attempting to replace an existing artifact.
+- Use `contents: read` rather than repository write access.
+- Use only the Pages permissions required for deployment.
+- Use the official GitHub Pages artifact/deployment actions.
+- Avoid force-pushing deployment branches.
+- Avoid unnecessary credentials and long-lived secrets.
+- Validate application assets and tests before deployment.
 
 ## Response Process
 
@@ -85,8 +88,8 @@ When reasonably possible, maintainers will:
 3. Assess severity, exploitability, affected versions, and impact.
 4. Determine whether immediate mitigation is required.
 5. Develop and test a fix.
-6. Release/deploy the fix and update affected package versions.
-7. Notify affected users or consumers when appropriate.
+6. Deploy the fix to GitHub Pages when appropriate.
+7. Notify affected users when appropriate.
 8. Credit the reporter when requested and safe.
 
 Response times depend on severity, complexity, evidence, and maintainer availability.
@@ -94,5 +97,3 @@ Response times depend on severity, complexity, evidence, and maintainer availabi
 ## Responsible Research
 
 Good-faith security research is welcome. Minimize disruption, avoid accessing data that does not belong to you, and stop testing if you encounter sensitive information.
-
-Thank you for helping keep the Calculator application, libraries, packages, workflows, and community safer.
