@@ -6,18 +6,31 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
+env:
+  NODE_VERSION: 20
+
 jobs:
   validate-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Validate JavaScript syntax
         run: |
@@ -63,48 +76,19 @@ jobs:
           print('All local HTML assets exist.')
           PY
 
-      - name: Prepare Pages site
+      - name: Prepare Pages artifact
         run: |
+          set -e
           rm -rf _site
           mkdir _site
           rsync -a --exclude='.git' --exclude='.github' --exclude='_site' ./ _site/
           touch _site/.nojekyll
 
-      - name: Publish to gh-pages
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          DEPLOY_AUTHOR_NAME="TEJAS MK2"
-          DEPLOY_AUTHOR_EMAIL="300078060+TEJAS-MK2@users.noreply.github.com"
-          git config user.name "$DEPLOY_AUTHOR_NAME"
-          git config user.email "$DEPLOY_AUTHOR_EMAIL"
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
 
-          git fetch origin gh-pages:refs/remotes/origin/gh-pages
-          rm -rf _deploy
-          git worktree add --force _deploy origin/gh-pages
-
-          cd _deploy
-
-          # The old Pages history was authored by github-actions[bot].
-          # Replace that deployment-only history with a clean root commit
-          # attributed to the repository owner, then use normal commits after.
-          if git log --format='%an <%ae>' | grep -Fq 'github-actions[bot]'; then
-            git checkout --orphan clean-pages
-            find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
-            rsync -a ../_site/ ./
-            git add --all
-            git commit -m "deploy: clean Pages history"
-            git push --force origin HEAD:gh-pages
-            exit 0
-          fi
-
-          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
-          rsync -a ../_site/ ./
-          git add --all
-          if git diff --cached --quiet; then
-            echo "No Pages changes to publish."
-          else
-            git commit -m "deploy: ${GITHUB_SHA}"
-            git push origin HEAD:gh-pages
-          fi
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
