@@ -4,7 +4,7 @@ A **lightweight, dependency-free Ruby calculation engine** from the Modern Calcu
 
 ## Current release
 
-**`0.1.0`**
+**`0.1.0` — first published release**
 
 The gem provides a small, reusable arithmetic API that can be used independently of the web calculator.
 
@@ -20,7 +20,7 @@ The gem provides a small, reusable arithmetic API that can be used independently
 - Simple module-based API
 - Published through GitHub Packages
 
-## Installation from GitHub Packages
+## Installation
 
 The gem is published to the GitHub Packages RubyGems registry.
 
@@ -30,7 +30,7 @@ Registry:
 https://rubygems.pkg.github.com/TEJAS-MK2
 ```
 
-Configure RubyGems authentication for the registry with an appropriate GitHub token, then install:
+Configure RubyGems authentication for GitHub Packages with an appropriate GitHub token, then install:
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
@@ -47,35 +47,29 @@ PijushCalculator.multiply(4, 6)   # 24
 PijushCalculator.divide(20, 5)    # 4.0
 ```
 
-Division by zero raises an explicit error instead of silently returning an invalid result.
+Division by zero raises an explicit error instead of returning an invalid result.
 
 ## API
 
 ### `PijushCalculator.add(a, b)`
-
 Returns the sum of two values.
 
 ### `PijushCalculator.subtract(a, b)`
-
 Returns the difference between two values.
 
 ### `PijushCalculator.multiply(a, b)`
-
 Returns the product of two values.
 
 ### `PijushCalculator.divide(a, b)`
-
-Returns the quotient of two values and raises an error when `b` is zero.
+Returns the quotient and raises an error when `b` is zero.
 
 ## GitHub Packages
 
-The repository contains a GitHub Actions workflow that builds, validates, and publishes the gem to GitHub Packages.
+The repository includes a GitHub Actions workflow that builds, validates, and publishes the gem to GitHub Packages.
 
-A gem version can only be published once. To release a new version, update the version in the gemspec before publishing.
+**Important:** RubyGems versions are immutable. Version `0.1.0` is already published, so future releases must increment the gem version before publishing.
 
 ## Development
-
-From the gem directory:
 
 ```bash
 gem build pijush-calculator.gemspec
