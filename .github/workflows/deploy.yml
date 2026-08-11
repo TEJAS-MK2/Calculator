@@ -75,17 +75,32 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          DEPLOY_AUTHOR_NAME="TEJAS MK2"
+          DEPLOY_AUTHOR_EMAIL="300078060+TEJAS-MK2@users.noreply.github.com"
+          git config user.name "$DEPLOY_AUTHOR_NAME"
+          git config user.email "$DEPLOY_AUTHOR_EMAIL"
 
           git fetch origin gh-pages:refs/remotes/origin/gh-pages
           rm -rf _deploy
           git worktree add --force _deploy origin/gh-pages
 
-          find _deploy -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
-          rsync -a _site/ _deploy/
-
           cd _deploy
+
+          # The old Pages history was authored by github-actions[bot].
+          # Replace that deployment-only history with a clean root commit
+          # attributed to the repository owner, then use normal commits after.
+          if git log --format='%an <%ae>' | grep -Fq 'github-actions[bot]'; then
+            git checkout --orphan clean-pages
+            find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+            rsync -a ../_site/ ./
+            git add --all
+            git commit -m "deploy: clean Pages history"
+            git push --force origin HEAD:gh-pages
+            exit 0
+          fi
+
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          rsync -a ../_site/ ./
           git add --all
           if git diff --cached --quiet; then
             echo "No Pages changes to publish."
