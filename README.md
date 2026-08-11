@@ -33,7 +33,7 @@
 - **Responsive layout** — optimized for smaller screens as well as desktop displays.
 - **PWA support** — service-worker caching for a more app-like experience.
 
-> The sidebar is intentionally minimal: **History**, **Clear**, and **Change Theme**. Feature actions open or control the calculator in the main interface rather than duplicating the calculator UI inside the sidebar.
+> The sidebar is intentionally minimal: **History**, **Clear**, and **Change Theme**.
 
 ## Calculator Controls
 
@@ -70,55 +70,47 @@
 
 ## Animations
 
-Anime.js is used for controlled UI motion including:
-
-- Calculator entrance animation
-- Button press feedback
-- Display transitions
-- Result transitions
-- History animations
-- Theme transitions
-- Sidebar open/close motion
+Anime.js is used for controlled UI motion including calculator entrance, button feedback, display transitions, result transitions, history animations, theme transitions, and sidebar motion.
 
 Animations respect `prefers-reduced-motion` where supported.
 
 ## Themes
 
-The calculator supports three theme modes:
+The calculator supports:
 
 - **Dark**
 - **Light**
 - **System** — follows the operating system preference
 
-Theme state is stored locally in the browser and applied through shared CSS variables so calculator panels remain visually consistent.
+Theme state is stored locally in the browser and applied through shared CSS variables for a consistent interface.
 
 ## Error Handling
 
-The calculator handles common edge cases including:
-
-- Division by zero
-- Invalid numeric values
-- Invalid scientific operations
-- Floating-point rounding artifacts
-- Very large or very small results
-- Corrupted local history or memory data
+The calculator handles common edge cases including division by zero, invalid numeric values, invalid scientific operations, floating-point rounding artifacts, very large or very small results, and corrupted local history or memory data.
 
 ## Performance
 
-The application is designed to avoid unnecessary work during interaction:
-
-- Lightweight DOM updates
-- Local persistence through `localStorage`
-- Animation cleanup before starting a replacement animation
-- Reduced-motion support
-- Service-worker asset caching
-- No backend required for normal calculator operation
+The application is designed to avoid unnecessary work through lightweight DOM updates, local persistence, animation cleanup, reduced-motion support, service-worker caching, and no backend requirement for normal calculator operation.
 
 ## GitHub Pages
 
-The calculator is deployed as a static website through GitHub Pages and runs primarily in the browser.
+The calculator is deployed as a static website through GitHub Pages.
 
 **Live:** https://tejas-mk2.github.io/Calculator/
+
+## Calculator Core Package
+
+The repository also contains **`@tejas-mk2/calculator-core`**, a lightweight, framework-free JavaScript calculation engine.
+
+It provides reusable calculation logic for arithmetic, scientific functions, variables, factorials, percentages, and temperature conversion without DOM dependencies.
+
+Package source:
+
+```text
+packages/calculator-core/
+```
+
+The package is configured for **GitHub Packages** and is published from GitHub Actions after the package tests and package verification pass.
 
 ## Development
 
@@ -131,21 +123,19 @@ cd Calculator
 
 Open `index.html` directly for a simple local preview, or use any static HTTP server for a more production-like environment.
 
-## Project Package
+For the calculator core package:
 
-An npm-compatible calculator package is also maintained under:
-
-```text
-packages/calculator-core/
+```bash
+cd packages/calculator-core
+npm test
+npm pack --dry-run
 ```
-
-The package is currently kept in the repository and is **not being published to npm** at this time.
 
 ## Contributing
 
 Contributions, bug reports, and feature requests are welcome. Please open an issue or submit a pull request.
 
-Before submitting changes, test the calculator interactions and check the UI on both desktop and mobile-sized screens.
+Before submitting changes, test calculator interactions and check the UI on both desktop and mobile-sized screens.
 
 ## License
 
