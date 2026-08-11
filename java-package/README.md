@@ -41,12 +41,12 @@ Then add the dependency:
 </dependency>
 ```
 
-GitHub Packages requires authentication for Maven package access. For GitHub Actions, the repository `GITHUB_TOKEN` can be used for packages associated with the workflow repository. citeturn0search0
+GitHub Packages requires authentication for Maven package access. For GitHub Actions, the repository `GITHUB_TOKEN` can be used for packages associated with the workflow repository.
 
 ## Usage
 
 ```java
-import io.github.tejas_mk2.calculator.Calculator;
+import io.github.tejasmk2.calculator.Calculator;
 import java.math.BigDecimal;
 
 BigDecimal sum = Calculator.add(new BigDecimal("2"), new BigDecimal("3"));
@@ -74,9 +74,9 @@ mvn package
 
 ## Publishing
 
-The project uses GitHub Actions and GitHub Packages' Apache Maven registry. GitHub documents `distributionManagement` with `https://maven.pkg.github.com/OWNER/REPOSITORY` and `mvn deploy` for publishing Maven artifacts. citeturn0search0turn0search2
+The project uses GitHub Actions and GitHub Packages' Apache Maven registry. The Maven `pom.xml` contains `distributionManagement` pointing to the Calculator repository's Maven registry.
 
-The publishing workflow uses the repository's `GITHUB_TOKEN`; no package credential should be committed to the repository. GitHub documents `GITHUB_TOKEN` as an authentication option for publishing packages associated with the workflow repository. citeturn0search0
+The publishing workflow uses the repository's `GITHUB_TOKEN`; no package credential should be committed to the repository.
 
 ## License
 
