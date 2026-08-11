@@ -28,6 +28,7 @@ try {
   const number = value => page.locator(`.calculator .btn-number[data-number="${value}"]`);
   const operator = value => page.locator(`.calculator .btn-operator[data-action="${value}"]`);
   const openSidebar = async () => { if (await sidebar.getAttribute('aria-hidden') !== 'false') await openControls.click(); };
+  const closeSidebar = async () => { if (await sidebar.getAttribute('aria-hidden') === 'false') await page.getByRole('button', { name: 'Close controls', exact: true }).click(); await sidebar.waitFor({ state: 'attached' }); await page.waitForFunction(() => document.getElementById('featureSidebar')?.getAttribute('aria-hidden') === 'true'); };
 
   await number('2').click(); await operator('add').click(); await number('3').click(); await page.locator('.calculator .btn-equals').click();
   if ((await display.textContent()) !== '5') throw new Error('Basic calculator flow failed: expected 5.');
@@ -40,8 +41,7 @@ try {
   await openSidebar();
   await page.getByRole('button', { name: 'About', exact: true }).click();
   if (!(await page.locator('#aboutPanel').isVisible())) throw new Error('About panel did not open.');
-  await page.getByRole('button', { name: 'Close controls', exact: true }).click();
-  if (await sidebar.getAttribute('aria-hidden') !== 'true') throw new Error('Sidebar did not close.');
+  await closeSidebar();
 
   await number('8').click(); await number('9').click(); await page.getByRole('button', { name: 'Backspace', exact: true }).click();
   if ((await display.textContent()) !== '8') throw new Error('Backspace failed.');
@@ -49,6 +49,7 @@ try {
   if ((await display.textContent()) !== '8.2') throw new Error('Decimal input failed.');
 
   await openSidebar(); await page.getByRole('button', { name: 'Clear', exact: true }).click();
+  await page.waitForFunction(() => document.getElementById('featureSidebar')?.getAttribute('aria-hidden') === 'true');
   if ((await display.textContent()) !== '0') throw new Error('Sidebar clear failed.');
 
   // Scientific engine: DEG + sin(30) must evaluate through the shared core engine.
@@ -57,8 +58,10 @@ try {
   if (!(await page.locator('#enginePanel').isVisible())) throw new Error('Scientific engine panel did not open.');
   await page.getByRole('button', { name: 'DEG', exact: true }).click();
   await page.getByRole('button', { name: 'sin(', exact: true }).click();
-  await number('3').click(); await number('0').click();
-  await page.getByRole('button', { name: 'Close parenthesis', exact: true }).click();
+  // The calculator is intentionally modal while the feature sidebar is open.
+  // Close it before using the main keypad; keyboard input remains valid as well.
+  await closeSidebar();
+  await page.keyboard.type('30)');
   await page.locator('.calculator .btn-equals').click();
   const scientificResult = Number(await display.textContent());
   if (Math.abs(scientificResult - 0.5) > 1e-10) throw new Error(`Scientific DEG calculation failed: ${scientificResult}`);
@@ -88,6 +91,7 @@ try {
   // Theme control must change the resolved theme.
   const beforeTheme = await page.locator('html').getAttribute('data-theme');
   await openSidebar(); await page.getByRole('button', { name: 'Theme', exact: true }).click();
+  await page.waitForFunction(() => document.getElementById('featureSidebar')?.getAttribute('aria-hidden') === 'true');
   const afterTheme = await page.locator('html').getAttribute('data-theme');
   if (beforeTheme === afterTheme) throw new Error('Theme control did not change the theme.');
 
