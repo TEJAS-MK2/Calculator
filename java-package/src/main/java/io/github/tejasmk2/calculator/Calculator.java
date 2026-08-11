@@ -8,43 +8,49 @@ import java.util.Objects;
 public final class Calculator {
     private static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
 
-    private Calculator() {
-    }
+    private Calculator() {}
 
-    public static BigDecimal add(BigDecimal a, BigDecimal b) {
-        return require(a).add(require(b), MATH_CONTEXT);
-    }
-
-    public static BigDecimal subtract(BigDecimal a, BigDecimal b) {
-        return require(a).subtract(require(b), MATH_CONTEXT);
-    }
-
-    public static BigDecimal multiply(BigDecimal a, BigDecimal b) {
-        return require(a).multiply(require(b), MATH_CONTEXT);
-    }
+    public static BigDecimal add(BigDecimal a, BigDecimal b) { return require(a).add(require(b), MATH_CONTEXT); }
+    public static BigDecimal subtract(BigDecimal a, BigDecimal b) { return require(a).subtract(require(b), MATH_CONTEXT); }
+    public static BigDecimal multiply(BigDecimal a, BigDecimal b) { return require(a).multiply(require(b), MATH_CONTEXT); }
 
     public static BigDecimal divide(BigDecimal a, BigDecimal b) {
-        require(a);
-        require(b);
-        if (b.compareTo(BigDecimal.ZERO) == 0) throw new ArithmeticException("cannot divide by zero");
+        require(a); require(b);
+        if (b.signum() == 0) throw new ArithmeticException("cannot divide by zero");
         return a.divide(b, MATH_CONTEXT);
     }
 
     public static BigDecimal modulo(BigDecimal a, BigDecimal b) {
-        require(a);
-        require(b);
-        if (b.compareTo(BigDecimal.ZERO) == 0) throw new ArithmeticException("cannot modulo by zero");
+        require(a); require(b);
+        if (b.signum() == 0) throw new ArithmeticException("cannot modulo by zero");
         return a.remainder(b, MATH_CONTEXT);
     }
 
-    public static BigDecimal power(BigDecimal a, int exponent) {
-        return require(a).pow(exponent, MATH_CONTEXT);
-    }
+    public static BigDecimal power(BigDecimal a, int exponent) { return require(a).pow(exponent, MATH_CONTEXT); }
 
     public static BigDecimal percentage(BigDecimal value, BigDecimal percent) {
-        return require(value).multiply(require(percent), MATH_CONTEXT)
-                .divide(BigDecimal.valueOf(100), MATH_CONTEXT);
+        return require(value).multiply(require(percent), MATH_CONTEXT).divide(BigDecimal.valueOf(100), MATH_CONTEXT);
     }
+
+    public static BigDecimal absolute(BigDecimal value) { return require(value).abs(MATH_CONTEXT); }
+    public static BigDecimal minimum(BigDecimal a, BigDecimal b) { return require(a).min(require(b)); }
+    public static BigDecimal maximum(BigDecimal a, BigDecimal b) { return require(a).max(require(b)); }
+    public static BigDecimal average(BigDecimal a, BigDecimal b) { return add(a, b).divide(BigDecimal.valueOf(2), MATH_CONTEXT); }
+
+    public static BigDecimal clamp(BigDecimal value, BigDecimal minimum, BigDecimal maximum) {
+        require(value); require(minimum); require(maximum);
+        if (minimum.compareTo(maximum) > 0) throw new IllegalArgumentException("minimum cannot exceed maximum");
+        return value.max(minimum).min(maximum);
+    }
+
+    public static BigDecimal reciprocal(BigDecimal value) {
+        require(value);
+        if (value.signum() == 0) throw new ArithmeticException("cannot take reciprocal of zero");
+        return BigDecimal.ONE.divide(value, MATH_CONTEXT);
+    }
+
+    public static BigDecimal square(BigDecimal value) { return multiply(value, value); }
+    public static BigDecimal cube(BigDecimal value) { return multiply(square(value), value); }
 
     private static BigDecimal require(BigDecimal value) {
         return Objects.requireNonNull(value, "value must not be null");
