@@ -48,7 +48,7 @@ public final class Calculator {
     public static double expm1(double value){return Math.expm1(value);}
     public static double naturalLog(double value){if(value<=0)throw new IllegalArgumentException("natural logarithm requires a positive value");return Math.log(value);}
     public static double exponential(double value){return Math.exp(value);}
-    public static double hypot(double... values){if(values.length==0)throw new IllegalArgumentException("hypot requires a value");return Math.hypot(values[0], values.length>1?values[1]:0);}
+    public static double hypot(double... values){if(values.length==0)throw new IllegalArgumentException("hypot requires a value");return Math.sqrt(java.util.Arrays.stream(values).map(v->v*v).sum());}
     public static long gcd(long a,long b){return java.math.BigInteger.valueOf(a).gcd(java.math.BigInteger.valueOf(b)).longValue();}
     public static long lcm(long a,long b){if(a==0||b==0)return 0;return Math.abs(a/gcd(a,b)*b);}
     public static BigDecimal factorial(int n){if(n<0)throw new IllegalArgumentException("factorial requires a non-negative integer");BigDecimal result=BigDecimal.ONE;for(int i=2;i<=n;i++)result=result.multiply(BigDecimal.valueOf(i),MC);return result;}
