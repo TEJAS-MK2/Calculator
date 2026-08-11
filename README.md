@@ -15,19 +15,22 @@
 
 ## Overview
 
-Modern Calculator combines a clean responsive interface with a reusable calculation engine. The browser application uses **`@tejas-mk2/calculator-core`** for expression parsing and evaluation, while **`pijush-calculator`** provides a separate Ruby arithmetic API.
+Modern Calculator combines a clean responsive interface with reusable calculation engines. The browser application uses **`@tejas-mk2/calculator-core`** for expression parsing and evaluation, while **`pijush-calculator`** provides a separate Ruby arithmetic API.
 
 ## Highlights
 
 - Modern glass-inspired responsive interface
 - Operator precedence and nested parentheses
 - Implicit multiplication such as `2(5 + 3)`
-- Scientific functions, variables, powers, and percentages
+- Scientific notation, functions, variables, powers, and percentages
+- DEG, RAD, and GRAD angle modes
+- Advanced mathematical constants
 - Exact rational arithmetic
 - Calculation history and memory
 - Dark, light, and system themes
 - Keyboard support
-- Explicit invalid-expression and division-by-zero handling
+- Explicit invalid-expression, domain, and division-by-zero handling
+- Typed calculation errors in the JavaScript engine
 - Anime.js animations with reduced-motion support
 - PWA/service-worker support
 - JavaScript and Ruby packages published through GitHub Packages
@@ -36,19 +39,20 @@ Modern Calculator combines a clean responsive interface with a reusable calculat
 
 ## Calculation Engine
 
-The main calculator is powered by **`@tejas-mk2/calculator-core` v0.2.1**.
+The main calculator is powered by **`@tejas-mk2/calculator-core` v0.3.1**.
 
-Phase 1 provides:
+The engine provides:
 
-- Operator precedence
-- Nested parentheses
+- Operator precedence and nested parentheses
 - Implicit multiplication
 - Unary `+` and `-`
 - Powers and percentages
 - Variables and constants
-- Scientific functions
+- Scientific notation
+- Scientific functions and trigonometry
+- DEG/RAD/GRAD angle modes
 - `Fraction` and `evaluateExact()` for supported exact rational expressions
-- Explicit calculation errors
+- Explicit and typed evaluation errors
 - No `eval()` or `Function()` constructor
 - Zero runtime dependencies
 
@@ -57,6 +61,8 @@ Example expressions:
 ```text
 (25 + 5) * 2
 2(5 + 3) + 4^2
+1.5e2 + 2.5e1
+sin(90)                 # with DEG mode
 sin(pi / 2)^2 + cos(pi / 2)^2
 x^2 + 1
 1 / 3 + 1 / 6
@@ -66,7 +72,7 @@ x^2 + 1
 
 ### JavaScript / GitHub Packages
 
-**`@tejas-mk2/calculator-core` v0.2.1**
+**`@tejas-mk2/calculator-core` v0.3.1**
 
 A framework-free, DOM-independent JavaScript calculation engine.
 
@@ -74,11 +80,17 @@ A framework-free, DOM-independent JavaScript calculation engine.
 npm install @tejas-mk2/calculator-core
 ```
 
+GitHub Packages registry:
+
+```text
+https://npm.pkg.github.com
+```
+
 ### Ruby / GitHub Packages
 
-**`pijush-calculator` v0.1.0**
+**`pijush-calculator` v0.1.1**
 
-A lightweight Ruby arithmetic engine with addition, subtraction, multiplication, division, and explicit division-by-zero handling.
+A lightweight, dependency-free Ruby arithmetic engine with addition, subtraction, multiplication, division, and explicit `ZeroDivisionError` handling.
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
@@ -151,6 +163,18 @@ Ruby gem:
 ```bash
 cd ruby-gem
 gem build pijush-calculator.gemspec
+gem specification pijush-calculator-0.1.1.gem
+```
+
+## Testing
+
+The JavaScript package includes automated tests for arithmetic precedence, implicit multiplication, scientific notation, angle modes, variables, percentages, exact fractions, error handling, and domain validation.
+
+Run them with:
+
+```bash
+cd packages/calculator-core
+npm test
 ```
 
 ## Contributing
