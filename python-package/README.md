@@ -51,7 +51,9 @@ python -m build
 
 ## Publishing
 
-Publishing is performed through GitHub Actions using PyPI Trusted Publishing (OIDC). No long-lived PyPI API token is stored in the repository.
+Publishing is performed automatically through GitHub Actions using **PyPI Trusted Publishing (OIDC)**. No long-lived PyPI API token is stored in the repository.
+
+The workflow runs the test suite and builds the package before attempting publication.
 
 ## License
 
