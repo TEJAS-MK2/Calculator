@@ -36,4 +36,4 @@ test('rejects invalid characters', () => assert.throws(() => evaluate('2 @ 3'), 
 test('rejects malformed parentheses', () => assert.throws(() => evaluate('(2 + 3'), /Expected \)/));
 test('rejects invalid angle modes', () => assert.throws(() => normalizeAngleMode('degrees'), /Angle mode/));
 test('uses typed evaluation errors', () => assert.throws(() => evaluate('1 / 0'), e => e instanceof EvaluationError && e.code === 'DIVISION_BY_ZERO'));
-test('rejects invalid logarithm domain', () => assert.throws(() => evaluate('log(0)'), /greater than zero/));
+test('rejects invalid logarithm domain', () => assert.throws(() => evaluate('log(0)'), /log requires a valid positive domain/));
