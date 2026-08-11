@@ -44,7 +44,7 @@ Then add the dependency:
 </dependency>
 ```
 
-GitHub Packages Maven artifacts are repository-scoped; package access requires appropriate GitHub authentication and permissions. citeturn0search1
+GitHub Packages Maven artifacts are repository-scoped; package access requires appropriate GitHub authentication and permissions.
 
 ## Usage
 
