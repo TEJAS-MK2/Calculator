@@ -17,7 +17,11 @@ try {
 
   page.on('pageerror', error => errors.push(error));
   page.on('console', message => {
-    if (message.type() === 'error') errors.push(new Error(message.text()));
+    if (message.type() !== 'error') return;
+    // GitHub-hosted runners can block third-party CDN requests. Those failures
+    // are not application errors and the calculator has a reduced-motion/no-CDN fallback.
+    if (/Failed to load resource/i.test(message.text())) return;
+    errors.push(new Error(message.text()));
   });
 
   await page.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: 'networkidle' });
