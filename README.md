@@ -2,6 +2,10 @@
 
 Modern Calculator is a responsive web calculator with a clean UI, scientific capabilities, reusable calculation engines, persistent history, themes, PWA support, and smooth Anime.js motion.
 
+<p align="center">
+  <img src="calculator-demo-fixed.gif" alt="Modern Calculator demo" width="800">
+</p>
+
 **Live:** https://tejas-mk2.github.io/Calculator/
 
 ## Features
