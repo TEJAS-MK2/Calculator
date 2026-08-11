@@ -14,15 +14,15 @@ The gem provides a small reusable arithmetic API that works independently of the
 - Subtraction
 - Multiplication
 - Division
-- Explicit division-by-zero errors
+- Explicit `ZeroDivisionError` handling
 - Ruby 3.0+
 - Zero runtime dependencies
 - Simple module-based API
 - GitHub Packages RubyGems distribution
 
-## Installation
+## Installation from GitHub Packages
 
-The gem is published to the GitHub Packages RubyGems registry.
+The gem is distributed through the GitHub Packages RubyGems registry.
 
 Registry:
 
@@ -30,7 +30,7 @@ Registry:
 https://rubygems.pkg.github.com/TEJAS-MK2
 ```
 
-Configure RubyGems authentication for GitHub Packages with an appropriate GitHub token, then install:
+Configure RubyGems authentication with an appropriate GitHub token, then install:
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
@@ -41,13 +41,13 @@ gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```ruby
 require "pijush_calculator"
 
-PijushCalculator.add(2, 3)        # 5
-PijushCalculator.subtract(8, 3)   # 5
-PijushCalculator.multiply(4, 6)    # 24
-PijushCalculator.divide(20, 5)    # 4.0
+PijushCalculator.add(2, 3)       # 5
+PijushCalculator.subtract(8, 3)  # 5
+PijushCalculator.multiply(4, 6)   # 24
+PijushCalculator.divide(20, 5)   # 4.0
 ```
 
-Division by zero raises an explicit `ZeroDivisionError` instead of returning an invalid result:
+Division by zero raises an explicit `ZeroDivisionError`:
 
 ```ruby
 PijushCalculator.divide(10, 0)
@@ -57,22 +57,20 @@ PijushCalculator.divide(10, 0)
 ## API
 
 ### `PijushCalculator.add(a, b)`
+
 Returns the sum of two values.
 
 ### `PijushCalculator.subtract(a, b)`
+
 Returns the difference between two values.
 
 ### `PijushCalculator.multiply(a, b)`
+
 Returns the product of two values.
 
 ### `PijushCalculator.divide(a, b)`
+
 Returns the quotient as a floating-point value and raises `ZeroDivisionError` when `b` is zero.
-
-## GitHub Packages
-
-The repository includes a GitHub Actions workflow that builds, validates, and publishes the gem to GitHub Packages.
-
-RubyGems package versions are immutable. **`0.1.1` is the current release**, so future releases must use a new version number such as `0.1.2`.
 
 ## Development
 
@@ -89,7 +87,13 @@ Install the locally built package:
 gem install ./pijush-calculator-0.1.1.gem
 ```
 
-## Package information
+## Publishing
+
+Package publishing is handled by the repository's GitHub Actions workflow. Do not commit registry credentials or tokens to the repository.
+
+RubyGems package versions are immutable after publication. The current release is **0.1.1**; future releases must use a new version such as `0.1.2`.
+
+## Package Information
 
 | Property | Value |
 |---|---|
