@@ -1,59 +1,85 @@
-// Stable minimal sidebar controller: History, Clear, Theme only.
+// Minimal sidebar controller.
+// The sidebar intentionally exposes only History, Clear, and Theme.
 (() => {
-  const init = () => {
-    const sidebar = document.getElementById('featureSidebar');
-    const list = sidebar?.querySelector('.feature-list');
-    if (!sidebar || !list) return;
-
-    const make = (feature, icon, label) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'feature-item';
-      button.dataset.feature = feature;
-      button.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>${label}</span>`;
-      return button;
-    };
-
-    list.replaceChildren(
-      make('history', 'fa-clock-rotate-left', 'History'),
-      make('clear', 'fa-eraser', 'Clear'),
-      make('theme', 'fa-circle-half-stroke', 'Change Theme')
-    );
-
-    const style = document.getElementById('minimal-sidebar-fix-style') || document.createElement('style');
-    style.id = 'minimal-sidebar-fix-style';
-    style.textContent = '.calculator .history-panel.sidebar-feature-visible,.calculator .history-panel.is-open{display:block!important}.calculator .history-panel.sidebar-feature-visible[aria-hidden="true"]{display:none!important}';
-    if (!style.parentNode) document.head.appendChild(style);
-
-    // This listener is installed in capture phase so the legacy sidebar handler
-    // cannot also process the same feature click.
-    list.addEventListener('click', event => {
-      const item = event.target.closest('.feature-item');
-      if (!item || !list.contains(item)) return;
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      const calculator = window.calculator;
-      if (!calculator) return;
-      list.querySelectorAll('.feature-item').forEach(button => button.classList.remove('active'));
-      item.classList.add('active');
-
-      if (item.dataset.feature === 'history') {
-        calculator.historyPanel?.classList.add('sidebar-feature-visible', 'is-open');
-        calculator.historyPanel?.setAttribute('aria-hidden', 'false');
-        calculator.historyToggle?.setAttribute('aria-expanded', 'true');
-        calculator.animateHistoryPanel?.();
-      } else if (item.dataset.feature === 'clear') {
-        calculator.clearAll?.();
-      } else if (item.dataset.feature === 'theme') {
-        calculator.toggleTheme?.();
-      }
-
-      document.getElementById('sidebarClose')?.click();
-    }, true);
+  const loadAnimationEnhancements = (done) => {
+    if (window.__calculatorAnimationEnhancements) return done();
+    const script = document.createElement('script');
+    script.src = './animation-enhancements.js?v=1';
+    script.onload = () => { window.__calculatorAnimationEnhancements = true; done(); };
+    script.onerror = done;
+    document.head.appendChild(script);
   };
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
-  else init();
+  const init = () => {
+    loadAnimationEnhancements(() => {
+      const sidebar = document.getElementById('featureSidebar');
+      const list = sidebar?.querySelector('.feature-list');
+      if (!sidebar || !list) return;
+
+      const freshList = list.cloneNode(false);
+      const make = (label, icon, handler) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'feature-item';
+        button.innerHTML = `<i class="fas ${icon}"></i><span>${label}</span>`;
+        button.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+          handler();
+          document.getElementById('sidebarClose')?.click();
+        });
+        return button;
+      };
+
+      freshList.append(
+        make('History', 'fa-clock-rotate-left', () => document.getElementById('historyToggle')?.click()),
+        make('Clear', 'fa-eraser', () => document.querySelector('[data-action="clear-all"]')?.click()),
+        make('Change Theme', 'fa-circle-half-stroke', () => document.getElementById('themeToggle')?.click())
+      );
+      list.replaceWith(freshList);
+
+      [
+        '#scientificToggle', '#scientificPanel', '.memory-panel',
+        '#graphToggle', '#graphPanel', '#statisticsToggle', '#statisticsPanel',
+        '#advancedFeaturesPanel'
+      ].forEach(selector => document.querySelector(selector)?.remove());
+
+      ['sidebarOpen', 'sidebarClose', 'sidebarBackdrop'].forEach(id => {
+        const node = document.getElementById(id);
+        if (node?.parentNode) node.replaceWith(node.cloneNode(true));
+      });
+
+      const openButton = document.getElementById('sidebarOpen');
+      const closeButton = document.getElementById('sidebarClose');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const close = () => {
+        sidebar.classList.remove('is-open');
+        backdrop?.classList.remove('is-open');
+        sidebar.setAttribute('aria-hidden', 'true');
+        openButton?.setAttribute('aria-expanded', 'false');
+        sidebar.style.removeProperty('transform');
+        if (typeof anime === 'function') anime.remove(sidebar);
+      };
+      const open = () => {
+        sidebar.classList.add('is-open');
+        backdrop?.classList.add('is-open');
+        sidebar.setAttribute('aria-hidden', 'false');
+        openButton?.setAttribute('aria-expanded', 'true');
+        if (typeof anime === 'function' && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+          anime.remove(sidebar);
+          sidebar.style.transform = 'translateX(-105%)';
+          anime({ targets: sidebar, translateX: ['-105%', '0%'], duration: 210, easing: 'easeOutCubic', complete: () => sidebar.style.removeProperty('transform') });
+        }
+      };
+      openButton?.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); open(); });
+      closeButton?.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); close(); });
+      backdrop?.addEventListener('click', close);
+      document.addEventListener('keydown', event => { if (event.key === 'Escape') close(); });
+      close();
+    });
+  };
+
+  const run = () => setTimeout(init, 0);
+  if (document.readyState === 'complete') run();
+  else window.addEventListener('load', run, { once: true });
 })();
