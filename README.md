@@ -1,8 +1,8 @@
 # Modern Calculator
 
 <p align="center">
-  <strong>A compact, modern calculator focused on fast everyday arithmetic.</strong><br>
-  HTML · CSS · JavaScript · PWA · npm · RubyGems · PyPI · Maven · Gradle · NuGet · Docker
+  <strong>A compact, modern calculator for fast everyday arithmetic.</strong><br>
+  HTML · CSS · JavaScript · PWA · Anime.js · npm · RubyGems · PyPI · Maven · Gradle · NuGet · Docker
 </p>
 
 <p align="center">
@@ -16,32 +16,44 @@
 
 ## Overview
 
-Modern Calculator is a responsive Progressive Web App built around a clean four-operation calculator interface. The current UI intentionally keeps the main calculator focused: **History, Clear, and Theme are available from the sidebar instead of taking space on the keypad.**
+Modern Calculator is a responsive Progressive Web App built for simple, fast arithmetic. The interface deliberately keeps the keypad focused on calculation while placing secondary controls in a compact sidebar.
 
-The interface uses a dark, compact visual system with rounded surfaces, subtle depth, responsive sizing, and reduced visual clutter.
+The current UI provides **addition, subtraction, multiplication, division, decimals, AC, History, Clear, and Theme**. It uses a modern dark-first visual system with responsive sizing, rounded surfaces, subtle depth, and lightweight motion.
 
 ## Features
 
 - Addition, subtraction, multiplication, and division
-- Decimal input and a clear `AC` control
-- Calculation history in the sidebar
-- Clear control in the sidebar
-- Theme control in the sidebar
+- Decimal input
+- **AC** button directly on the keypad
+- **History** in the sidebar
+- **Clear** in the sidebar
+- **Theme** in the sidebar
 - Compact responsive layout
-- Keyboard-friendly controls
-- PWA/service-worker support
+- Keyboard-friendly interaction
+- Anime.js-powered UI motion
+- `prefers-reduced-motion` support
+- PWA and service-worker support
+- Persistent calculation history using local storage
 - No `eval()` or `Function()` based expression execution
-- Modern dark visual design with subtle interaction feedback
 
 ## Interface
 
-The main calculator contains only the calculation display and keypad. A compact menu opens the sidebar, which contains:
+The main calculator contains the display and keypad. The sidebar keeps secondary controls out of the keypad area:
 
-- **History** — view and reuse previous calculations
-- **Clear** — clear calculator state
-- **Theme** — change the calculator appearance
+| Control | Location | Purpose |
+|---|---|---|
+| AC | Main keypad | Immediately reset the current calculation |
+| History | Sidebar | Open and reuse previous calculations |
+| Clear | Sidebar | Reset the calculator state |
+| Theme | Sidebar | Cycle through Dark, Light, and System themes |
 
-This separation keeps the keypad clean and makes the calculator easier to use on small screens.
+The sidebar is designed as an overlay on small screens and shifts the calculator safely on larger screens so the menu button does not collide with the calculator.
+
+## Animation
+
+The interface uses [Anime.js](https://animejs.com/) for lightweight UI motion, including calculator entrance, keypad interactions, sidebar transitions, history presentation, and result feedback.
+
+Animations respect the user's `prefers-reduced-motion` setting.
 
 ## Package ecosystem
 
@@ -114,7 +126,7 @@ git clone https://github.com/TEJAS-MK2/Calculator.git
 cd Calculator
 ```
 
-Use a local HTTP server when testing ES modules, PWA behavior, or service workers.
+Use a local HTTP server when testing ES modules, PWA behavior, service workers, or the browser UI.
 
 ### JavaScript package
 
@@ -162,6 +174,24 @@ gradle build
 cd nuget-package
 dotnet test tests/Calculator.Tests.csproj
 dotnet pack Pijush.Calculator.csproj -c Release
+```
+
+## Project structure
+
+```text
+Calculator/
+├── index.html                 # Calculator UI
+├── styles.css                 # Current visual system
+├── script.js                  # Sidebar and theme controls
+├── calculator-core-ui.js      # Calculator UI state and history
+├── packages/                  # JavaScript calculator core
+├── ruby-gem/                  # Ruby package
+├── python-package/            # Python package
+├── java-package/              # Maven package
+├── gradle-package/            # Gradle package
+├── nuget-package/             # NuGet package
+├── .github/workflows/         # CI/CD and registry publishing
+└── Dockerfile                 # Container image
 ```
 
 ## Project policies
