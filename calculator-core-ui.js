@@ -39,6 +39,14 @@ import { evaluate } from './packages/calculator-core/index.js';
   }
   function clearHistory() { try { localStorage.removeItem('calculatorHistory'); } catch {} renderHistory(); }
   function clear() { expression = ''; justCalculated = false; display('0', ''); animate('.display-container', { scale: [0.965, 1], duration: 220, easing: 'easeOutQuad' }); }
+  function clearEntry() {
+    if (justCalculated) return clear();
+    if (!expression) return;
+    const match = expression.match(/^(.*?)([-+*/])(-?\d*\.?\d*)$/);
+    if (match) expression = match[1] + match[2];
+    else expression = '';
+    display(expression || '0');
+  }
   function appendNumber(value) { if (justCalculated) expression = ''; justCalculated = false; expression += value; display(expression); }
   function appendDecimal() {
     if (justCalculated) expression = '';
@@ -56,9 +64,8 @@ import { evaluate } from './packages/calculator-core/index.js';
     const last = expression.at(-1);
     if (operators.has(last)) {
       if (operator === '-' && last !== '-') expression += '-';
-      else if (last === '-' && expression.length > 1 && operators.has(expression.at(-2))) {
-        if (operator !== '-') expression = expression.slice(0, -2) + operator;
-      } else expression = expression.slice(0, -1) + operator;
+      else if (last === '-' && expression.length > 1 && operators.has(expression.at(-2))) { if (operator !== '-') expression = expression.slice(0, -2) + operator; }
+      else expression = expression.slice(0, -1) + operator;
     } else expression += operator;
     display(expression);
   }
@@ -82,8 +89,10 @@ import { evaluate } from './packages/calculator-core/index.js';
     if (action === 'decimal') return appendDecimal();
     if (action === 'equals') return calculate();
     if (action === 'clear-all') return clear();
+    if (action === 'clear-entry') return clearEntry();
+    if (action === 'backspace') return backspace();
   }
-  document.addEventListener('click', event => { const button = event.target.closest('.calculator .btn'); if (!button) return; event.preventDefault(); event.stopImmediatePropagation(); animate(button, { scale: [0.9, 1], duration: 180, easing: 'easeOutQuad' }); handleButton(button); }, true);
+  document.addEventListener('click', event => { const button = event.target.closest('.calculator .btn'); if (!button) return; event.preventDefault(); event.stopImmediatePropagation(); animate(button, { scale: [0.94, 1], duration: 180, easing: 'easeOutQuad' }); handleButton(button); }, true);
   document.addEventListener('keydown', event => {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (/^\d$/.test(event.key)) { event.preventDefault(); appendNumber(event.key); return; }
