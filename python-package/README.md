@@ -1,24 +1,24 @@
 # pijush-calculator
 
-A **lightweight, dependency-free Python arithmetic engine** for reliable calculator operations and small reusable math utilities.
+A lightweight, dependency-free Python arithmetic engine for reusable calculator and math applications.
 
-## Current release
+## Current engine
 
-**v0.1.2 — Python arithmetic engine**
+The Python package provides a predictable function-based arithmetic API with explicit error handling.
 
-The package is independent of the web calculator and exposes a small function-based API designed for Python applications and scripts.
+### Features
 
-## Features
-
-- Addition, subtraction, multiplication, and division
+- Addition, subtraction, multiplication, division
+- Modulo
+- Power
+- Percentage
+- Absolute value, min/max, average, clamp, reciprocal, square, and cube helpers
 - Explicit `ZeroDivisionError` handling
 - Python 3.9+
 - Zero runtime dependencies
 - Framework-free API
 
 ## Installation
-
-Install the published package from PyPI:
 
 ```bash
 pip install pijush-calculator
@@ -27,24 +27,32 @@ pip install pijush-calculator
 ## Usage
 
 ```python
-from pijush_calculator import add, subtract, multiply, divide
+from pijush_calculator import add, subtract, multiply, divide, modulo, power, percentage
 
 print(add(2, 3))
 print(subtract(8, 3))
 print(multiply(4, 6))
 print(divide(20, 5))
+print(modulo(20, 6))
+print(power(2, 8))
+print(percentage(250, 20))
 ```
 
-Division by zero raises `ZeroDivisionError`.
+Division and modulo by zero raise `ZeroDivisionError`.
 
 ## API
 
 | Function | Result |
 |---|---|
-| `add(a, b)` | Sum of two values |
-| `subtract(a, b)` | Difference between two values |
-| `multiply(a, b)` | Product of two values |
-| `divide(a, b)` | Quotient; raises on zero divisor |
+| `add(a, b)` | Sum |
+| `subtract(a, b)` | Difference |
+| `multiply(a, b)` | Product |
+| `divide(a, b)` | Quotient |
+| `modulo(a, b)` | Remainder |
+| `power(a, b)` | Power |
+| `percentage(value, percent)` | Percentage value |
+
+Additional utility helpers are available for common arithmetic operations.
 
 ## Development
 
@@ -56,16 +64,13 @@ python -m build
 
 ## Publishing
 
-The package is published to PyPI through GitHub Actions using **PyPI Trusted Publishing (OIDC)** where configured. No long-lived PyPI API token is stored in the repository.
-
-The workflow tests the package, builds source and wheel distributions, and publishes only after a successful build. PyPI releases are immutable, so future releases require a new version.
+The package is published to PyPI through GitHub Actions using PyPI Trusted Publishing (OIDC) where configured. No long-lived PyPI API token is stored in the repository. Published versions are immutable and require a new version for each release.
 
 ## Package information
 
 | Property | Value |
 |---|---|
 | Package | `pijush-calculator` |
-| Version | `0.1.2` |
 | PyPI | `https://pypi.org/project/pijush-calculator/` |
 | Repository | `https://github.com/TEJAS-MK2/Calculator` |
 | Runtime dependencies | None |
