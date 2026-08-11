@@ -15,46 +15,47 @@
 
 ## Overview
 
-Modern Calculator combines a clean responsive interface with reusable calculation engines. The browser application uses **`@tejas-mk2/calculator-core`** for expression parsing and evaluation, while **`pijush-calculator`** provides a separate Ruby arithmetic API.
+Modern Calculator combines a responsive, modern interface with a reusable calculation engine. The web application delegates expression evaluation to **`@tejas-mk2/calculator-core`**, while **`pijush-calculator`** provides a separate Ruby arithmetic API.
 
 ## Highlights
 
 - Modern glass-inspired responsive interface
 - Operator precedence and nested parentheses
 - Implicit multiplication such as `2(5 + 3)`
-- Scientific notation, functions, variables, powers, and percentages
+- Scientific notation, variables, powers, and percentages
+- Modulo with correct `%` handling
+- Scientific functions and trigonometry
 - DEG, RAD, and GRAD angle modes
-- Advanced mathematical constants
-- Exact rational arithmetic
+- `π`, `e`, `τ`, and `φ` constants
+- Exact rational arithmetic for supported expressions
 - Calculation history and memory
 - Dark, light, and system themes
 - Keyboard support
-- Explicit invalid-expression, domain, and division-by-zero handling
-- Typed calculation errors in the JavaScript engine
+- Typed and explicit calculation errors
+- No `eval()` or `Function()` in the calculation engine
 - Anime.js animations with reduced-motion support
 - PWA/service-worker support
-- JavaScript and Ruby packages published through GitHub Packages
+- JavaScript and Ruby packages distributed through GitHub Packages
 
-> The sidebar intentionally contains **History**, **Clear**, and **Change Theme**. All three controls share the calculator's visual system and open their functionality in the main interface.
+> The sidebar focuses on **History**, **Clear**, and **Change Theme**. These controls share the calculator's visual system and open their functionality in the main interface.
 
 ## Calculation Engine
 
-The main calculator is powered by **`@tejas-mk2/calculator-core` v0.3.1**.
+The main calculator uses **`@tejas-mk2/calculator-core` v0.3.1**.
 
-The engine provides:
+Supported capabilities include:
 
-- Operator precedence and nested parentheses
+- Arithmetic precedence and nested expressions
 - Implicit multiplication
-- Unary `+` and `-`
-- Powers and percentages
+- Unary operators
+- Powers, percentages, and modulo
 - Variables and constants
 - Scientific notation
-- Scientific functions and trigonometry
-- DEG/RAD/GRAD angle modes
-- `Fraction` and `evaluateExact()` for supported exact rational expressions
-- Explicit and typed evaluation errors
-- No `eval()` or `Function()` constructor
-- Zero runtime dependencies
+- Scientific functions
+- DEG/RAD/GRAD trigonometry
+- Exact `Fraction` arithmetic
+- Explicit error codes through `EvaluationError`
+- Safe parsing without `eval()` or `Function()`
 
 Example expressions:
 
@@ -62,8 +63,8 @@ Example expressions:
 (25 + 5) * 2
 2(5 + 3) + 4^2
 1.5e2 + 2.5e1
-sin(90)                 # with DEG mode
-sin(pi / 2)^2 + cos(pi / 2)^2
+10 % 3
+sin(90)
 x^2 + 1
 1 / 3 + 1 / 6
 ```
@@ -74,13 +75,11 @@ x^2 + 1
 
 **`@tejas-mk2/calculator-core` v0.3.1**
 
-A framework-free, DOM-independent JavaScript calculation engine.
-
 ```bash
 npm install @tejas-mk2/calculator-core
 ```
 
-GitHub Packages registry:
+Registry:
 
 ```text
 https://npm.pkg.github.com
@@ -90,21 +89,20 @@ https://npm.pkg.github.com
 
 **`pijush-calculator` v0.1.1**
 
-A lightweight, dependency-free Ruby arithmetic engine with addition, subtraction, multiplication, division, and explicit `ZeroDivisionError` handling.
-
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```
 
-Package versions are immutable after publication; new releases use a new version number.
+The Ruby gem is a lightweight arithmetic API with no runtime dependencies.
 
 ## Calculator Controls
 
 | Category | Operations |
 |---|---|
-| Arithmetic | `+` `−` `×` `÷` |
+| Arithmetic | `+` `−` `×` `÷` `%` |
 | Input | `0–9` `.` |
 | Controls | `AC` `C` `Backspace` `=` |
+| Scientific | Functions, powers, constants, angle modes |
 | Memory | `MC` `MR` `M+` `M−` `MS` |
 | History | Open, reuse, and clear calculations |
 | Theme | Dark, Light, System |
@@ -114,16 +112,18 @@ Package versions are immutable after publication; new releases use a new version
 | Key | Action |
 |---|---|
 | `0–9` | Enter number |
-| `+` `-` `*` `/` | Choose operator |
+| `+` `-` `*` `/` `%` | Operators |
 | `.` | Decimal point |
 | `Enter` / `=` | Calculate |
-| `Backspace` | Delete last digit |
+| `Backspace` | Delete last input |
 | `Escape` | Clear all |
 | `C` | Clear current input |
 
-## Design
+## Design and Performance
 
-The UI uses layered surfaces, subtle depth, consistent borders, rounded controls, clear display hierarchy, responsive sizing, and matched sidebar controls. Dark, light, and system themes share the same component styling.
+The interface uses layered surfaces, consistent borders, rounded controls, responsive sizing, and matched sidebar components. Animation effects respect `prefers-reduced-motion` and avoid unnecessary work during calculation.
+
+The application is a static PWA and does not require a backend server for normal calculator operation.
 
 ## Tech Stack
 
@@ -137,8 +137,6 @@ The UI uses layered surfaces, subtle depth, consistent borders, rounded controls
 
 ## GitHub Pages
 
-The calculator is deployed as a static website through GitHub Pages.
-
 **Live:** https://tejas-mk2.github.io/Calculator/
 
 ## Development
@@ -148,7 +146,7 @@ git clone https://github.com/TEJAS-MK2/Calculator.git
 cd Calculator
 ```
 
-Open `index.html` locally or use a static HTTP server.
+Use a local HTTP server when testing the PWA or ES modules.
 
 JavaScript package:
 
@@ -163,23 +161,22 @@ Ruby gem:
 ```bash
 cd ruby-gem
 gem build pijush-calculator.gemspec
-gem specification pijush-calculator-0.1.1.gem
 ```
 
 ## Testing
 
-The JavaScript package includes automated tests for arithmetic precedence, implicit multiplication, scientific notation, angle modes, variables, percentages, exact fractions, error handling, and domain validation.
-
-Run them with:
+The JavaScript package has automated coverage for precedence, parentheses, implicit multiplication, scientific notation, variables, angle modes, percentages, modulo, exact fractions, domain validation, and typed errors.
 
 ```bash
 cd packages/calculator-core
 npm test
 ```
 
-## Contributing
+GitHub Actions also validates JavaScript syntax, package tests, manifest JSON, HTML references, and GitHub Pages deployment.
 
-Bug reports, feature requests, and pull requests are welcome. Test calculator interactions and check the UI on both desktop and mobile-sized screens before submitting changes.
+## Documentation and Contribution
+
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md), [`SECURITY.md`](./SECURITY.md), and [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) before contributing.
 
 ## License
 
