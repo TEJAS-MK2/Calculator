@@ -2,11 +2,16 @@
 
 **Advanced, dependency-free JavaScript/ESM calculation engine** for Node.js, browsers, PWAs, CLIs, and reusable math applications.
 
-> This package is the **reference / extreme engine** of the Calculator project. The browser calculator intentionally exposes a smaller UI, while this package provides the full programmatic calculation API.
+> This package is the **reference / extreme engine** of the Calculator project. The browser calculator intentionally exposes a smaller UI, while this package provides the serious programmatic calculation layer.
 
-## What makes the npm engine advanced?
+## Engine architecture
 
-The engine is built around a tokenizer and recursive-descent parser instead of `eval()` or `Function()`. It supports operator precedence, right-associative powers, implicit multiplication, controlled variables, scientific notation, exact rational arithmetic, scientific functions, statistics, combinatorics, and typed calculation errors.
+The npm engine now has two complementary layers:
+
+1. **Expression engine** — parses and evaluates calculator-style mathematical expressions safely.
+2. **Advanced numerical toolkit** — provides statistics, number theory, combinatorics, numerical methods, interpolation, and matrix operations through explicit APIs.
+
+Both layers are dependency-free and avoid `eval()` and `Function()`.
 
 ## Expression engine
 
@@ -27,15 +32,14 @@ Supported syntax includes:
 - Recursive-descent parsing
 - Operator precedence
 - Right-associative exponentiation
-- Parentheses
-- Unary `+` and `-`
+- Parentheses and unary operators
 - Implicit multiplication
 - Scientific notation
 - Binary modulo
 - Postfix percentages
 - Controlled variables / custom scopes
-- Mathematical constants
 - Strict tokenization and validation
+- Typed evaluation errors
 - No `eval()`
 - No `Function()` constructor
 
@@ -60,50 +64,133 @@ Supported syntax includes:
 - `exp`, `expm1`
 - `hypot`
 
-### Aggregation and statistics
+### Aggregation
 
-- `min`
-- `max`
-- `sum`
-- `product`
-- `mean`
+- `min`, `max`
+- `sum`, `product`, `mean`
+- GCD / LCM
+
+## Exact arithmetic
+
+The engine includes immutable rational arithmetic and an exact evaluator:
+
+```js
+import { evaluateExact, Fraction } from '@tejas-mk2/calculator-core';
+
+console.log(evaluateExact('1 / 3 + 1 / 6').toString()); // 1/2
+console.log(new Fraction(2, 4).toString());              // 1/2
+```
+
+Exact mode supports rational arithmetic, integer powers, modulo, unary operators, percentages, and numeric variables without silently converting rational results to floating point.
+
+## Advanced numerical toolkit
+
+The new advanced API is available from the `@tejas-mk2/calculator-core/advanced` subpath.
+
+```js
+import {
+  median,
+  variance,
+  standardDeviation,
+  correlation,
+  combinations,
+  primeFactors,
+  solveQuadratic,
+  newtonRaphson,
+  bisection,
+  integrateSimpson,
+  derivative,
+  matrixMultiply,
+  determinant
+} from '@tejas-mk2/calculator-core/advanced';
+```
+
+### Statistics
+
+- Arithmetic, geometric, and harmonic mean
 - Median
-- Variance
-- Standard deviation
-- Range
-- Approximate equality
+- Quantiles
+- Population/sample variance
+- Population/sample standard deviation
+- Covariance
+- Pearson correlation
+- Sum and product
 
-### Number theory and combinatorics
+### Number theory
 
-- GCD
-- LCM
+- GCD / LCM
+- Prime detection
+- Next-prime search
+- Prime factorization
 - Factorial
 - Combinations
 - Permutations
 
-## Constants
+### Numerical methods
 
-The expression engine provides:
+- Quadratic equation solver
+- Newton-Raphson root finding
+- Bisection root finding
+- Numerical derivative
+- Simpson numerical integration
+- Configurable tolerance and iteration limits
+- Explicit convergence results instead of silently returning a questionable root
 
-| Name | Value |
-|---|---|
-| `pi` | π |
-| `e` | Euler's number |
-| `tau` | 2π |
-| `phi` | Golden ratio |
-| `sqrt2` | √2 |
-| `ln2` | ln(2) |
-| `ln10` | ln(10) |
+Example:
 
-Unicode `π` and `τ` are also normalized by the tokenizer.
+```js
+const result = newtonRaphson(
+  x => x * x - 2,
+  x => 2 * x,
+  1
+);
+
+console.log(result.root);       // approximately sqrt(2)
+console.log(result.converged);  // true
+```
+
+### Interpolation and mapping
+
+- Linear interpolation (`lerp`)
+- Inverse interpolation (`inverseLerp`)
+- Range remapping (`remap`)
+- Safe clamping (`clamp`)
+
+### Matrix operations
+
+- Matrix validation
+- Matrix addition
+- Matrix multiplication
+- Transpose
+- Determinant calculation with pivoting
+- Dimension and square-matrix validation
+
+```js
+const A = [[1, 2], [3, 4]];
+const B = [[5, 6], [7, 8]];
+
+matrixMultiply(A, B); // [[19, 22], [43, 50]]
+determinant(A);       // -2
+```
+
+### Numerical constants
+
+The advanced module exposes common constants including:
+
+- `PI`
+- `E`
+- `TAU`
+- `PHI`
+- `SQRT2`
+- `SQRT3`
+- `LN2`
+- `LN10`
+- `LOG2E`
+- `LOG10E`
 
 ## Angle modes
 
-Trigonometric calculations support:
-
-- `RAD` — radians, default
-- `DEG` — degrees
-- `GRAD` — gradians
+The expression engine supports `RAD`, `DEG`, and `GRAD`:
 
 ```js
 import { evaluate } from '@tejas-mk2/calculator-core';
@@ -115,79 +202,15 @@ console.log(evaluate('sin(100)', {}, { angleMode: 'GRAD' })); // 1
 
 ## Variables
 
-Variables are supplied through an explicit scope object.
-
 ```js
-console.log(
-  evaluate('2*x + y', { x: 5, y: 10 })
-); // 20
+console.log(evaluate('2*x + y', { x: 5, y: 10 })); // 20
 ```
 
-Unknown identifiers and non-finite variable values are rejected.
-
-## Exact rational arithmetic
-
-The package includes an immutable `Fraction` implementation and a separate exact evaluator.
-
-```js
-import { evaluateExact, Fraction } from '@tejas-mk2/calculator-core';
-
-const result = evaluateExact('1 / 3 + 1 / 6');
-console.log(result.toString()); // 1/2
-
-const fraction = new Fraction(2, 4);
-console.log(fraction.toString()); // 1/2
-```
-
-Exact mode supports rational arithmetic, integer powers, modulo, unary operators, percentages, and scoped numeric variables. It deliberately refuses to silently approximate unsupported irrational operations.
-
-## Utility API
-
-```js
-import {
-  evaluate,
-  evaluateExact,
-  factorial,
-  percentage,
-  convertTemperature,
-  absolute,
-  minimum,
-  maximum,
-  average,
-  mean,
-  sum,
-  Fraction,
-  EvaluationError
-} from '@tejas-mk2/calculator-core';
-
-console.log(evaluate('sqrt(144) + 2^8')); // 400
-console.log(factorial(5));                // 120
-console.log(percentage(250, 20));         // 50
-console.log(absolute(-42));               // 42
-console.log(minimum(9, 2, 7));            // 2
-console.log(maximum(9, 2, 7));            // 9
-console.log(average(2, 4, 6));             // 4
-console.log(sum(1, 2, 3, 4));             // 10
-console.log(convertTemperature(100, 'C', 'F')); // 212
-```
+Unknown identifiers and non-finite variables are rejected.
 
 ## Error model
 
-The engine uses typed `EvaluationError` instances for important evaluation failures.
-
-```js
-import { evaluate, EvaluationError } from '@tejas-mk2/calculator-core';
-
-try {
-  evaluate('1 / 0');
-} catch (error) {
-  if (error instanceof EvaluationError) {
-    console.log(error.code); // DIVISION_BY_ZERO
-  }
-}
-```
-
-Important error categories include:
+Important typed `EvaluationError` codes include:
 
 - `DIVISION_BY_ZERO`
 - `EXPECTED_TOKEN`
@@ -201,28 +224,24 @@ Important error categories include:
 - `INVALID_FUNCTION_RESULT`
 - `NON_FINITE_RESULT`
 
-The engine validates logarithm/root domains, division and modulo by zero, invalid variables, invalid powers, and non-finite results.
+The advanced numerical APIs also validate inputs, matrix dimensions, root brackets, convergence limits, and mathematical domains.
 
 ## Installation
 
-### npm
-
 ```bash
 npm install @tejas-mk2/calculator-core
+```
+
+For the advanced numerical toolkit:
+
+```js
+import { determinant } from '@tejas-mk2/calculator-core/advanced';
 ```
 
 ### GitHub Packages
 
-Configure the npm scope:
-
 ```ini
 @tejas-mk2:registry=https://npm.pkg.github.com
-```
-
-Then install:
-
-```bash
-npm install @tejas-mk2/calculator-core
 ```
 
 ## API overview
@@ -230,20 +249,14 @@ npm install @tejas-mk2/calculator-core
 | API | Purpose |
 |---|---|
 | `evaluate()` | Full numeric expression evaluation |
-| `evaluateExact()` | Exact rational expression evaluation |
+| `evaluateExact()` | Exact rational evaluation |
 | `Parser` | Reusable expression parser |
 | `Fraction` | Immutable rational arithmetic |
 | `factorial()` | Integer factorial |
 | `percentage()` | Percentage calculation |
-| `convertTemperature()` | Celsius/Fahrenheit/Kelvin conversion |
-| `absolute()` | Absolute value |
-| `minimum()` / `maximum()` | Variadic extrema |
-| `average()` / `mean()` | Arithmetic mean |
-| `sum()` / `product()` | Variadic aggregation |
+| `convertTemperature()` | Temperature conversion |
 | `EvaluationError` | Typed evaluation errors |
-| `constants` | Mathematical constants |
-| `normalizeAngleMode()` | Validate angle mode |
-| `toRadians()` / `fromRadians()` | Angle conversion |
+| `advanced` subpath | Statistics, numerical methods, matrices, number theory, interpolation |
 
 ## Development
 
@@ -253,38 +266,23 @@ npm test
 npm pack --dry-run
 ```
 
-The test suite covers parser precedence, implicit multiplication, scientific notation, trigonometry, angle modes, variables, constants, percentages, modulo, factorial, exact fractions, conversion, malformed input, and typed errors.
+The test suite covers the core parser and the advanced numerical toolkit, including statistics, combinatorics, number theory, numerical solvers, integration, derivatives, interpolation, and matrix operations.
 
-Before publishing a new version, run:
+Before publishing:
 
 ```bash
 npm test
 npm pack --dry-run
 ```
 
-## Publishing
-
-The package is configured for GitHub Packages:
-
-```json
-{
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  }
-}
-```
-
-Every published version must use a new semver version. Registry versions are immutable; do not attempt to overwrite an existing release.
-
 ## Package information
 
 | Property | Value |
 |---|---|
 | Package | `@tejas-mk2/calculator-core` |
-| Current source version | `0.3.3` |
+| Current source version | `0.4.0` |
 | npm | `https://www.npmjs.com/package/@tejas-mk2/calculator-core` |
 | GitHub Packages | `https://github.com/TEJAS-MK2/Calculator/packages` |
-| Source | `https://github.com/TEJAS-MK2/Calculator/tree/main/packages/calculator-core` |
 | Runtime dependencies | None |
 | Module format | ES module |
 | License | MIT |
