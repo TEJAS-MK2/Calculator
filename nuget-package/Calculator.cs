@@ -19,6 +19,21 @@ public static class Calculator
         return a % b;
     }
 
-    public static decimal Power(decimal a, int exponent) => decimal.Pow(a, exponent);
+    public static decimal Power(decimal value, int exponent)
+    {
+        if (exponent == 0) return 1m;
+        var negative = exponent < 0;
+        var power = Math.Abs((long)exponent);
+        var result = 1m;
+        var baseValue = value;
+        while (power > 0)
+        {
+            if ((power & 1) == 1) result *= baseValue;
+            power >>= 1;
+            if (power > 0) baseValue *= baseValue;
+        }
+        return negative ? 1m / result : result;
+    }
+
     public static decimal Percentage(decimal value, decimal percent) => value * percent / 100m;
 }
