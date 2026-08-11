@@ -20,4 +20,12 @@ class ExactParser extends Parser{parseAdditive(){let value=this.parseMultiplicat
 export function factorial(value){const n=Number(value);if(!Number.isInteger(n)||n<0||n>170)throw new Error('Factorial requires an integer from 0 to 170');let result=1;for(let i=2;i<=n;i++)result*=i;return result;}
 export function percentage(value,percent){return Number(value)*Number(percent)/100;}
 export function convertTemperature(value,from,to){const n=Number(value);if(!Number.isFinite(n))throw new Error('Temperature value must be finite');if(!['C','F','K'].includes(from)||!['C','F','K'].includes(to))throw new Error('Temperature unit must be C, F, or K');const celsius=from==='C'?n:from==='F'?(n-32)*5/9:n-273.15;return to==='C'?celsius:to==='F'?celsius*9/5+32:celsius+273.15;}
+export function absolute(value){const n=Number(value);if(!Number.isFinite(n))throw new EvaluationError('Value is not finite','NON_FINITE_RESULT');return Math.abs(n);}
+export function minimum(a,b){return Math.min(Number(a),Number(b));}
+export function maximum(a,b){return Math.max(Number(a),Number(b));}
+export function average(a,b){return (Number(a)+Number(b))/2;}
+export function clamp(value,min,max){const v=Number(value),lo=Number(min),hi=Number(max);if([v,lo,hi].some(n=>!Number.isFinite(n)))throw new EvaluationError('Clamp values must be finite','NON_FINITE_RESULT');if(lo>hi)throw new EvaluationError('Minimum cannot exceed maximum','INVALID_RANGE');return Math.min(hi,Math.max(lo,v));}
+export function reciprocal(value){const n=Number(value);if(!Number.isFinite(n))throw new EvaluationError('Value is not finite','NON_FINITE_RESULT');if(n===0)throw new EvaluationError('Cannot take reciprocal of zero','DIVISION_BY_ZERO');return 1/n;}
+export function square(value){return Number(value)**2;}
+export function cube(value){return Number(value)**3;}
 export const constants=CONSTANTS;
