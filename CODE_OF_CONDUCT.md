@@ -4,7 +4,7 @@
 
 The **TEJAS-MK2 Calculator** project is committed to providing a welcoming, respectful, inclusive, and constructive environment for users, contributors, maintainers, package consumers, and community members.
 
-Technical discussions, bug reports, code reviews, UI feedback, package contributions, and release discussions should remain professional and focused on improving the project.
+This project includes a web calculator, reusable calculation engines, tests, documentation, CI/CD workflows, and published packages. Technical discussions, bug reports, code reviews, UI feedback, package contributions, and release discussions should remain professional and focused on improving the project.
 
 ## Expected Behavior
 
@@ -13,11 +13,12 @@ Participants are expected to:
 - Treat others with respect, patience, and professionalism.
 - Communicate constructively, including when disagreeing.
 - Welcome good-faith questions, different perspectives, and constructive feedback.
-- Focus criticism on code, documentation, ideas, or decisions rather than people.
-- Give appropriate credit to contributors and respect licenses.
+- Focus criticism on code, documentation, ideas, or technical decisions rather than people.
+- Give appropriate credit to contributors and respect licenses and attribution requirements.
 - Take responsibility for mistakes and work toward constructive resolution.
-- Respect project boundaries, maintainer decisions, and moderation actions.
-- Avoid unnecessary disruption of repository, package, CI, or community spaces.
+- Respect project boundaries, maintainer decisions, moderation actions, and repository rules.
+- Keep issues, pull requests, reviews, discussions, and package-related communication relevant and useful.
+- Avoid unnecessary disruption of repository, package, CI, release, or community spaces.
 
 ## Unacceptable Behavior
 
@@ -30,28 +31,36 @@ The following behavior is not acceptable:
 - Repeated bad-faith participation intended to derail productive discussion.
 - Publishing private or personal information without permission.
 - Impersonating contributors, maintainers, package owners, or project representatives.
-- Malicious behavior intended to harm the project, users, packages, registry accounts, or infrastructure.
-- Deliberate abuse of package registries, CI systems, container infrastructure, or automation.
+- Malicious behavior intended to harm the project, its users, packages, registry accounts, or infrastructure.
+- Deliberate abuse of package registries, CI systems, container infrastructure, GitHub Actions, or automation.
+- Introducing known malicious code, intentionally compromised dependencies, or destructive changes.
 - Any other conduct reasonably considered inappropriate in a professional open-source community.
 
 ## Project Spaces
 
-This Code of Conduct applies to the repository and project-managed spaces, including issues, pull requests, discussions, reviews, comments, documentation, package-related discussions, CI/release discussions, and project communication channels.
+This Code of Conduct applies to project-managed spaces, including:
 
-It also applies when someone represents the project or its community in a public setting.
+- The GitHub repository.
+- Issues, pull requests, reviews, comments, and discussions.
+- Documentation and package-related discussions.
+- CI, release, and deployment discussions.
+- Project-managed communication channels and events.
+
+It also applies when someone is representing the project or its community in a public setting.
 
 ## Enforcement
 
-Project maintainers are responsible for interpreting and enforcing this Code of Conduct. They may remove, edit, or reject contributions and may restrict participation when necessary to protect the community or project infrastructure.
+Project maintainers are responsible for interpreting and enforcing this Code of Conduct. They may remove, edit, lock, or reject content and may restrict participation when necessary to protect people, the project, or its infrastructure.
 
 Possible actions include:
 
 1. Private or public warning when appropriate.
-2. Temporary restrictions on participation.
-3. Removal of content that violates this Code of Conduct.
-4. Temporary or permanent removal from project spaces for serious or repeated violations.
+2. Request to stop or modify specific behavior.
+3. Removal or moderation of content that violates this Code of Conduct.
+4. Temporary restrictions on participation.
+5. Temporary or permanent removal from project spaces for serious or repeated violations.
 
-Enforcement should be fair, proportionate, consistent, and focused on maintaining a safe and productive community.
+Enforcement should be fair, proportionate, consistent, and focused on maintaining a safe and productive community. Maintainers may take immediate action when there is a credible risk to people, users, project infrastructure, or repository security.
 
 ## Reporting a Problem
 
@@ -61,7 +70,7 @@ When possible, include:
 
 - What happened.
 - When and where it happened.
-- Relevant links, screenshots, or context.
+- Relevant links, screenshots, or other context.
 - Usernames or project accounts involved.
 
 Do not publicly expose private information or sensitive evidence about anyone involved in a report. Retaliation against a good-faith report is not acceptable.
@@ -77,6 +86,11 @@ Maintainers should:
 - Give participants an opportunity to provide relevant context when practical.
 - Keep enforcement focused on protecting people and maintaining a productive project.
 - Avoid using moderation powers for personal disputes or retaliation.
+- Protect confidential information received through private reports.
+
+## Scope and Good-Faith Participation
+
+This Code of Conduct does not prohibit legitimate technical criticism, security research, bug reporting, or disagreement with a design or maintainer decision. Good-faith participation is welcome when it remains respectful and follows the project's security and contribution procedures.
 
 ## Attribution
 
@@ -84,4 +98,4 @@ This Code of Conduct is adapted from the principles and structure of the [Contri
 
 ## Questions
 
-For general questions, open a GitHub issue. For sensitive conduct reports or security matters, use the repository's private reporting channels.
+For general questions, use a GitHub issue or discussion where appropriate. For sensitive conduct reports or security matters, use the repository's private reporting channels.
