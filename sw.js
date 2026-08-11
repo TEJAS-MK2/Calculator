@@ -1,5 +1,5 @@
-const CACHE_NAME='aesthetic-calculator-v43';
-const APP_SHELL=['./','./index.html','./styles.css?v=13','./graph.css?v=1','./statistics.css?v=2','./script.js?v=12','./graph.js?v=4','./statistics.js?v=2','./sidebar-fix.js?v=12','./animation-enhancements.js?v=2','./sidebar-hardening.js?v=1','./advanced-features.js?v=3','./manifest.json'];
+const CACHE_NAME='aesthetic-calculator-v44';
+const APP_SHELL=['./','./index.html','./styles.css?v=13','./graph.css?v=1','./statistics.css?v=2','./script.js?v=12','./graph.js?v=4','./statistics.js?v=2','./sidebar-fix.js?v=12','./animation-enhancements.js?v=3','./calculator-core-ui.js?v=1','./sidebar-hardening.js?v=1','./advanced-features.js?v=3','./manifest.json'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;const url=new URL(event.request.url);if(url.origin!==self.location.origin)return;event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{if(response.ok){const copy=response.clone();caches.open(CACHE_NAME).then(cache=>cache.put(event.request,copy));}return response;}).catch(()=>caches.match('./index.html'))));});
