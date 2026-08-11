@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module PijushCalculator
-  VERSION = "0.2.0"
+  VERSION = "0.6.0"
   module_function
 
   def add(a,b)=a+b
@@ -43,6 +43,8 @@ module PijushCalculator
   def hyperbolic_tangent(value)=Math.tanh(value)
   def logarithm(value,base=10);raise ArgumentError,"invalid logarithm domain" if value<=0||base<=0||base==1;Math.log(value,base);end
   def log2(value);raise ArgumentError,"log2 requires a positive value" if value<=0;Math.log(value,2);end
+  def log1p(value);raise ArgumentError,"log1p requires a value greater than -1" if value<=-1;Math.log(1+value);end
+  def expm1(value)=Math.exp(value)-1
   def natural_log(value);raise ArgumentError,"natural logarithm requires a positive value" if value<=0;Math.log(value);end
   def exponential(value)=Math.exp(value)
   def hypot(*values);raise ArgumentError,"hypot requires a value" if values.empty?;Math.hypot(*values);end
@@ -53,4 +55,6 @@ module PijushCalculator
   def standard_deviation(*values)=Math.sqrt(variance(*values))
   def range(*values);raise ArgumentError,"range requires a value" if values.empty?;maximum(*values)-minimum(*values);end
   def approximately_equal?(a,b,tolerance=1e-9)=((a-b).abs<=tolerance)
+  def finite?(value)=value.respond_to?(:finite?) ? value.finite? : true
+  def round_to(value,digits=0);raise ArgumentError,"digits must be an integer" unless digits.is_a?(Integer);value.round(digits);end
 end

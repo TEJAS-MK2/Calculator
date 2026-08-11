@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.tejas-mk2</groupId>
   <artifactId>pijush-calculator</artifactId>
-  <version>0.2.0</version>
+  <version>0.6.0</version>
   <packaging>jar</packaging>
   <name>pijush-calculator</name>
   <description>Advanced, dependency-free Java numerical engine with BigDecimal DECIMAL128 precision and scientific utilities.</description>
