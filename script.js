@@ -15,13 +15,10 @@
     : theme;
 
   function applyTheme() {
-    document.documentElement.dataset.theme = resolvedTheme();
-    const button = $('themeToggle');
-    if (!button) return;
-    const icons = { dark: 'fa-moon', light: 'fa-sun', system: 'fa-circle-half-stroke' };
-    button.innerHTML = `<i class="fas ${icons[theme]}" aria-hidden="true"></i>`;
-    button.setAttribute('aria-label', `Theme: ${theme}. Click to change`);
-    button.title = `Theme: ${theme}`;
+    const resolved = resolvedTheme();
+    document.documentElement.dataset.theme = resolved;
+    const themeColor = $('themeColor');
+    if (themeColor) themeColor.setAttribute('content', resolved === 'light' ? '#f4f4f4' : '#191919');
   }
 
   function toggleTheme() {
@@ -30,17 +27,17 @@
     applyTheme();
   }
 
-  function toggleHistoryPanel() {
+  function toggleHistory() {
     const panel = $('historyPanel');
     if (!panel) return;
     const open = !panel.classList.contains('is-open');
     panel.classList.toggle('is-open', open);
     panel.setAttribute('aria-hidden', String(!open));
-    if (open) window.dispatchEvent(new CustomEvent('calculator:history-open'));
+    if (open) window.renderCalculatorHistory?.();
   }
 
   function clearCalculator() {
-    document.querySelector('[data-action="clear-all"]')?.click();
+    document.querySelector('.calculator .btn[data-action="clear-all"]')?.click();
   }
 
   function setupSidebar() {
@@ -57,7 +54,6 @@
       document.body.classList.toggle('sidebar-visible', open);
       sidebar.setAttribute('aria-hidden', String(!open));
       openButton.setAttribute('aria-expanded', String(open));
-      openButton.setAttribute('aria-label', open ? 'Close calculator controls' : 'Open calculator controls');
     };
 
     const close = () => setOpen(false);
@@ -76,7 +72,7 @@
         return;
       }
       if (feature === 'history') {
-        toggleHistoryPanel();
+        toggleHistory();
         close();
       }
     };
@@ -84,7 +80,7 @@
     openButton.addEventListener('click', event => {
       event.preventDefault();
       event.stopPropagation();
-      setOpen(!sidebar.classList.contains('is-open'));
+      setOpen(true);
     });
 
     closeButton.addEventListener('click', event => {
