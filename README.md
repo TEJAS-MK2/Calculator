@@ -23,7 +23,7 @@
 
 - **Fast responsive calculator** — works across desktop, tablet, and mobile.
 - **Modern UI** — clean layout with a polished visual system.
-- **Arithmetic engine** — addition, subtraction, multiplication, and division.
+- **Advanced calculation engine** — precedence-aware expressions, parentheses, implicit multiplication, variables, scientific functions, and exact fractions.
 - **History** — stores recent calculations locally and lets you reuse results.
 - **Memory** — supports calculator memory operations.
 - **Theme system** — dark, light, and system themes.
@@ -100,14 +100,24 @@ The calculator is deployed as a static website through GitHub Pages.
 
 ## Calculator Core Package
 
-The repository includes **`@tejas-mk2/calculator-core`**, a lightweight, dependency-free JavaScript calculation engine for web apps, Node.js tools, and other JavaScript projects.
+The repository includes **`@tejas-mk2/calculator-core`**, a lightweight, dependency-free JavaScript calculation engine with a safe expression parser.
 
-The package provides reusable calculation logic for arithmetic, scientific functions, variables, factorials, percentages, and temperature conversion without DOM dependencies or runtime dependencies.
+### Phase 1 calculation features
+
+- Operator precedence and nested parentheses
+- Implicit multiplication such as `2(5 + 3)`
+- Unary `+` and `-`
+- Powers and percentages
+- Variables and constants
+- Scientific functions
+- Exact rational arithmetic through `Fraction` and `evaluateExact`
+- Explicit calculation errors
+- No `eval()` or `Function()` constructor
 
 ### Package
 
 ```text
-@tejas-mk2/calculator-core@0.1.1
+@tejas-mk2/calculator-core@0.2.0
 ```
 
 ### Registry
