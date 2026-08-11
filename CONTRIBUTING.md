@@ -1,74 +1,67 @@
 # Contributing to Calculator
 
-Thank you for contributing to the **TEJAS-MK2 Calculator** project. Contributions of all sizes are welcome, including bug fixes, performance improvements, accessibility fixes, documentation, tests, UI improvements, and new calculator capabilities.
-
-This guide explains how to propose changes while keeping the application, calculation engines, packages, and documentation reliable and maintainable.
+Thank you for contributing to **TEJAS-MK2 Calculator**. Contributions are welcome across the web application, calculation engine, JavaScript package, Ruby gem, Python package, tests, documentation, accessibility, performance, and developer tooling.
 
 ## Code of Conduct
 
-Please read [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) before contributing. All contributors are expected to participate respectfully and constructively.
+Read [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) before contributing. Participate respectfully and constructively.
 
 ## Before You Start
 
-1. Check existing issues and pull requests to avoid duplicating work.
-2. Read the relevant documentation before changing an API or package.
-3. Keep changes focused. Large changes should be discussed in an issue first when practical.
-4. Never commit passwords, tokens, API keys, private keys, credentials, or personal information.
+1. Search existing issues and pull requests.
+2. Read the relevant package and project documentation.
+3. Keep changes focused and explain larger architectural changes before implementation when practical.
+4. Never commit passwords, registry tokens, API keys, private keys, credentials, or personal information.
+5. For security vulnerabilities, follow [`SECURITY.md`](./SECURITY.md) and do not open a public issue with sensitive details.
 
 ## Repository Areas
 
-The repository contains several related parts:
-
 | Area | Purpose |
 |---|---|
-| `index.html` | Calculator page structure and UI markup |
-| `styles.css` | Layout, themes, responsive styling, and visual effects |
-| `script.js` | Legacy/application UI behavior that remains in the web app |
-| `calculator-core-ui.js` | Integration between the web UI and the calculation engine |
-| `packages/calculator-core/` | Reusable JavaScript calculation engine and its tests |
-| `ruby-gem/` | Ruby `pijush-calculator` gem |
-| `.github/workflows/` | CI, deployment, and package publishing workflows |
-| `README.md` and docs | User and developer documentation |
+| `index.html` | Web calculator structure |
+| `styles.css` | Layout, themes, responsive styling, visual effects |
+| `script.js` | Remaining application/legacy UI behavior |
+| `calculator-core-ui.js` | Web UI integration with the calculation engine |
+| `packages/calculator-core/` | Reusable JavaScript calculation engine and tests |
+| `ruby-gem/` | `pijush-calculator` Ruby gem |
+| `python-package/` | `pijush-calculator` Python package |
+| `.github/workflows/` | CI, deployment, and package publishing |
+| `README.md` and package READMEs | User and developer documentation |
 
-When changing calculation behavior, prefer updating the reusable calculation engine rather than duplicating mathematical logic in the browser UI.
+When changing mathematical behavior, prefer the reusable engine rather than duplicating calculation logic in the browser UI.
 
 ## Reporting Bugs
 
 Before opening an issue:
 
-1. Search existing issues for the same problem.
-2. Confirm the issue still exists on the latest `main` branch or deployed version.
-3. Reduce the problem to the smallest reproducible example.
+1. Search existing issues.
+2. Confirm the problem on the latest `main` branch or current published/deployed version.
+3. Reduce it to the smallest reproducible case.
 
-Include, when relevant:
+Include when relevant:
 
-- A clear description of the problem.
-- Steps to reproduce it.
-- Expected behavior.
-- Actual behavior.
+- Clear problem description.
+- Steps to reproduce.
+- Expected and actual behavior.
 - Calculator expression or input sequence.
-- Browser, operating system, and device information.
-- Console errors or stack traces.
-- Screenshots or screen recordings for visual/animation problems.
-- Whether the issue affects the web calculator, JavaScript package, Ruby gem, or more than one component.
+- Browser, operating system, device, Ruby, Python, or Node.js version as applicable.
+- Console errors, stack traces, or test output.
+- Screenshots or recordings for UI/animation problems.
+- Which component is affected: web app, JavaScript package, Ruby gem, Python package, or CI.
 
-For security vulnerabilities, **do not open a public issue**. Follow [`SECURITY.md`](./SECURITY.md) instead.
+## Feature Requests
 
-## Suggesting Features
+Open an issue describing:
 
-Feature requests are welcome. Open an issue with:
+1. The problem being solved.
+2. The proposed behavior.
+3. Example inputs and outputs.
+4. Alternatives considered.
+5. Compatibility, accessibility, performance, and UI impact.
 
-1. **Problem** — What problem does the feature solve?
-2. **Proposal** — What should it do?
-3. **Examples** — Give example inputs and outputs where applicable.
-4. **Alternatives** — What alternatives have you considered?
-5. **Impact** — How could it affect compatibility, performance, accessibility, or the existing UI?
-
-For changes to the calculation engine or public package APIs, include the proposed API or expression syntax when possible.
+For public package APIs or expression syntax, document the proposed API clearly.
 
 ## Development Setup
-
-Clone the repository and create a focused branch:
 
 ```bash
 git clone https://github.com/TEJAS-MK2/Calculator.git
@@ -76,9 +69,9 @@ cd Calculator
 git checkout -b feature/your-feature-name
 ```
 
-The web calculator is a static application. You can preview it with any local HTTP server. A local HTTP server is recommended because service workers and ES modules behave differently when opened directly from `file://` URLs.
+The web app should be tested through a local HTTP server when using ES modules, service workers, or PWA features.
 
-For the JavaScript package:
+### JavaScript package
 
 ```bash
 cd packages/calculator-core
@@ -86,131 +79,139 @@ npm test
 npm pack --dry-run
 ```
 
-For the Ruby gem:
+### Ruby gem
 
 ```bash
 cd ruby-gem
 gem build pijush-calculator.gemspec
 ```
 
-Do not publish packages manually as part of an ordinary pull request. Package publishing is handled by the repository's configured GitHub Actions workflows.
+### Python package
+
+```bash
+cd python-package
+python -m pip install -e .
+python -m pytest
+python -m build
+```
+
+Do not manually publish packages as part of a normal pull request. Releases are handled by the configured GitHub Actions workflows.
 
 ## Making Changes
 
-### Calculator UI
+### Web calculator
 
-- Preserve responsive behavior on mobile and desktop.
+- Preserve responsive mobile and desktop behavior.
 - Keep History, Clear, Theme, and calculator controls visually consistent.
 - Preserve keyboard accessibility and visible focus states.
-- Use the existing animation system for UI animations rather than introducing another animation framework.
+- Use the existing animation system rather than adding unnecessary animation frameworks.
 - Respect `prefers-reduced-motion`.
-- Avoid unnecessary layout-triggering animations that can cause jank.
-- Do not introduce blocking work on the main thread.
+- Avoid expensive layout-triggering animations and blocking main-thread work.
 
-### JavaScript Calculation Engine
+### JavaScript engine
 
-- Keep the parser deterministic and free of `eval()` and `Function()` execution.
-- Add tests for every new mathematical operation or syntax rule.
-- Define explicit behavior for invalid input and domain errors.
-- Preserve existing public APIs unless a breaking change is intentional and documented.
-- Consider precedence, associativity, unary operators, implicit multiplication, percentages, and edge cases when changing the parser.
-- Keep exact arithmetic behavior separate from floating-point approximations where appropriate.
+- Keep expression parsing deterministic and free of `eval()` and `Function()` execution.
+- Add tests for every new syntax rule or mathematical operation.
+- Define explicit invalid-input and domain-error behavior.
+- Preserve public APIs unless a breaking change is intentional and documented.
+- Consider precedence, associativity, unary operators, implicit multiplication, percentages, modulo, and edge cases.
+- Preserve exact arithmetic behavior where supported.
 
-### Ruby Gem
+### Ruby gem
 
-- Keep the gem API small and predictable.
+- Keep the API small and predictable.
 - Add tests for new public behavior.
+- Avoid unnecessary dependencies.
+- Update the gem version for release changes.
+- Keep the gemspec and README synchronized.
+
+### Python package
+
+- Keep the public API small and predictable.
+- Add pytest coverage for new behavior.
 - Avoid unnecessary runtime dependencies.
-- Update the gemspec version when making a release.
-- Keep the Ruby README synchronized with the actual gem API.
+- Update `pyproject.toml`, package version, and README together for releases.
+- Preserve Python 3.9+ compatibility unless a documented change is intentional.
 
 ## Testing Checklist
-
-Before opening a pull request, run the relevant automated tests and manually verify the application.
 
 ### Core calculations
 
 - Basic arithmetic.
 - Operator precedence.
-- Parentheses and nested expressions.
+- Nested parentheses.
 - Decimal and scientific notation.
-- Unary `+` and `-`.
+- Unary operators.
 - Powers and percentages.
 - Modulo, including `10 % 3`.
 - Scientific functions and angle modes.
 - Variables and constants.
 - Exact fractions where supported.
-- Division by zero and other domain errors.
+- Division by zero and domain errors.
 
 ### UI
 
-- Number and operator buttons.
-- Enter, Backspace, Escape, and keyboard input.
-- History and Clear.
+- Calculator buttons and keyboard input.
+- Enter, Backspace, Escape, and Clear.
+- History.
 - Theme switching.
 - Scientific controls.
 - Responsive layout.
-- Focus states and accessibility.
+- Focus and accessibility states.
 - Animation timing and reduced-motion behavior.
-- Browser console for new errors.
+- Browser console errors.
 
 ### Packages
 
-- JavaScript package tests pass with `npm test`.
-- Package metadata and README match the implementation.
-- Ruby gem builds successfully with `gem build`.
+- JavaScript `npm test` passes.
+- Ruby gem builds successfully.
+- Python `pytest` passes and the package builds successfully.
+- Package metadata, version, and README agree with the implementation.
 - Public API changes are documented.
 
 ## Pull Requests
 
 Keep pull requests focused and easy to review.
 
-A useful pull request should:
+Include:
 
-- Explain what changed and why.
-- Link related issues.
-- Include tests for behavior changes.
-- Include screenshots or a short recording for visual changes.
-- Mention any package/API version changes.
-- Mention compatibility or migration concerns for breaking changes.
-- Avoid unrelated formatting or file changes.
+- What changed and why.
+- Related issues.
+- Tests for behavior changes.
+- Screenshots or a recording for visual changes.
+- Package/API version changes when applicable.
+- Compatibility or migration notes for breaking changes.
 
-Example commit messages:
+Suggested commit messages:
 
 ```text
 feat(core): add degree angle mode
 fix(ui): prevent sidebar animation overlap
 test(core): add modulo regression cases
-docs: update package installation guide
+docs: update package documentation
+release(python): publish 0.1.1
 ```
 
 ## Code Review
 
-Maintainers may review changes for:
+Maintainers may review for correctness, test coverage, security, accessibility, performance, API compatibility, maintainability, documentation accuracy, and consistency with the project design.
 
-- Correctness and test coverage.
-- Security.
-- Accessibility.
-- Performance and animation smoothness.
-- API compatibility.
-- Maintainability.
-- Documentation accuracy.
-- Consistency with the existing design and architecture.
-
-Please address review feedback constructively. Additional changes should remain focused on the pull request's purpose.
+Address review feedback constructively and keep follow-up changes relevant to the pull request.
 
 ## Documentation
 
-Keep the following documentation synchronized with implementation changes:
+Keep these synchronized with implementation changes:
 
-- Main `README.md`.
-- `packages/calculator-core/README.md`.
-- `ruby-gem/README.md`.
-- Package version and API documentation.
-- Contribution, security, and code-of-conduct guidance when relevant.
+- `README.md`
+- `packages/calculator-core/README.md`
+- `ruby-gem/README.md`
+- `python-package/README.md`
+- Package metadata and versions
+- `SECURITY.md`
+- `CODE_OF_CONDUCT.md`
 
 ## Licensing
 
-By contributing to this repository, you agree that your contributions are provided under the project's [`LICENSE`](./LICENSE) and any applicable package-specific license terms.
+By contributing, you agree that your contributions are provided under the project's [`LICENSE`](./LICENSE) and any applicable package-specific license terms.
 
-Thank you for helping make Calculator more reliable, accessible, and useful.
+Thank you for helping make Calculator reliable, accessible, secure, and useful across its web and package ecosystems.
