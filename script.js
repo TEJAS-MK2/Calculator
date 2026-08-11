@@ -23,8 +23,7 @@
       document.head.appendChild(style);
     }
     style.textContent = `
-      .calculator.has-feature .button-grid { display: none; }
-      .calculator.has-feature .calculator-feature-panel { margin-top: 0; max-height: min(58vh, 430px); overflow: auto; }
+      .calculator.has-feature .calculator-feature-panel { margin-top: 0; margin-bottom: 16px; max-height: min(52vh, 390px); overflow: auto; }
       .calculator-feature-panel { width: 100%; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
       .calculator-feature-panel .engine-panel-head { position: sticky; top: -12px; z-index: 3; padding-bottom: 8px; background: inherit; }
       html[data-theme="dark"] .calculator-feature-panel,
@@ -92,7 +91,9 @@
   function mountFeaturePanel(panel) {
     const root = calculator();
     if (!panel || !root) return false;
-    if (panel.parentElement !== root) root.appendChild(panel);
+    const keypad = root.querySelector('.button-grid');
+    if (keypad) root.insertBefore(panel, keypad);
+    else root.appendChild(panel);
     panel.classList.add('calculator-feature-panel');
     return true;
   }
