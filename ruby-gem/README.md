@@ -1,6 +1,6 @@
 # pijush-calculator
 
-A lightweight, dependency-free Ruby calculator engine from the Modern Calculator project.
+A **lightweight, dependency-free Ruby calculation engine** from the Modern Calculator project.
 
 ## Current release
 
@@ -18,12 +18,19 @@ The gem provides a small, reusable arithmetic API that can be used independently
 - Ruby 3.0+
 - Zero runtime dependencies
 - Simple module-based API
+- Published through GitHub Packages
 
-## Installation
+## Installation from GitHub Packages
 
-The gem is published through **GitHub Packages**.
+The gem is published to the GitHub Packages RubyGems registry.
 
-Configure RubyGems to use the GitHub RubyGems registry, authenticate with an appropriate GitHub token, then install the package:
+Registry:
+
+```text
+https://rubygems.pkg.github.com/TEJAS-MK2
+```
+
+Configure RubyGems authentication for the registry with an appropriate GitHub token, then install:
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
@@ -62,13 +69,9 @@ Returns the quotient of two values and raises an error when `b` is zero.
 
 ## GitHub Packages
 
-Registry:
+The repository contains a GitHub Actions workflow that builds, validates, and publishes the gem to GitHub Packages.
 
-```text
-https://rubygems.pkg.github.com/TEJAS-MK2
-```
-
-The repository includes a GitHub Actions workflow that builds and validates the gem before publishing it to GitHub Packages. A package version can only be published once; releases therefore require a new gem version.
+A gem version can only be published once. To release a new version, update the version in the gemspec before publishing.
 
 ## Development
 
