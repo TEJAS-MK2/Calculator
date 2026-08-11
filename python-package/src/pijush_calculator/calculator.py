@@ -43,6 +43,11 @@ def square_root(value):
     if value<0: raise ValueError("square root requires a non-negative value")
     return _finite(math.sqrt(value))
 def cube_root(value): return _finite(math.cbrt(value) if hasattr(math,"cbrt") else math.copysign(abs(value)**(1/3),value))
+def nth_root(value,n):
+    if n==0: raise ValueError("root degree cannot be zero")
+    if value<0 and int(n)%2==0: raise ValueError("even root requires a non-negative value")
+    result=math.copysign(abs(value)**(1/float(n)),value) if value<0 else value**(1/float(n))
+    return _finite(result)
 def factorial(value):
     if not isinstance(value,int) or value<0: raise ValueError("factorial requires a non-negative integer")
     return math.factorial(value)
@@ -57,12 +62,20 @@ def cotangent(value,degrees=False): return _finite(1/tangent(value,degrees))
 def arcsine(value,degrees=False): return _finite(math.degrees(math.asin(value)) if degrees else math.asin(value))
 def arccosine(value,degrees=False): return _finite(math.degrees(math.acos(value)) if degrees else math.acos(value))
 def arctangent(value,degrees=False): return _finite(math.degrees(math.atan(value)) if degrees else math.atan(value))
+def atan2(y,x,degrees=False): return _finite(math.degrees(math.atan2(y,x)) if degrees else math.atan2(y,x))
 def hyperbolic_sine(value): return _finite(math.sinh(value))
 def hyperbolic_cosine(value): return _finite(math.cosh(value))
 def hyperbolic_tangent(value): return _finite(math.tanh(value))
 def logarithm(value,base=10):
     if value<=0 or base<=0 or base==1: raise ValueError("invalid logarithm domain")
     return _finite(math.log(value,base))
+def log2(value):
+    if value<=0: raise ValueError("log2 requires a positive value")
+    return _finite(math.log2(value))
+def log1p(value):
+    if value<=-1: raise ValueError("log1p requires a value greater than -1")
+    return _finite(math.log1p(value))
+def expm1(value): return _finite(math.expm1(value))
 def natural_log(value):
     if value<=0: raise ValueError("natural logarithm requires a positive value")
     return _finite(math.log(value))
@@ -89,3 +102,4 @@ def range_values(*values):
     if not values: raise ValueError("range requires at least one value")
     return maximum(*values)-minimum(*values)
 def is_close(a,b,rel_tol=1e-9,abs_tol=0.0): return math.isclose(a,b,rel_tol=rel_tol,abs_tol=abs_tol)
+def approximately_equal(a,b,tolerance=1e-9): return abs(a-b)<=tolerance
