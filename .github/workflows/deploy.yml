@@ -5,10 +5,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# GitHub Pages is currently configured to publish from the gh-pages branch.
+# Writing that branch is therefore required for the deployment workflow.
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
@@ -20,9 +20,6 @@ env:
 jobs:
   validate-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,10 +73,7 @@ jobs:
           print('All local HTML assets exist.')
           PY
 
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Prepare Pages artifact
+      - name: Prepare Pages site
         run: |
           set -e
           rm -rf _site
@@ -87,11 +81,27 @@ jobs:
           rsync -a --exclude='.git' --exclude='.github' --exclude='_site' ./ _site/
           touch _site/.nojekyll
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
+      - name: Publish to gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          git fetch origin gh-pages:refs/remotes/origin/gh-pages
+          rm -rf _deploy
+          git worktree add --force _deploy origin/gh-pages
+
+          cd _deploy
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          rsync -a ../_site/ ./
+          git add --all
+
+          if git diff --cached --quiet; then
+            echo "No Pages changes to publish."
+            exit 0
+          fi
+
+          git commit -m "deploy: ${GITHUB_SHA}"
+          git push origin HEAD:gh-pages
