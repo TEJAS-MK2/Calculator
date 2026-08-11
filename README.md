@@ -1,8 +1,8 @@
 # Modern Calculator
 
 <p align="center">
-  <strong>A clean, responsive, modern calculator for the web.</strong><br>
-  Built with HTML, CSS, JavaScript, and Anime.js.
+  <strong>A modern, responsive web calculator with a clean UI and a powerful calculation engine.</strong><br>
+  Built with HTML, CSS, JavaScript, Anime.js, and a reusable calculation core.
 </p>
 
 <p align="center">
@@ -13,6 +13,10 @@
 
 ---
 
+## Overview
+
+Modern Calculator combines a polished, responsive interface with a reusable JavaScript calculation engine. The main calculator UI is powered by **`@tejas-mk2/calculator-core`**, keeping expression parsing and mathematical evaluation separate from presentation.
+
 ## Demo
 
 <p align="center">
@@ -21,19 +25,45 @@
 
 ## Features
 
-- **Fast responsive calculator** — works across desktop, tablet, and mobile.
-- **Modern UI** — clean layout with a polished visual system.
+- **Modern responsive UI** — clean glass-inspired surfaces, refined spacing, and responsive sizing.
 - **Advanced calculation engine** — precedence-aware expressions, parentheses, implicit multiplication, variables, scientific functions, and exact fractions.
-- **History** — stores recent calculations locally and lets you reuse results.
+- **History** — stores calculations locally and lets you reuse results.
 - **Memory** — supports calculator memory operations.
 - **Theme system** — dark, light, and system themes.
 - **Keyboard support** — numbers, operators, Enter, Backspace, Escape, and C.
-- **Error handling** — protects against invalid input and division by zero.
-- **Anime.js motion** — lightweight interface animations and interaction feedback.
-- **Responsive layout** — optimized for smaller screens as well as desktop displays.
-- **PWA support** — service-worker caching for a more app-like experience.
+- **Error handling** — explicit handling for invalid expressions and division by zero.
+- **Smooth animations** — Anime.js interaction and transition effects with reduced-motion support.
+- **PWA support** — service-worker caching for an app-like experience.
+- **Mobile-friendly** — optimized for desktop, tablet, and small screens.
 
-> The sidebar is intentionally minimal: **History**, **Clear**, and **Change Theme**.
+> The sidebar stays intentionally focused on **History**, **Clear**, and **Change Theme**. Selecting a feature opens or controls the relevant calculator functionality in the main interface.
+
+## Calculator Engine
+
+The calculator UI uses **`@tejas-mk2/calculator-core`** for expression evaluation.
+
+Phase 1 provides:
+
+- Operator precedence and nested parentheses
+- Implicit multiplication such as `2(5 + 3)`
+- Unary `+` and `-`
+- Powers and percentages
+- Variables and constants
+- Scientific functions
+- Exact rational arithmetic through `Fraction` and `evaluateExact`
+- Explicit calculation errors
+- No `eval()` or `Function()` constructor
+- Zero runtime dependencies
+
+Example expressions:
+
+```text
+(25 + 5) * 2
+2(5 + 3) + 4^2
+sin(pi / 2)^2 + cos(pi / 2)^2
+x^2 + 1
+1 / 3 + 1 / 6
+```
 
 ## Calculator Controls
 
@@ -58,19 +88,31 @@
 | `Escape` | Clear all |
 | `C` | Clear current input |
 
+## Design
+
+The interface uses a restrained visual system built around:
+
+- Layered surfaces and subtle depth
+- Consistent borders and rounded controls
+- Clear calculator/display hierarchy
+- Responsive button sizing
+- Unified sidebar controls
+- Dark, light, and system themes
+- Lightweight interaction feedback
+
 ## Tech Stack
 
 - **HTML5** — structure and accessibility
-- **CSS3** — responsive layout, themes, and visual effects
-- **JavaScript (ES6+)** — calculator engine and application state
-- **Anime.js** — UI animations and micro-interactions
-- **Bootstrap 5** — responsive utilities
+- **CSS3** — responsive layout, themes, glass-inspired surfaces, and visual effects
+- **JavaScript (ES6+)** — UI state and calculator integration
+- **Anime.js** — animations and micro-interactions
 - **Font Awesome** — interface icons
 - **Service Worker** — application-shell caching
+- **`@tejas-mk2/calculator-core`** — calculation and expression engine
 
 ## Animations
 
-Anime.js is used for controlled UI motion including calculator entrance, button feedback, display transitions, result transitions, history animations, theme transitions, and sidebar motion.
+Anime.js is used for controlled motion including calculator entrance, button feedback, display transitions, result transitions, history interactions, theme transitions, and sidebar motion.
 
 Animations respect `prefers-reduced-motion` where supported.
 
@@ -82,15 +124,11 @@ The calculator supports:
 - **Light**
 - **System** — follows the operating system preference
 
-Theme state is stored locally in the browser and applied through shared CSS variables for a consistent interface.
-
-## Error Handling
-
-The calculator handles common edge cases including division by zero, invalid numeric values, invalid scientific operations, floating-point rounding artifacts, very large or very small results, and corrupted local history or memory data.
+Theme state is stored locally and applied through shared CSS variables so the calculator and sidebar remain visually consistent.
 
 ## Performance
 
-The application is designed to avoid unnecessary work through lightweight DOM updates, local persistence, animation cleanup, reduced-motion support, service-worker caching, and no backend requirement for normal calculator operation.
+The application is designed to keep interaction responsive through lightweight DOM updates, local persistence, animation cleanup, reduced-motion support, and service-worker caching.
 
 ## GitHub Pages
 
@@ -100,31 +138,15 @@ The calculator is deployed as a static website through GitHub Pages.
 
 ## Calculator Core Package
 
-The repository includes **`@tejas-mk2/calculator-core`**, a lightweight, dependency-free JavaScript calculation engine with a safe expression parser.
-
-### Phase 1 calculation features
-
-- Operator precedence and nested parentheses
-- Implicit multiplication such as `2(5 + 3)`
-- Unary `+` and `-`
-- Powers and percentages
-- Variables and constants
-- Scientific functions
-- Exact rational arithmetic through `Fraction` and `evaluateExact`
-- Explicit calculation errors
-- No `eval()` or `Function()` constructor
-
-### Package
+The repository includes **`@tejas-mk2/calculator-core`**, a lightweight, dependency-free JavaScript calculation engine.
 
 ```text
 @tejas-mk2/calculator-core@0.2.0
 ```
 
-### Registry
+It is configured for **GitHub Packages** and released through GitHub Actions after package tests and verification pass.
 
-The package is published to **GitHub Packages** and is released through GitHub Actions after automated tests and package verification pass.
-
-### Source
+Source:
 
 ```text
 packages/calculator-core/
@@ -139,9 +161,9 @@ git clone https://github.com/TEJAS-MK2/Calculator.git
 cd Calculator
 ```
 
-Open `index.html` directly for a simple local preview, or use any static HTTP server for a more production-like environment.
+Open `index.html` for a simple local preview, or use any static HTTP server for a production-like environment.
 
-For the calculator core package:
+For the calculation engine:
 
 ```bash
 cd packages/calculator-core
@@ -161,7 +183,7 @@ Licensed under the Apache License 2.0. See [`LICENSE`](./LICENSE) for details.
 
 ## About
 
-Built by **Pijush Chakraborty** as a modern web calculator focused on simplicity, responsiveness, usability, performance, and polished interaction.
+Built by **Pijush Chakraborty** as a modern web calculator focused on simplicity, usability, performance, and polished interaction.
 
 ---
 
