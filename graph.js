@@ -8,59 +8,10 @@ class GraphingCalculator {
     reset(){this.xMin=-10;this.xMax=10;this.yMin=-10;this.yMax=10;if(this.input)this.input.value='x^2';this.plotFromInput();}
     zoom(factor,px,py){const cx=px==null?this.canvas.clientWidth/2:px,cy=py==null?this.canvas.clientHeight/2:py,x=this.toX(cx),y=this.toY(cy);this.xMin=x-(x-this.xMin)*factor;this.xMax=x+(this.xMax-x)*factor;this.yMin=y-(y-this.yMin)*factor;this.yMax=y+(this.yMax-y)*factor;this.plot();}
     plotFromInput(){const value=(this.input?.value||'').trim();if(!value)return this.setStatus('Enter an expression such as x^2 or sin(x).',true);try{this.compile(value);this.expression=value;this.setStatus('Plotted: y = '+value,false);this.plot();}catch{this.setStatus('Invalid expression. Try x^2, sin(x), cos(x), tan(x), sqrt(x), or log(x).',true);}}
-    compile(source){let expr=source.toLowerCase().replace(/π/g,'pi').replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/\^/g,'**');if(!/^[0-9x+\-*/().,\s_a-z]+$/.test(expr))throw Error('characters');expr=expr.replace(/\bpi\b/g,'Math.PI').replace(/\be\b/g,'Math.E');const names={sin:'Math.sin',cos:'Math.cos',tan:'Math.tan',sqrt:'Math.sqrt',abs:'Math.abs',log:'Math.log10',ln:'Math.log'};Object.entries(names).forEach(([name,fn])=>{expr=expr.replace(new RegExp('\\b'+name+'\\b','g'),fn);});if(/[^0-9x+\-*/().,\sMathPIE]/.test(expr)||/Math\.(?!PI|E|sin|cos|tan|sqrt|abs|log10|log)/.test(expr))throw Error('unsafe');const fn=new Function('x','return ('+expr+');');const probe=fn(0);if(!Number.isFinite(Number(probe))&&expr.indexOf('1/x')===-1&&expr.indexOf('/x')===-1){}return fn;}
+    compile(source){let expr=source.toLowerCase().replace(/π/g,'pi').replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/\^/g,'**');if(!/^[0-9x+\-*/().,\s_a-z]+$/.test(expr))throw Error('characters');expr=expr.replace(/\bpi\b/g,'Math.PI').replace(/\be\b/g,'Math.E');const names={sin:'Math.sin',cos:'Math.cos',tan:'Math.tan',sqrt:'Math.sqrt',abs:'Math.abs',log:'Math.log10',ln:'Math.log'};Object.entries(names).forEach(([name,fn])=>{expr=expr.replace(new RegExp('\\b'+name+'\\b','g'),fn);});if(/[^0-9x+\-*/().,\sMathPIE]/.test(expr)||/Math\.(?!PI|E|sin|cos|tan|sqrt|abs|log10|log)/.test(expr))throw Error('unsafe');const fn=new Function('x','return ('+expr+');');fn(0);return fn;}
     plot(){if(!this.ctx)return;const w=this.canvas.clientWidth,h=this.canvas.clientHeight;if(!w||!h)return;this.ctx.clearRect(0,0,w,h);this.drawGrid(w,h);let fn;try{fn=this.compile(this.expression);}catch{return;}this.ctx.save();this.ctx.lineWidth=2;this.ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--graph-line').trim()||'#5ee7ff';this.ctx.beginPath();let started=false,previousY=null;for(let px=0;px<=w;px++){const x=this.toX(px),y=Number(fn(x));if(!Number.isFinite(y)){started=false;previousY=null;continue;}const py=this.toY(y);if(py<-h*3||py>h*3){started=false;previousY=null;continue;}if(!started||previousY!==null&&Math.abs(py-previousY)>h*1.5)this.ctx.moveTo(px,py);else this.ctx.lineTo(px,py);started=true;previousY=py;}this.ctx.stroke();this.ctx.restore();}
     drawGrid(w,h){const s=getComputedStyle(document.documentElement),grid=s.getPropertyValue('--graph-grid').trim()||'rgba(128,128,128,.18)',axis=s.getPropertyValue('--graph-axis').trim()||'rgba(128,128,128,.65)';this.ctx.lineWidth=1;this.ctx.strokeStyle=grid;this.ctx.fillStyle=s.getPropertyValue('--text-secondary').trim()||'#999';this.ctx.font='10px Inter,sans-serif';const step=this.gridStep();for(let x=Math.ceil(this.xMin/step)*step;x<=this.xMax;x+=step){const px=this.toPx(x,w);this.ctx.beginPath();this.ctx.moveTo(px,0);this.ctx.lineTo(px,h);this.ctx.stroke();if(Math.abs(x)>1e-10)this.ctx.fillText(this.label(x),px+3,Math.min(h-4,Math.max(12,this.toY(0)+12)));}for(let y=Math.ceil(this.yMin/step)*step;y<=this.yMax;y+=step){const py=this.toY(y);this.ctx.beginPath();this.ctx.moveTo(0,py);this.ctx.lineTo(w,py);this.ctx.stroke();if(Math.abs(y)>1e-10)this.ctx.fillText(this.label(y),4,py-3);}this.ctx.strokeStyle=axis;this.ctx.lineWidth=1.5;const ax=this.toPx(0,w),ay=this.toY(0);if(ax>=0&&ax<=w){this.ctx.beginPath();this.ctx.moveTo(ax,0);this.ctx.lineTo(ax,h);this.ctx.stroke();}if(ay>=0&&ay<=h){this.ctx.beginPath();this.ctx.moveTo(0,ay);this.ctx.lineTo(w,ay);this.ctx.stroke();}}
     gridStep(){const raw=Math.max(this.xMax-this.xMin,this.yMax-this.yMin)/10,p=Math.pow(10,Math.floor(Math.log10(raw))),n=raw/p;return(n<2?1:n<5?2:5)*p;}
     toX(px){return this.xMin+(px/this.canvas.clientWidth)*(this.xMax-this.xMin)}toY(y){return this.canvas.clientHeight-((y-this.yMin)/(this.yMax-this.yMin))*this.canvas.clientHeight}toPx(x,w){return((x-this.xMin)/(this.xMax-this.xMin))*w}label(v){return Math.abs(v)>=1000?v.toExponential(0):String(Number(v.toFixed(4)));}setStatus(t,error){if(this.status){this.status.textContent=t;this.status.classList.toggle('error',error);}}
 }
 document.addEventListener('DOMContentLoaded',()=>new GraphingCalculator());
-
-document.addEventListener('DOMContentLoaded',()=>{
-    const sidebar=document.getElementById('featureSidebar');
-    const list=sidebar?.querySelector('.feature-list');
-    if(!sidebar||!list)return;
-    const content=document.createElement('div');
-    content.className='sidebar-feature-content';
-    sidebar.appendChild(content);
-    const items=[
-        ['historyToggle','historyPanel','calculator-tools'],
-        ['memoryPanel'],
-        ['scientificToggle','scientificPanel'],
-        ['graphToggle','graphPanel'],
-        ['statisticsToggle','statisticsPanel']
-    ];
-    const moved=[];
-    const memory=document.querySelector('.memory-panel');
-    if(memory){memory.dataset.sidebarFeature='memory';content.appendChild(memory);moved.push(memory);}
-    items.forEach(group=>{
-        group.forEach(id=>{const el=id==='memoryPanel'?memory:document.getElementById(id)||document.querySelector('.calculator-tools');if(el&&!moved.includes(el)){el.dataset.sidebarFeature=el.id||id;content.appendChild(el);moved.push(el);}});
-    });
-    const controls=sidebar.querySelectorAll('.feature-item');
-    const hideAll=()=>{content.querySelectorAll('[data-sidebar-feature]').forEach(el=>{el.classList.remove('sidebar-feature-active');if(el.classList.contains('history-panel')||el.classList.contains('scientific-panel')||el.classList.contains('graph-panel')||el.classList.contains('statistics-panel'))el.classList.remove('is-open');});};
-    const showFeature=feature=>{
-        hideAll();
-        let targets=[];
-        if(feature==='history')targets=['historyToggle','historyPanel'];
-        if(feature==='memory')targets=['memory'];
-        if(feature==='scientific')targets=['scientificToggle','scientificPanel'];
-        if(feature==='graph')targets=['graphToggle','graphPanel'];
-        if(feature==='statistics')targets=['statisticsToggle','statisticsPanel'];
-        targets.forEach(id=>{const el=id==='memory'?memory:document.getElementById(id);if(el){el.classList.add('sidebar-feature-active');if(el.classList.contains('history-panel')||el.classList.contains('scientific-panel')||el.classList.contains('graph-panel')||el.classList.contains('statistics-panel'))el.classList.add('is-open');}});
-        sidebar.classList.add('feature-view-open');
-        const target=targets.map(id=>id==='memory'?memory:document.getElementById(id)).find(Boolean);
-        if(typeof anime==='function'&&target&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){anime.remove(content.querySelectorAll('.sidebar-feature-active'));anime({targets:content.querySelectorAll('.sidebar-feature-active'),opacity:[0,1],translateX:[8,0],duration:220,easing:'easeOutCubic'});}
-    };
-    controls.forEach(item=>item.addEventListener('click',e=>{
-        const feature=item.dataset.feature;
-        if(feature==='basic'||feature==='theme')return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        document.getElementById('sidebarOpen')?.click();
-        showFeature(feature);
-    },true));
-    const basic=sidebar.querySelector('[data-feature="basic"]');
-    basic?.addEventListener('click',()=>{hideAll();sidebar.classList.remove('feature-view-open');});
-    const theme=sidebar.querySelector('[data-feature="theme"]);
-    theme?.addEventListener('click',()=>document.getElementById('themeToggle')?.click());
-});
