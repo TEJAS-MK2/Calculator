@@ -1,0 +1,103 @@
+// Advanced numerical toolkit for @tejas-mk2/calculator-core.
+// Dependency-free, deterministic helpers intended for serious calculation workloads.
+
+export class MatrixError extends Error {
+  constructor(message, code = 'MATRIX_ERROR') { super(message); this.name = 'MatrixError'; this.code = code; }
+}
+
+function finiteNumber(value, name = 'value') {
+  const n = Number(value);
+  if (!Number.isFinite(n)) throw new TypeError(`${name} must be a finite number`);
+  return n;
+}
+
+function finiteVector(values, name = 'values') {
+  if (!Array.isArray(values) || values.length === 0) throw new TypeError(`${name} must be a non-empty array`);
+  return values.map((value, index) => finiteNumber(value, `${name}[${index}]`));
+}
+
+export function clamp(value, min, max) {
+  const n = finiteNumber(value); const lo = finiteNumber(min, 'min'); const hi = finiteNumber(max, 'max');
+  if (lo > hi) throw new RangeError('min cannot be greater than max');
+  return Math.min(hi, Math.max(lo, n));
+}
+
+export function lerp(a, b, t) { return finiteNumber(a) + (finiteNumber(b) - finiteNumber(a)) * finiteNumber(t); }
+export function inverseLerp(a, b, value) { const x = finiteNumber(a), y = finiteNumber(b), v = finiteNumber(value); if (x === y) throw new RangeError('inverseLerp requires distinct endpoints'); return (v - x) / (y - x); }
+export function remap(value, inMin, inMax, outMin, outMax) { return lerp(outMin, outMax, inverseLerp(inMin, inMax, value)); }
+
+export function sum(values) { return finiteVector(values).reduce((a, b) => a + b, 0); }
+export function product(values) { return finiteVector(values).reduce((a, b) => a * b, 1); }
+export function mean(values) { const v = finiteVector(values); return sum(v) / v.length; }
+export function geometricMean(values) { const v = finiteVector(values); if (v.some(x => x <= 0)) throw new RangeError('geometricMean requires positive values'); return Math.exp(v.reduce((s, x) => s + Math.log(x), 0) / v.length); }
+export function harmonicMean(values) { const v = finiteVector(values); if (v.some(x => x === 0)) throw new RangeError('harmonicMean cannot use zero'); return v.length / v.reduce((s, x) => s + 1 / x, 0); }
+export function median(values) { const v = finiteVector(values).sort((a, b) => a - b); const m = Math.floor(v.length / 2); return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; }
+export function quantile(values, q) { const v = finiteVector(values).sort((a, b) => a - b); const p = finiteNumber(q, 'q'); if (p < 0 || p > 1) throw new RangeError('q must be between 0 and 1'); const index = (v.length - 1) * p, lo = Math.floor(index), hi = Math.ceil(index); return lo === hi ? v[lo] : lerp(v[lo], v[hi], index - lo); }
+export function variance(values, sample = false) { const v = finiteVector(values); if (sample && v.length < 2) throw new RangeError('Sample variance requires at least two values'); const m = mean(v); return v.reduce((s, x) => s + (x - m) ** 2, 0) / (v.length - (sample ? 1 : 0)); }
+export function standardDeviation(values, sample = false) { return Math.sqrt(variance(values, sample)); }
+export function covariance(x, y, sample = false) { const a = finiteVector(x, 'x'), b = finiteVector(y, 'y'); if (a.length !== b.length) throw new RangeError('Vectors must have equal length'); if (sample && a.length < 2) throw new RangeError('Sample covariance requires at least two values'); const ax = mean(a), by = mean(b); return a.reduce((s, value, i) => s + (value - ax) * (b[i] - by), 0) / (a.length - (sample ? 1 : 0)); }
+export function correlation(x, y) { const c = covariance(x, y); const d = Math.sqrt(variance(x) * variance(y)); if (d === 0) throw new RangeError('Correlation is undefined for zero-variance data'); return c / d; }
+
+export function factorial(n) { const x = finiteNumber(n, 'n'); if (!Number.isInteger(x) || x < 0 || x > 170) throw new RangeError('n must be an integer from 0 to 170'); let r = 1; for (let i = 2; i <= x; i++) r *= i; return r; }
+export function permutations(n, r) { const a = finiteNumber(n, 'n'), b = finiteNumber(r, 'r'); if (![a, b].every(Number.isInteger) || a < 0 || b < 0 || b > a) throw new RangeError('Require integers with 0 <= r <= n'); let result = 1; for (let i = 0; i < b; i++) result *= a - i; return result; }
+export function combinations(n, r) { const a = finiteNumber(n, 'n'), b = finiteNumber(r, 'r'); if (![a, b].every(Number.isInteger) || a < 0 || b < 0 || b > a) throw new RangeError('Require integers with 0 <= r <= n'); const k = Math.min(b, a - b); let result = 1; for (let i = 1; i <= k; i++) result = result * (a - k + i) / i; return result; }
+export function gcd(...values) { const v = finiteVector(values).map(Math.trunc); const g = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; }; return v.reduce(g); }
+export function lcm(...values) { const v = finiteVector(values).map(Math.trunc); return v.reduce((a, b) => a === 0 || b === 0 ? 0 : Math.abs(a / gcd(a, b) * b)); }
+export function isPrime(value) { const n = finiteNumber(value, 'value'); if (!Number.isInteger(n) || n < 2) return false; if (n % 2 === 0) return n === 2; for (let i = 3; i <= Math.sqrt(n); i += 2) if (n % i === 0) return false; return true; }
+export function nextPrime(value) { let n = Math.max(1, Math.floor(finiteNumber(value, 'value'))) + 1; while (!isPrime(n)) n++; return n; }
+export function primeFactors(value) { let n = Math.trunc(finiteNumber(value, 'value')); if (n < 2) throw new RangeError('value must be at least 2'); const factors = []; while (n % 2 === 0) { factors.push(2); n /= 2; } for (let p = 3; p <= Math.sqrt(n); p += 2) while (n % p === 0) { factors.push(p); n /= p; } if (n > 1) factors.push(n); return factors; }
+
+export function solveQuadratic(a, b, c, tolerance = 1e-14) {
+  a = finiteNumber(a, 'a'); b = finiteNumber(b, 'b'); c = finiteNumber(c, 'c'); tolerance = Math.abs(finiteNumber(tolerance, 'tolerance'));
+  if (Math.abs(a) <= tolerance) { if (Math.abs(b) <= tolerance) return Math.abs(c) <= tolerance ? { type: 'identity', roots: [] } : { type: 'none', roots: [] }; return { type: 'linear', roots: [-c / b] }; }
+  const discriminant = b * b - 4 * a * c;
+  if (discriminant < -tolerance) return { type: 'complex', discriminant, roots: [] };
+  if (Math.abs(discriminant) <= tolerance) return { type: 'real', discriminant: 0, roots: [-b / (2 * a)] };
+  const sqrtD = Math.sqrt(discriminant); const q = -0.5 * (b + Math.sign(b || 1) * sqrtD); const r1 = q / a; const r2 = c / q;
+  return { type: 'real', discriminant, roots: [Math.min(r1, r2), Math.max(r1, r2)] };
+}
+
+export function newtonRaphson(fn, derivative, initial, options = {}) {
+  if (typeof fn !== 'function' || typeof derivative !== 'function') throw new TypeError('fn and derivative must be functions');
+  let x = finiteNumber(initial, 'initial'); const tolerance = Math.abs(finiteNumber(options.tolerance ?? 1e-12, 'tolerance')); const maxIterations = Math.max(1, Math.trunc(finiteNumber(options.maxIterations ?? 100, 'maxIterations')));
+  for (let iteration = 0; iteration < maxIterations; iteration++) { const fx = finiteNumber(fn(x), 'fn(x)'); const dfx = finiteNumber(derivative(x), 'derivative(x)'); if (Math.abs(dfx) <= Number.EPSILON) throw new RangeError('Derivative is too close to zero'); const next = x - fx / dfx; if (!Number.isFinite(next)) throw new RangeError('Newton-Raphson diverged'); if (Math.abs(next - x) <= tolerance) return { root: next, iterations: iteration + 1, converged: true }; x = next; }
+  return { root: x, iterations: maxIterations, converged: false };
+}
+
+export function bisection(fn, lower, upper, options = {}) {
+  if (typeof fn !== 'function') throw new TypeError('fn must be a function'); let lo = finiteNumber(lower, 'lower'), hi = finiteNumber(upper, 'upper');
+  const tolerance = Math.abs(finiteNumber(options.tolerance ?? 1e-12, 'tolerance')); const maxIterations = Math.max(1, Math.trunc(finiteNumber(options.maxIterations ?? 200, 'maxIterations')));
+  let flo = finiteNumber(fn(lo), 'fn(lower)'), fhi = finiteNumber(fn(hi), 'fn(upper)'); if (flo === 0) return { root: lo, iterations: 0, converged: true }; if (fhi === 0) return { root: hi, iterations: 0, converged: true }; if (Math.sign(flo) === Math.sign(fhi)) throw new RangeError('Bisection interval must bracket a root');
+  for (let iteration = 1; iteration <= maxIterations; iteration++) { const mid = (lo + hi) / 2, fm = finiteNumber(fn(mid), 'fn(mid)'); if (Math.abs(fm) <= tolerance || Math.abs(hi - lo) <= tolerance) return { root: mid, iterations: iteration, converged: true }; if (Math.sign(flo) === Math.sign(fm)) { lo = mid; flo = fm; } else { hi = mid; fhi = fm; } }
+  return { root: (lo + hi) / 2, iterations: maxIterations, converged: false };
+}
+
+export function integrateSimpson(fn, lower, upper, intervals = 1000) {
+  if (typeof fn !== 'function') throw new TypeError('fn must be a function'); const a = finiteNumber(lower, 'lower'), b = finiteNumber(upper, 'upper'); let n = Math.max(2, Math.trunc(finiteNumber(intervals, 'intervals'))); if (n % 2) n++; const h = (b - a) / n; let total = finiteNumber(fn(a), 'fn(lower)') + finiteNumber(fn(b), 'fn(upper)'); for (let i = 1; i < n; i++) total += (i % 2 ? 4 : 2) * finiteNumber(fn(a + i * h), 'fn(x)'); return total * h / 3;
+}
+
+export function derivative(fn, x, step = 1e-6) { if (typeof fn !== 'function') throw new TypeError('fn must be a function'); const n = finiteNumber(x, 'x'), h = Math.abs(finiteNumber(step, 'step')); if (h === 0) throw new RangeError('step must be non-zero'); return (finiteNumber(fn(n + h)) - finiteNumber(fn(n - h))) / (2 * h); }
+
+export function matrix(rows) {
+  if (!Array.isArray(rows) || !rows.length || !Array.isArray(rows[0]) || !rows[0].length) throw new MatrixError('Matrix must be a non-empty rectangular array', 'INVALID_MATRIX');
+  const cols = rows[0].length; if (rows.some(row => !Array.isArray(row) || row.length !== cols)) throw new MatrixError('Matrix rows must have equal lengths', 'NON_RECTANGULAR');
+  const data = rows.map(row => row.map((value, i) => finiteNumber(value, `matrix[${i}]`)));
+  return Object.freeze(data.map(row => Object.freeze(row)));
+}
+export function matrixAdd(a, b) { const A = matrix(a), B = matrix(b); if (A.length !== B.length || A[0].length !== B[0].length) throw new MatrixError('Matrix dimensions must match', 'DIMENSION_MISMATCH'); return A.map((row, i) => row.map((x, j) => x + B[i][j])); }
+export function matrixMultiply(a, b) { const A = matrix(a), B = matrix(b); if (A[0].length !== B.length) throw new MatrixError('Inner matrix dimensions must match', 'DIMENSION_MISMATCH'); return A.map(row => B[0].map((_, j) => row.reduce((s, x, k) => s + x * B[k][j], 0))); }
+export function transpose(a) { const A = matrix(a); return A[0].map((_, j) => A.map(row => row[j])); }
+export function determinant(a) { const A = matrix(a); if (A.length !== A[0].length) throw new MatrixError('Determinant requires a square matrix', 'NOT_SQUARE'); const n = A.length, M = A.map(row => [...row]); let det = 1; for (let col = 0; col < n; col++) { let pivot = col; for (let row = col + 1; row < n; row++) if (Math.abs(M[row][col]) > Math.abs(M[pivot][col])) pivot = row; if (Math.abs(M[pivot][col]) <= Number.EPSILON) return 0; if (pivot !== col) { [M[pivot], M[col]] = [M[col], M[pivot]]; det *= -1; } const p = M[col][col]; det *= p; for (let row = col + 1; row < n; row++) { const factor = M[row][col] / p; for (let k = col + 1; k < n; k++) M[row][k] -= factor * M[col][k]; } } return det; }
+
+export const constants = Object.freeze({
+  PI: Math.PI,
+  E: Math.E,
+  TAU: Math.PI * 2,
+  PHI: (1 + Math.sqrt(5)) / 2,
+  SQRT2: Math.SQRT2,
+  SQRT3: Math.sqrt(3),
+  LN2: Math.LN2,
+  LN10: Math.LN10,
+  LOG2E: Math.LOG2E,
+  LOG10E: Math.LOG10E,
+});
