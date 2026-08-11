@@ -1,16 +1,18 @@
 # pijush-calculator
 
-A **lightweight, dependency-free Ruby arithmetic library** for reusable calculator operations.
+A lightweight, dependency-free Ruby arithmetic engine for reusable calculator and math applications.
 
-## Current release
+## Current engine
 
-**v0.1.2 — Ruby arithmetic engine**
+The Ruby engine now provides a consistent arithmetic API with explicit error handling.
 
-The gem is independent of the web UI and exposes a small, predictable API for basic arithmetic.
+### Features
 
-## Features
-
-- Addition, subtraction, multiplication, and division
+- Addition, subtraction, multiplication, division
+- Modulo
+- Power
+- Percentage
+- Absolute value, min/max, average, clamp, reciprocal, square, and cube helpers
 - Explicit `ZeroDivisionError` handling
 - Ruby 3.0+
 - Zero runtime dependencies
@@ -18,19 +20,15 @@ The gem is independent of the web UI and exposes a small, predictable API for ba
 
 ## Installation
 
-From RubyGems.org:
-
 ```bash
 gem install pijush-calculator
 ```
 
-From GitHub Packages RubyGems:
+GitHub Packages:
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```
-
-GitHub Packages RubyGems uses the `rubygems.pkg.github.com` registry and requires authentication for package access.
 
 ## Usage
 
@@ -41,39 +39,43 @@ PijushCalculator.add(2, 3)        # 5
 PijushCalculator.subtract(8, 3)   # 5
 PijushCalculator.multiply(4, 6)   # 24
 PijushCalculator.divide(20, 5)    # 4.0
+PijushCalculator.modulo(20, 6)    # 2
+PijushCalculator.power(2, 8)      # 256
+PijushCalculator.percentage(250, 20) # 50.0
 ```
 
-Division by zero raises `ZeroDivisionError`.
+Division and modulo by zero raise `ZeroDivisionError`.
 
 ## API
 
 | Method | Result |
 |---|---|
-| `PijushCalculator.add(a, b)` | `a + b` |
-| `PijushCalculator.subtract(a, b)` | `a - b` |
-| `PijushCalculator.multiply(a, b)` | `a * b` |
-| `PijushCalculator.divide(a, b)` | Floating-point quotient; raises on zero divisor |
+| `add(a, b)` | Sum |
+| `subtract(a, b)` | Difference |
+| `multiply(a, b)` | Product |
+| `divide(a, b)` | Quotient |
+| `modulo(a, b)` | Remainder |
+| `power(a, b)` | Power |
+| `percentage(value, percent)` | Percentage value |
+
+Additional utility helpers are available in the engine for common arithmetic operations.
 
 ## Development
 
 ```bash
 gem build pijush-calculator.gemspec
-gem specification pijush-calculator-0.1.2.gem
-gem install ./pijush-calculator-0.1.2.gem
+gem test
 ```
 
 ## Publishing
 
-Releases are handled through GitHub Actions. Registry credentials and tokens must never be committed to source code or workflow files.
-
-Published package versions are immutable, so future releases must use a new version number.
+Releases are handled through GitHub Actions. Registry credentials must never be committed to source code or workflow files. Published versions are immutable; every release requires a new version.
 
 ## Package information
 
 | Property | Value |
 |---|---|
 | Gem | `pijush-calculator` |
-| Version | `0.1.2` |
 | RubyGems | `https://rubygems.org/gems/pijush-calculator` |
 | GitHub Packages | `https://github.com/TEJAS-MK2/Calculator/packages` |
 | Runtime dependencies | None |
