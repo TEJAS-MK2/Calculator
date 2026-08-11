@@ -21,70 +21,28 @@
     <i class="fas fa-bars" aria-hidden="true"></i>
   </button>
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-
   <aside class="feature-sidebar" id="featureSidebar" aria-hidden="true">
-    <div class="sidebar-head">
-      <span class="sidebar-title">Controls</span>
-      <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close controls">
-        <i class="fas fa-xmark" aria-hidden="true"></i>
-      </button>
-    </div>
+    <div class="sidebar-head"><span class="sidebar-title">Controls</span><button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close controls"><i class="fas fa-xmark" aria-hidden="true"></i></button></div>
     <nav class="feature-list" aria-label="Calculator controls">
-      <button class="feature-item" data-feature="history" type="button">
-        <i class="fas fa-clock-rotate-left" aria-hidden="true"></i><span>History</span>
-      </button>
-      <button class="feature-item" data-feature="clear" type="button">
-        <i class="fas fa-eraser" aria-hidden="true"></i><span>Clear</span>
-      </button>
-      <button class="feature-item" data-feature="theme" type="button">
-        <i class="fas fa-circle-half-stroke" aria-hidden="true"></i><span>Theme</span>
-      </button>
+      <button class="feature-item" data-feature="history" type="button"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i><span>History</span></button>
+      <button class="feature-item" data-feature="clear" type="button"><i class="fas fa-eraser" aria-hidden="true"></i><span>Clear</span></button>
+      <button class="feature-item" data-feature="theme" type="button"><i class="fas fa-circle-half-stroke" aria-hidden="true"></i><span>Theme</span></button>
     </nav>
   </aside>
-
   <div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center">
-    <div class="calculator-container">
-      <main class="calculator" aria-label="Calculator">
-        <div class="display-container" aria-live="polite">
-          <div class="expression-preview" id="expressionPreview"></div>
-          <div class="display-secondary" id="displaySecondary">0</div>
-          <div class="display-primary" id="displayPrimary">0</div>
-        </div>
-
-        <div class="history-panel" id="historyPanel" aria-hidden="true">
-          <div class="history-header"><span>Calculation History</span><span class="history-count" id="historyCount">0</span></div>
-          <div class="history-list" id="historyList"><div class="history-empty">No calculations yet</div></div>
-        </div>
-
-        <div class="button-grid">
-          <button class="btn btn-function" data-action="clear-all" type="button">AC</button>
-          <button class="btn btn-number" data-number="7" type="button">7</button>
-          <button class="btn btn-number" data-number="8" type="button">8</button>
-          <button class="btn btn-number" data-number="9" type="button">9</button>
-          <button class="btn btn-operator" data-action="divide" type="button">÷</button>
-          <button class="btn btn-number" data-number="4" type="button">4</button>
-          <button class="btn btn-number" data-number="5" type="button">5</button>
-          <button class="btn btn-number" data-number="6" type="button">6</button>
-          <button class="btn btn-operator" data-action="multiply" type="button">×</button>
-          <button class="btn btn-number" data-number="1" type="button">1</button>
-          <button class="btn btn-number" data-number="2" type="button">2</button>
-          <button class="btn btn-number" data-number="3" type="button">3</button>
-          <button class="btn btn-operator" data-action="subtract" type="button">−</button>
-          <button class="btn btn-number btn-zero" data-number="0" type="button">0</button>
-          <button class="btn btn-number" data-action="decimal" type="button">.</button>
-          <button class="btn btn-operator" data-action="add" type="button">+</button>
-          <button class="btn btn-equals" data-action="equals" type="button">=</button>
-        </div>
-      </main>
-    </div>
+    <div class="calculator-container"><main class="calculator" aria-label="Calculator">
+      <div class="display-container" aria-live="polite"><div class="expression-preview" id="expressionPreview"></div><div class="display-secondary" id="displaySecondary">0</div><div class="display-primary" id="displayPrimary">0</div></div>
+      <div class="history-panel" id="historyPanel" aria-hidden="true"><div class="history-header"><span>Calculation History</span><span class="history-count" id="historyCount">0</span></div><div class="history-list" id="historyList"><div class="history-empty">No calculations yet</div></div></div>
+      <div class="button-grid">
+        <button class="btn btn-number" data-number="7" type="button">7</button><button class="btn btn-number" data-number="8" type="button">8</button><button class="btn btn-number" data-number="9" type="button">9</button><button class="btn btn-operator" data-action="divide" type="button">÷</button>
+        <button class="btn btn-number" data-number="4" type="button">4</button><button class="btn btn-number" data-number="5" type="button">5</button><button class="btn btn-number" data-number="6" type="button">6</button><button class="btn btn-operator" data-action="multiply" type="button">×</button>
+        <button class="btn btn-number" data-number="1" type="button">1</button><button class="btn btn-number" data-number="2" type="button">2</button><button class="btn btn-number" data-number="3" type="button">3</button><button class="btn btn-operator" data-action="subtract" type="button">−</button>
+        <button class="btn btn-number btn-zero" data-number="0" type="button">0</button><button class="btn btn-number" data-action="decimal" type="button">.</button><button class="btn btn-operator" data-action="add" type="button">+</button><button class="btn btn-equals" data-action="equals" type="button">=</button>
+      </div>
+    </main></div>
   </div>
-
-  <script src="./script.js?v=18"></script>
-  <script type="module" src="./calculator-core-ui.js?v=5"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
-    }
-  </script>
+  <script src="./script.js?v=19"></script>
+  <script type="module" src="./calculator-core-ui.js?v=6"></script>
+  <script>if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));</script>
 </body>
 </html>
