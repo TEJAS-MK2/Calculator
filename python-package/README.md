@@ -49,6 +49,8 @@ python -m pytest
 python -m build
 ```
 
+The CI workflow installs the package in editable mode before running the test suite so imports are tested against the package layout used for distribution.
+
 ## Publishing
 
 Publishing is performed automatically through GitHub Actions using **PyPI Trusted Publishing (OIDC)**. No long-lived PyPI API token is stored in the repository.
