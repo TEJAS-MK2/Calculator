@@ -23,6 +23,10 @@
       document.head.appendChild(style);
     }
     style.textContent = `
+      .calculator.has-feature .button-grid { display: none; }
+      .calculator.has-feature .calculator-feature-panel { margin-top: 0; max-height: min(58vh, 430px); overflow: auto; }
+      .calculator-feature-panel { width: 100%; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+      .calculator-feature-panel .engine-panel-head { position: sticky; top: -12px; z-index: 3; padding-bottom: 8px; background: inherit; }
       html[data-theme="dark"] .calculator-feature-panel,
       html[data-theme="dark"] .about-panel { color-scheme: dark; }
       html[data-theme="light"] .calculator-feature-panel,
@@ -174,13 +178,8 @@
     animate(panel, { opacity: [0, 1], translateY: [12, 0], scale: [0.985, 1], duration: 260, easing: 'easeOutCubic' });
   }
 
-  function closeEngine() {
-    resetFeaturePanels();
-  }
-
-  function closeAbout() {
-    resetFeaturePanels();
-  }
+  function closeEngine() { resetFeaturePanels(); }
+  function closeAbout() { resetFeaturePanels(); }
 
   function closeSidebar() {
     const sidebar = $('featureSidebar');
