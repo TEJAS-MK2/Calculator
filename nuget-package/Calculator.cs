@@ -36,4 +36,23 @@ public static class Calculator
     }
 
     public static decimal Percentage(decimal value, decimal percent) => value * percent / 100m;
+    public static decimal Absolute(decimal value) => Math.Abs(value);
+    public static decimal Minimum(decimal a, decimal b) => Math.Min(a, b);
+    public static decimal Maximum(decimal a, decimal b) => Math.Max(a, b);
+    public static decimal Average(decimal a, decimal b) => (a + b) / 2m;
+
+    public static decimal Clamp(decimal value, decimal minimum, decimal maximum)
+    {
+        if (minimum > maximum) throw new ArgumentException("minimum cannot exceed maximum");
+        return Math.Clamp(value, minimum, maximum);
+    }
+
+    public static decimal Reciprocal(decimal value)
+    {
+        if (value == 0m) throw new DivideByZeroException("Cannot take reciprocal of zero.");
+        return 1m / value;
+    }
+
+    public static decimal Square(decimal value) => value * value;
+    public static decimal Cube(decimal value) => value * value * value;
 }
