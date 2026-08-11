@@ -1,36 +1,46 @@
 # @tejas-mk2/calculator-core
 
-A dependency-free JavaScript calculation engine for Node.js, browser applications, and reusable math tooling.
+Advanced, dependency-free JavaScript/ESM calculation engine for Node.js, browsers, PWAs, and reusable math tooling.
 
-## Engine
+## Engine capabilities
 
-The current engine supports both simple arithmetic and advanced expression evaluation.
-
-### Core operations
-
-- Addition, subtraction, multiplication, division
-- Modulo
-- Powers
-- Percentages
-- Absolute value, min/max, average, clamp, reciprocal, square, and cube helpers
+The npm package is the most feature-rich engine in this project.
 
 ### Expression engine
 
-- Operator precedence and nested parentheses
+- Recursive-descent parser
+- Operator precedence
+- Parentheses and unary operators
 - Implicit multiplication
-- Unary `+` and `-`
 - Scientific notation
-- Variables
-- `pi`, `e`, `tau`, and `phi`
-- Trigonometric and inverse trigonometric functions
-- `sqrt`, `abs`, `floor`, `ceil`, `round`, `log`, `ln`, and `exp`
+- Binary modulo and postfix percentage syntax
+- Variables through a controlled scope object
+- Mathematical constants: `pi`, `e`, `tau`, `phi`
 - DEG, RAD, and GRAD angle modes
-- Exact rational arithmetic with `Fraction`
-- `evaluateExact()` for supported exact expressions
-- Factorial and temperature conversion helpers
-- Typed `EvaluationError` instances
-- Explicit division-by-zero and domain validation
 - No `eval()` or `Function()` constructor
+
+### Functions
+
+- `sin`, `cos`, `tan`
+- `asin`, `acos`, `atan`
+- `sqrt`, `abs`, `floor`, `ceil`, `round`
+- `log`, `ln`, `exp`
+
+### Exact and mathematical utilities
+
+- Immutable `Fraction` arithmetic
+- `evaluateExact()` for supported exact rational expressions
+- Factorial
+- Temperature conversion
+- Percentage
+- Absolute value
+- Minimum / maximum
+- Average
+- Clamp
+- Reciprocal
+- Square / cube
+- Typed `EvaluationError` codes
+- Explicit domain and division-by-zero validation
 - Zero runtime dependencies
 
 ## Installation
@@ -39,9 +49,9 @@ The current engine supports both simple arithmetic and advanced expression evalu
 npm install @tejas-mk2/calculator-core
 ```
 
-GitHub Packages is also supported:
+GitHub Packages:
 
-```text
+```ini
 @tejas-mk2:registry=https://npm.pkg.github.com
 ```
 
@@ -52,14 +62,14 @@ import {
   evaluate,
   evaluateExact,
   percentage,
-  Fraction,
   factorial,
+  Fraction,
   convertTemperature
 } from '@tejas-mk2/calculator-core';
 
 console.log(evaluate('(25 + 5) * 2')); // 60
-console.log(evaluate('10 % 3')); // 1
 console.log(evaluate('2^8')); // 256
+console.log(evaluate('10 % 3')); // 1
 console.log(evaluate('20%')); // 0.2
 console.log(evaluate('sin(90)', {}, { angleMode: 'DEG' })); // 1
 console.log(evaluate('x^2 + 1', { x: 5 })); // 26
@@ -69,28 +79,6 @@ console.log(factorial(5)); // 120
 console.log(convertTemperature(100, 'C', 'F')); // 212
 ```
 
-## Expression syntax
-
-```text
-+  -  *  /  %  ^  ( )  ,
-```
-
-Binary `%` performs modulo. Postfix `%` converts a value to a decimal percentage.
-
-### Variables
-
-```js
-evaluate('2*x + y', { x: 5, y: 3 }); // 13
-```
-
-### Angle modes
-
-```js
-evaluate('sin(90)', {}, { angleMode: 'DEG' });
-evaluate('sin(pi / 2)', {}, { angleMode: 'RAD' });
-evaluate('sin(100)', {}, { angleMode: 'GRAD' });
-```
-
 ## Exact arithmetic
 
 ```js
@@ -98,7 +86,9 @@ const result = evaluateExact('1 / 3 + 1 / 6');
 console.log(result.toString()); // 1/2
 ```
 
-## Error handling
+Exact mode intentionally rejects unsupported irrational constants and functions rather than silently approximating them.
+
+## Errors
 
 ```js
 import { evaluate, EvaluationError } from '@tejas-mk2/calculator-core';
@@ -116,8 +106,8 @@ try {
 
 | API | Purpose |
 |---|---|
-| `evaluate()` | Numeric expression evaluation |
-| `evaluateExact()` | Exact rational expression evaluation |
+| `evaluate()` | Advanced numeric expression evaluation |
+| `evaluateExact()` | Exact rational evaluation |
 | `Fraction` | Immutable rational values |
 | `percentage()` | Percentage calculation |
 | `factorial()` | Integer factorial |
@@ -132,7 +122,7 @@ npm test
 npm pack --dry-run
 ```
 
-Add regression tests for every parser rule and mathematical operation.
+Add regression tests for parser rules, domain errors, edge cases, and every public helper before publishing.
 
 ## Package information
 
