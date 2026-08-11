@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: pages
@@ -63,28 +63,33 @@ jobs:
           print('All local HTML assets exist.')
           PY
 
-      - name: Prepare Pages artifact
+      - name: Prepare Pages site
         run: |
           rm -rf _site
           mkdir _site
           rsync -a --exclude='.git' --exclude='.github' --exclude='_site' ./ _site/
+          touch _site/.nojekyll
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
+      - name: Publish to gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-  deploy:
-    needs: validate-and-deploy
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          git fetch origin gh-pages:refs/remotes/origin/gh-pages
+          rm -rf _deploy
+          git worktree add --force _deploy origin/gh-pages
+
+          find _deploy -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          rsync -a _site/ _deploy/
+
+          cd _deploy
+          git add --all
+          if git diff --cached --quiet; then
+            echo "No Pages changes to publish."
+          else
+            git commit -m "deploy: ${GITHUB_SHA}"
+            git push origin HEAD:gh-pages
+          fi
