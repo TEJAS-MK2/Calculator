@@ -1,19 +1,16 @@
 # pijush-calculator-gradle
 
-A lightweight Java arithmetic engine published to GitHub Packages using Gradle and `maven-publish`.
+Advanced, dependency-free Java arithmetic engine published to GitHub Packages using Gradle and `maven-publish`.
 
-## Engine
+## Engine capabilities
 
-The Gradle package uses `BigDecimal` with `MathContext.DECIMAL128` for predictable decimal arithmetic.
+The Gradle engine uses `BigDecimal` with `MathContext.DECIMAL128` for predictable decimal arithmetic.
 
-### Features
-
-- Addition, subtraction, multiplication, division
-- Modulo
-- Integer power
-- Percentage
-- Null validation
-- Division/modulo-by-zero protection
+- Addition, subtraction, multiplication, division, modulo
+- Integer power and percentage
+- Absolute value, min/max, average, clamp, reciprocal
+- Square and cube
+- Null validation and division/modulo-by-zero protection
 - Java 17
 - JUnit 5 tests
 - No runtime dependencies
@@ -36,28 +33,20 @@ https://maven.pkg.github.com/TEJAS-MK2/Calculator
 import io.github.tejasmk2.gradle.calculator.Calculator;
 import java.math.BigDecimal;
 
-BigDecimal result = Calculator.add(
-    new BigDecimal("2"),
-    new BigDecimal("3")
-);
-
-BigDecimal remainder = Calculator.modulo(
-    new BigDecimal("20"),
-    new BigDecimal("6")
-);
+BigDecimal result = Calculator.add(new BigDecimal("2"), new BigDecimal("3"));
+BigDecimal remainder = Calculator.modulo(new BigDecimal("20"), new BigDecimal("6"));
+BigDecimal power = Calculator.power(new BigDecimal("2"), 8);
+BigDecimal percent = Calculator.percentage(new BigDecimal("250"), new BigDecimal("20"));
 ```
 
 ## API
 
-| Method | Description |
+| Method | Purpose |
 |---|---|
-| `add(a, b)` | Adds values |
-| `subtract(a, b)` | Subtracts values |
-| `multiply(a, b)` | Multiplies values |
-| `divide(a, b)` | Divides values |
-| `modulo(a, b)` | Calculates remainder |
-| `power(a, exponent)` | Integer exponentiation |
-| `percentage(value, percent)` | Calculates a percentage |
+| `add`, `subtract`, `multiply`, `divide` | Basic arithmetic |
+| `modulo`, `power`, `percentage` | Extended arithmetic |
+| `absolute`, `minimum`, `maximum`, `average` | Numeric utilities |
+| `clamp`, `reciprocal`, `square`, `cube` | Value transformations |
 
 ## Development
 
@@ -66,7 +55,7 @@ gradle test
 gradle build
 ```
 
-For local publishing, configure `USERNAME` and `GITHUB_TOKEN`, then run:
+For local publishing, configure credentials through environment variables and run:
 
 ```bash
 gradle publish
@@ -74,7 +63,7 @@ gradle publish
 
 ## CI / Publishing
 
-The workflow sets up Java 17, runs the JUnit suite, builds the artifact, and publishes the Maven-compatible package to GitHub Packages. Credentials are supplied through GitHub Actions and are not committed to the repository.
+GitHub Actions sets up Java 17, runs the JUnit suite, builds the artifact, and publishes the Maven-compatible package to GitHub Packages. Credentials are supplied through GitHub Actions and are never committed.
 
 ## Links
 
