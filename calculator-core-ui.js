@@ -38,11 +38,12 @@ import { evaluate } from './packages/calculator-core/index.js';
     const rect = button.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height) * 1.8;
     const dot = document.createElement('span');
-    dot.className = 'anime-ripple';
-    dot.style.width = `${size}px`;
-    dot.style.height = `${size}px`;
-    dot.style.left = `${(event?.clientX ?? rect.left + rect.width / 2) - rect.left - size / 2}px`;
-    dot.style.top = `${(event?.clientY ?? rect.top + rect.height / 2) - rect.top - size / 2}px`;
+    Object.assign(dot.style, {
+      position: 'absolute', pointerEvents: 'none', borderRadius: '50%',
+      width: `${size}px`, height: `${size}px`, left: `${(event?.clientX ?? rect.left + rect.width / 2) - rect.left - size / 2}px`,
+      top: `${(event?.clientY ?? rect.top + rect.height / 2) - rect.top - size / 2}px`,
+      background: 'currentColor', transform: 'scale(0)', opacity: '0', zIndex: '0'
+    });
     button.appendChild(dot);
     window.anime({ targets: dot, scale: [0, 1], opacity: [0.28, 0], duration: 420, easing: 'easeOutCubic', complete: () => dot.remove() });
   }
