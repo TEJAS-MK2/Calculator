@@ -9,12 +9,8 @@
     const buttonGrid = document.querySelector('.button-grid');
     if (!sidebar || !open || !close || !list || !calculator || !buttonGrid) return;
 
-    const oldContent = sidebar.querySelector('.sidebar-feature-content');
-    oldContent?.remove();
+    sidebar.querySelector('.sidebar-feature-content')?.remove();
 
-    // The feature panels belong to the main calculator. Never move them into the sidebar.
-    const featureIds = ['historyToggle', 'clearHistory', 'historyPanel', 'scientificToggle', 'scientificPanel', 'graphToggle', 'graphPanel', 'statisticsToggle', 'statisticsPanel'];
-    const memoryPanel = calculator.querySelector('.memory-panel');
     const featureNodes = {
       history: ['historyToggle', 'clearHistory', 'historyPanel'],
       memory: ['memory-panel'],
@@ -22,36 +18,33 @@
       graph: ['graphToggle', 'graphPanel'],
       statistics: ['statisticsToggle', 'statisticsPanel']
     };
+    const memoryPanel = calculator.querySelector('.memory-panel');
 
-    // Restore anything previously moved by the legacy sidebar code.
+    // Restore panels that the previous sidebar implementation may have moved.
     const restoreNode = node => {
-      if (!node || node.parentElement !== sidebar) return;
+      if (!node || node.parentElement === calculator) return;
       calculator.insertBefore(node, buttonGrid);
     };
-    featureIds.forEach(id => restoreNode(document.getElementById(id)));
-    restoreNode(memoryPanel);
+    Object.values(featureNodes).flat().forEach(id => restoreNode(id === 'memory-panel' ? memoryPanel : document.getElementById(id)));
 
-    // Main-calculator feature layout.
     if (!document.getElementById('sidebar-main-layout-style')) {
       const style = document.createElement('style');
       style.id = 'sidebar-main-layout-style';
       style.textContent = `
         .calculator .sidebar-main-feature-hidden { display:none !important; }
         .calculator .sidebar-main-feature-visible { display:block !important; }
-        .calculator .sidebar-main-feature-visible.history-panel { display:block !important; }
         .calculator .sidebar-main-feature-visible.scientific-panel { display:grid !important; }
-        .calculator .sidebar-main-feature-visible.graph-panel,
-        .calculator .sidebar-main-feature-visible.statistics-panel { display:block !important; }
       `;
       document.head.appendChild(style);
     }
 
     const canAnimate = () => typeof window.anime === 'function' && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const allFeatureNodes = Object.values(featureNodes).flat().map(id => id === 'memory-panel' ? memoryPanel : document.getElementById(id)).filter(Boolean);
+    const nodeKey = node => node.classList.contains('memory-panel') ? 'memory-panel' : node.id;
 
-    const setPanelVisibility = (visibleFeature = 'basic') => {
+    const setPanelVisibility = feature => {
       allFeatureNodes.forEach(node => {
-        const active = visibleFeature !== 'basic' && featureNodes[visibleFeature]?.includes(node.id || (node.classList.contains('memory-panel') ? 'memory-panel' : ''));
+        const active = feature !== 'basic' && featureNodes[feature]?.includes(nodeKey(node));
         node.classList.toggle('sidebar-main-feature-visible', active);
         node.classList.toggle('sidebar-main-feature-hidden', !active);
         node.setAttribute('aria-hidden', String(!active));
@@ -71,9 +64,7 @@
           sidebar.classList.remove('is-open');
           sidebar.style.removeProperty('transform');
         }});
-      } else {
-        sidebar.classList.remove('is-open');
-      }
+      } else sidebar.classList.remove('is-open');
       backdrop?.classList.remove('is-open');
       sidebar.setAttribute('aria-hidden', 'true');
       open.setAttribute('aria-expanded', 'false');
@@ -99,6 +90,7 @@
       if (feature === 'basic') {
         resetFeatureControls();
         setPanelVisibility('basic');
+        sidebar.querySelectorAll('.feature-item').forEach(item => item.classList.toggle('active', item.dataset.feature === 'basic'));
         closeSidebar();
         return;
       }
@@ -136,11 +128,9 @@
     });
 
     document.addEventListener('keydown', event => {
-      if (event.key !== 'Escape' || !sidebar.classList.contains('is-open')) return;
-      closeSidebar();
+      if (event.key === 'Escape' && sidebar.classList.contains('is-open')) closeSidebar();
     });
 
-    // Start with the basic calculator visible in the main area.
     setPanelVisibility('basic');
     sidebar.classList.remove('is-open');
     sidebar.style.removeProperty('transform');
