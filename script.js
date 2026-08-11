@@ -30,6 +30,19 @@
     applyTheme();
   }
 
+  function toggleHistoryPanel() {
+    const panel = $('historyPanel');
+    if (!panel) return;
+    const open = !panel.classList.contains('is-open');
+    panel.classList.toggle('is-open', open);
+    panel.setAttribute('aria-hidden', String(!open));
+    if (open) window.dispatchEvent(new CustomEvent('calculator:history-open'));
+  }
+
+  function clearCalculator() {
+    document.querySelector('[data-action="clear-all"]')?.click();
+  }
+
   function setupSidebar() {
     const sidebar = $('featureSidebar');
     const openButton = $('sidebarOpen');
@@ -41,8 +54,10 @@
     const setOpen = open => {
       sidebar.classList.toggle('is-open', open);
       backdrop?.classList.toggle('is-open', open);
+      document.body.classList.toggle('sidebar-visible', open);
       sidebar.setAttribute('aria-hidden', String(!open));
       openButton.setAttribute('aria-expanded', String(open));
+      openButton.setAttribute('aria-label', open ? 'Close calculator controls' : 'Open calculator controls');
     };
 
     const close = () => setOpen(false);
@@ -53,18 +68,15 @@
 
       if (feature === 'theme') {
         toggleTheme();
-        close();
         return;
       }
-
       if (feature === 'clear') {
-        document.querySelector('[data-action="clear-all"]')?.click();
+        clearCalculator();
         close();
         return;
       }
-
       if (feature === 'history') {
-        $('historyToggle')?.click();
+        toggleHistoryPanel();
         close();
       }
     };
@@ -72,7 +84,7 @@
     openButton.addEventListener('click', event => {
       event.preventDefault();
       event.stopPropagation();
-      setOpen(true);
+      setOpen(!sidebar.classList.contains('is-open'));
     });
 
     closeButton.addEventListener('click', event => {
@@ -101,7 +113,6 @@
     setOpen(false);
   }
 
-  $('themeToggle')?.addEventListener('click', toggleTheme);
   applyTheme();
   setupSidebar();
   window.matchMedia?.('(prefers-color-scheme: light)').addEventListener?.('change', () => {
