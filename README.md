@@ -15,7 +15,7 @@
 
 ## Overview
 
-Modern Calculator combines a clean, responsive interface with reusable calculation engines. The web UI uses **`@tejas-mk2/calculator-core`** for expression parsing and mathematical evaluation, while the repository also includes **`pijush-calculator`**, a lightweight Ruby calculation gem.
+Modern Calculator combines a polished responsive interface with reusable calculation engines. The web UI uses **`@tejas-mk2/calculator-core`** for expression parsing and evaluation, while the repository also includes **`pijush-calculator`**, a lightweight Ruby calculation gem.
 
 ## Highlights
 
@@ -77,7 +77,7 @@ npm install @tejas-mk2/calculator-core
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```
 
-See the package READMEs for installation, authentication, API, and development details.
+Both packages are maintained independently from the browser UI. Package versions are immutable after publication, so releases use new versions.
 
 ## Calculator Controls
 
@@ -108,14 +108,13 @@ The interface uses a unified visual system with layered surfaces, subtle depth, 
 
 ## Tech Stack
 
-- **HTML5** — structure and accessibility
-- **CSS3** — responsive layout, themes, and visual effects
-- **JavaScript (ES6+)** — UI state and calculator integration
-- **Anime.js** — animations and micro-interactions
-- **Font Awesome** — interface icons
-- **Service Worker** — application-shell caching
-- **`@tejas-mk2/calculator-core`** — JavaScript calculation engine
-- **`pijush-calculator`** — Ruby calculation gem
+- HTML5 and CSS3
+- JavaScript ES6+
+- Anime.js
+- Font Awesome
+- Service Worker / PWA
+- `@tejas-mk2/calculator-core`
+- `pijush-calculator`
 
 ## GitHub Pages
 
@@ -130,9 +129,9 @@ git clone https://github.com/TEJAS-MK2/Calculator.git
 cd Calculator
 ```
 
-Open `index.html` for a simple local preview, or use a static HTTP server.
+Open `index.html` locally or use a static HTTP server.
 
-For the JavaScript package:
+JavaScript package:
 
 ```bash
 cd packages/calculator-core
@@ -140,7 +139,7 @@ npm test
 npm pack --dry-run
 ```
 
-For the Ruby gem:
+Ruby gem:
 
 ```bash
 cd ruby-gem
@@ -153,7 +152,7 @@ Bug reports, feature requests, and pull requests are welcome. Test calculator in
 
 ## License
 
-The main calculator is licensed under the Apache License 2.0. The reusable packages retain their own package licenses as documented in their directories.
+The main calculator is licensed under Apache License 2.0. Each reusable package retains the license documented in its own directory.
 
 ---
 
