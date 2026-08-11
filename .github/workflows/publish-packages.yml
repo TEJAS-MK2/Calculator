@@ -120,11 +120,30 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Configure Maven credentials
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p "$HOME/.m2"
+          cat > "$HOME/.m2/settings.xml" <<'EOF'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${env.GITHUB_ACTOR}</username>
+                <password>${env.GITHUB_TOKEN}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
       - name: Publish Java package
         working-directory: java-package
         env:
+          GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn -B deploy -DskipTests -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/TEJAS-MK2/Calculator
+        run: mvn -B deploy -DskipTests
 
   publish-gradle:
     name: Publish Gradle package
@@ -136,6 +155,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Make Gradle wrapper executable
+        working-directory: gradle-package
+        run: chmod +x gradlew
       - name: Publish Gradle package
         working-directory: gradle-package
         env:
@@ -167,8 +189,10 @@ jobs:
   publish-python:
     name: Publish Python package
     needs: test-engines
-    if: ${{ secrets.PYPI_API_TOKEN != '' }}
     runs-on: ubuntu-latest
+    env:
+      PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+    if: ${{ env.PYPI_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -189,8 +213,10 @@ jobs:
   publish-ruby:
     name: Publish Ruby gem
     needs: test-engines
-    if: ${{ secrets.RUBYGEMS_API_KEY != '' }}
     runs-on: ubuntu-latest
+    env:
+      RUBYGEMS_TOKEN: ${{ secrets.RUBYGEMS_API_KEY }}
+    if: ${{ env.RUBYGEMS_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
