@@ -6,24 +6,19 @@ A **safe, dependency-free JavaScript expression engine** for calculator applicat
 
 **v0.3.2 — Phase 2 scientific calculation engine**
 
-## Why use it?
-
-`@tejas-mk2/calculator-core` provides deterministic expression evaluation without a DOM dependency or dynamic JavaScript execution. It is designed to be reusable outside the Modern Calculator web application.
-
 ## Features
 
 - Operator precedence and nested parentheses
-- Implicit multiplication such as `2(5 + 3)` and `3pi`
+- Implicit multiplication: `2(5 + 3)`, `3pi`, `2sin(pi / 2)`
 - Unary `+` and `-`
 - Powers, percentages, and modulo
-- Variables through a scope object
-- Scientific notation
+- Variables and scientific notation
 - `pi`, `e`, `tau`, and `phi` constants
 - Trigonometric and scientific functions
 - DEG, RAD, and GRAD angle modes
 - Exact rational arithmetic with `Fraction`
 - `evaluateExact()` for supported exact expressions
-- Typed `EvaluationError` instances with machine-readable codes
+- Typed `EvaluationError` instances
 - Explicit division-by-zero and domain validation
 - No `eval()` or `Function()` constructor
 - Zero runtime dependencies
@@ -31,17 +26,19 @@ A **safe, dependency-free JavaScript expression engine** for calculator applicat
 
 ## Installation
 
-The package is published to GitHub Packages:
+From npm:
 
 ```bash
 npm install @tejas-mk2/calculator-core
 ```
 
-Configure the GitHub Packages npm registry for the `@tejas-mk2` scope:
+The package is also configured for GitHub Packages:
 
 ```text
 @tejas-mk2:registry=https://npm.pkg.github.com
 ```
+
+GitHub Packages npm packages must use a scoped package name. citeturn0search4
 
 ## Usage
 
@@ -67,7 +64,7 @@ console.log(percentage(250, 20)); // 50
 console.log(convertTemperature(100, 'C', 'F')); // 212
 ```
 
-## Expression Syntax
+## Expression syntax
 
 ### Operators
 
@@ -75,25 +72,7 @@ console.log(convertTemperature(100, 'C', 'F')); // 212
 +  -  *  /  %  ^
 ```
 
-Binary `%` performs modulo:
-
-```text
-10 % 3  →  1
-```
-
-Postfix `%` converts a value to a decimal percentage:
-
-```text
-50%  →  0.5
-```
-
-### Implicit multiplication
-
-```text
-2(5 + 3)
-3pi
-2sin(pi / 2)
-```
+Binary `%` performs modulo. Postfix `%` converts a value to a decimal percentage.
 
 ### Variables
 
@@ -120,8 +99,6 @@ log ln exp
 ```
 
 ## Exact arithmetic
-
-For supported rational expressions, `evaluateExact()` preserves the exact fraction instead of returning a floating-point approximation:
 
 ```js
 const result = evaluateExact('1 / 3 + 1 / 6');
@@ -151,7 +128,7 @@ Common error codes include `DIVISION_BY_ZERO`, `DOMAIN_ERROR`, `UNKNOWN_IDENTIFI
 | `evaluate()` | Floating-point expression evaluation |
 | `evaluateExact()` | Exact rational expression evaluation |
 | `Fraction` | Immutable normalized rational values |
-| `factorial()` | Integer factorial from 0 through 170 |
+| `factorial()` | Integer factorial |
 | `percentage()` | Percentage calculation |
 | `convertTemperature()` | C/F/K conversion |
 | `constants` | `pi`, `e`, `tau`, `phi` |
@@ -164,7 +141,7 @@ npm test
 npm pack --dry-run
 ```
 
-Tests cover precedence, scientific notation, implicit multiplication, variables, angle modes, percentages, modulo, exact fractions, and error handling.
+Add regression tests for every new parser rule or mathematical operation.
 
 ## Package information
 
@@ -172,7 +149,8 @@ Tests cover precedence, scientific notation, implicit multiplication, variables,
 |---|---|
 | Package | `@tejas-mk2/calculator-core` |
 | Version | `0.3.2` |
-| Registry | GitHub Packages npm registry |
+| npm | `https://www.npmjs.com/package/@tejas-mk2/calculator-core` |
+| GitHub Packages | `https://github.com/TEJAS-MK2/Calculator/packages` |
 | Runtime dependencies | None |
 | Module format | ES module |
 | License | MIT |
