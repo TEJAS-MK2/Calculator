@@ -1,0 +1,36 @@
+name: Publish Ruby gem to GitHub Packages
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ruby-gem/**"
+      - ".github/workflows/publish-ruby-gem.yml"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ruby-gem
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: false
+
+      - name: Build gem
+        run: gem build pijush-calculator.gemspec
+
+      - name: Publish to GitHub Packages
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+        run: gem push --key github --host https://rubygems.pkg.github.com/TEJAS-MK2 pijush-calculator-${{ github.event_name == 'push' && '0.1.0' || '0.1.0' }}.gem
