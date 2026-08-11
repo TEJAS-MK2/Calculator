@@ -28,7 +28,7 @@ The package powers the expression-evaluation layer of the Modern Calculator web 
 
 This package is published to the GitHub Packages npm registry.
 
-First configure npm authentication for GitHub Packages and the `@tejas-mk2` scope, then install:
+Configure npm authentication for GitHub Packages and the `@tejas-mk2` scope, then install:
 
 ```bash
 npm install @tejas-mk2/calculator-core
@@ -165,3 +165,5 @@ npm pack --dry-run
 ## License
 
 MIT
+
+> Phase 1 calculation engine release.
