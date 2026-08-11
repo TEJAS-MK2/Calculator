@@ -1,17 +1,15 @@
 # pijush-calculator — Apache Maven
 
-A lightweight, dependency-free Java arithmetic engine published to GitHub Packages through Apache Maven.
+Advanced, dependency-free Java arithmetic engine published to GitHub Packages through Apache Maven.
 
-## Engine
+## Engine capabilities
 
 The engine uses `BigDecimal` with `MathContext.DECIMAL128` for predictable decimal arithmetic.
 
-### Features
-
-- Addition, subtraction, multiplication, division
-- Modulo
-- Integer power
-- Percentage
+- Addition, subtraction, multiplication, division, modulo
+- Integer power and percentage
+- Absolute value, min/max, average, clamp, reciprocal
+- Square and cube
 - Explicit null validation
 - Division/modulo-by-zero protection
 - Java 17+
@@ -23,7 +21,7 @@ The engine uses `BigDecimal` with `MathContext.DECIMAL128` for predictable decim
 io.github.tejas-mk2:pijush-calculator
 ```
 
-## Installation from GitHub Packages
+## Installation
 
 ```xml
 <repositories>
@@ -54,21 +52,19 @@ BigDecimal sum = Calculator.add(new BigDecimal("2"), new BigDecimal("3"));
 BigDecimal remainder = Calculator.modulo(new BigDecimal("20"), new BigDecimal("6"));
 BigDecimal power = Calculator.power(new BigDecimal("2"), 8);
 BigDecimal percent = Calculator.percentage(new BigDecimal("250"), new BigDecimal("20"));
+BigDecimal clamped = Calculator.clamp(new BigDecimal("120"), BigDecimal.ZERO, new BigDecimal("100"));
 ```
-
-Invalid null values raise `NullPointerException`; division and modulo by zero raise `ArithmeticException`.
 
 ## API
 
-| Method | Description |
+| Method | Purpose |
 |---|---|
-| `add(a, b)` | Adds two values |
-| `subtract(a, b)` | Subtracts two values |
-| `multiply(a, b)` | Multiplies two values |
-| `divide(a, b)` | Divides two values |
-| `modulo(a, b)` | Calculates remainder |
-| `power(a, exponent)` | Integer exponentiation |
-| `percentage(value, percent)` | Calculates a percentage |
+| `add`, `subtract`, `multiply`, `divide` | Basic arithmetic |
+| `modulo`, `power`, `percentage` | Extended arithmetic |
+| `absolute`, `minimum`, `maximum`, `average` | Numeric utilities |
+| `clamp`, `reciprocal`, `square`, `cube` | Value transformations |
+
+Null values raise `NullPointerException`; division and modulo by zero raise `ArithmeticException`.
 
 ## Development
 
@@ -79,7 +75,7 @@ mvn package
 
 ## Publishing
 
-GitHub Actions publishes the package to GitHub Packages using the workflow-provided `GITHUB_TOKEN`. Package credentials are never committed to the repository. Published versions are immutable.
+GitHub Actions publishes the artifact to GitHub Packages using the workflow-provided `GITHUB_TOKEN`. Credentials are never committed. Published versions are immutable.
 
 ## Links
 
