@@ -1,7 +1,7 @@
 {
   "name": "@tejas-mk2/calculator-core",
-  "version": "0.4.0",
-  "description": "Advanced, dependency-free JavaScript calculation engine with a recursive expression parser, exact arithmetic, scientific functions, statistics, numerical methods, combinatorics, and matrix utilities.",
+  "version": "0.5.0",
+  "description": "Advanced, dependency-free JavaScript calculation engine with recursive expression parsing, exact arithmetic, scientific functions, statistics, numerical methods, combinatorics, and matrix utilities.",
   "type": "module",
   "main": "index.js",
   "exports": {
