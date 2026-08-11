@@ -1,12 +1,5 @@
 (() => {
-  // Load the shared calculation engine into the browser UI without duplicating
-  // its parser. The module installs a capture-phase controller before user input.
-  import('./calculator-core-ui.js?v=1').catch(error => {
-    console.error('Calculator core UI integration failed:', error);
-  });
-
   const boot = () => {
-    // Calculator is a classic-script global lexical binding, not necessarily a window property.
     if (typeof Calculator === 'undefined') return;
     const C = Calculator.prototype;
     C.canAnimate = function () {
@@ -51,22 +44,8 @@
       anime.remove(item);
       anime({ targets: item, opacity: [0, 1], translateY: [5, 0], duration: 180, easing: 'easeOutQuad' });
     };
-    C.animateScientificPanel = function () {
-      if (!this.canAnimate() || !this.scientificPanel) return;
-      const items = this.scientificPanel.querySelectorAll('.btn');
-      if (!items.length) return;
-      anime.remove(items);
-      anime({ targets: items, opacity: [0, 1], translateY: [4, 0], duration: 170, delay: anime.stagger(15), easing: 'easeOutQuad' });
-    };
-    C.animateMemoryAction = function (action) {
-      if (!this.canAnimate()) return;
-      const panel = document.querySelector('.memory-panel');
-      if (panel) {
-        anime.remove(panel);
-        anime({ targets: panel, scale: [1, 0.99, 1], duration: 170, easing: 'easeOutQuad' });
-      }
-      if (action === 'memory-recall') this.animateResult();
-    };
+    C.animateScientificPanel = function () {};
+    C.animateMemoryAction = function () {};
     C.animateThemeChange = function () {
       if (!this.canAnimate() || !this.themeToggle) return;
       anime.remove(this.themeToggle);
