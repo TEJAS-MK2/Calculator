@@ -3,9 +3,10 @@ name: Publish Ruby gem to GitHub Packages
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
-      - "ruby-gem/**"
-      - ".github/workflows/publish-ruby-gem.yml"
+      - 'ruby-gem/**'
+      - '.github/workflows/publish-ruby-gem.yml'
 
 permissions:
   contents: read
@@ -24,8 +25,11 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.3"
+          ruby-version: '3.3'
           bundler-cache: false
+
+      - name: Run gem tests
+        run: ruby -Itest test/test_pijush_calculator.rb
 
       - name: Build gem
         run: gem build pijush-calculator.gemspec
@@ -41,5 +45,23 @@ jobs:
       - name: Validate gem
         run: gem specification pijush-calculator-*.gem >/dev/null
 
+      - name: Read gem version
+        id: gem-version
+        run: echo "version=$(ruby -e 'spec=Gem::Specification.load("pijush-calculator.gemspec"); puts spec.version')" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether version is already published
+        id: published
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION='${{ steps.gem-version.outputs.version }}'
+          if gh api "/users/${GITHUB_REPOSITORY_OWNER}/packages/rubygems/pijush-calculator/versions" --jq '.[].name' 2>/dev/null | grep -Fxq "$VERSION"; then
+            echo "already_published=true" >> "$GITHUB_OUTPUT"
+            echo "Version $VERSION is already published; skipping duplicate publish."
+          else
+            echo "already_published=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish to GitHub Packages
+        if: steps.published.outputs.already_published != 'true'
         run: gem push --key github --host https://rubygems.pkg.github.com/TEJAS-MK2 pijush-calculator-*.gem
