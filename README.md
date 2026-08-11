@@ -1,8 +1,8 @@
 # Modern Calculator
 
 <p align="center">
-  <strong>A modern, responsive calculator with a clean UI, scientific calculation engine, and reusable package ecosystem.</strong><br>
-  HTML · CSS · JavaScript · Anime.js · npm · RubyGems · PyPI · Apache Maven
+  <strong>A modern, responsive calculator with a scientific calculation engine and reusable packages across JavaScript, Ruby, Python, and Java.</strong><br>
+  HTML · CSS · JavaScript · Anime.js · npm · RubyGems · PyPI · Maven · Gradle
 </p>
 
 <p align="center">
@@ -15,96 +15,57 @@
 
 ## Overview
 
-Modern Calculator is a responsive Progressive Web App backed by a reusable JavaScript calculation engine. The project also ships lightweight calculator libraries for JavaScript, Ruby, Python, and Java.
+Modern Calculator is a responsive Progressive Web App backed by a reusable calculation engine. It provides fast everyday calculations, scientific operations, history, memory, keyboard support, theme controls, and a package ecosystem for multiple programming languages.
 
-The web calculator focuses on fast everyday calculations while the JavaScript core provides the advanced expression parser used by the scientific features.
+The web calculator is designed to remain lightweight, responsive, and safe: expressions are parsed without `eval()` or `Function()`, and animations respect reduced-motion preferences.
 
 ## Highlights
 
 - Modern responsive calculator interface
-- History, Clear, memory, and theme controls
+- History, Clear, and memory controls
 - Dark, light, and system themes
-- Keyboard support and responsive mobile layout
-- Operator precedence and nested parentheses
-- Implicit multiplication
+- Keyboard support and mobile-friendly layout
+- Operator precedence, nested parentheses, and implicit multiplication
 - Scientific notation, variables, powers, percentages, and modulo
 - Scientific functions and trigonometry
 - DEG, RAD, and GRAD angle modes
 - `π`, `e`, `τ`, and `φ` constants
 - Exact rational arithmetic for supported expressions
-- Explicit, typed calculation errors
-- Safe expression parsing without `eval()` or `Function()`
+- Explicit typed calculation errors
 - Smooth Anime.js interactions with reduced-motion support
 - PWA and service-worker support
 
-## Calculation Engine
-
-The web calculator uses **`@tejas-mk2/calculator-core` v0.3.2**.
-
-It supports:
-
-- Arithmetic precedence
-- Parentheses and implicit multiplication
-- Unary operators
-- Powers, percentages, and modulo
-- Variables and constants
-- Scientific notation
-- Trigonometric and scientific functions
-- DEG/RAD/GRAD angle modes
-- Exact `Fraction` arithmetic
-- Typed `EvaluationError` codes
-
-Examples:
-
-```text
-(25 + 5) * 2
-2(5 + 3) + 4^2
-1.5e2 + 2.5e1
-10 % 3
-sin(90)
-x^2 + 1
-1 / 3 + 1 / 6
-```
-
 ## Packages
 
-### JavaScript — GitHub Packages
+| Ecosystem | Package | Registry |
+|---|---|---|
+| JavaScript | `@tejas-mk2/calculator-core` | [npm](https://www.npmjs.com/package/@tejas-mk2/calculator-core) |
+| Ruby | `pijush-calculator` | [RubyGems](https://rubygems.org/gems/pijush-calculator) |
+| Python | `pijush-calculator` | [PyPI](https://pypi.org/project/pijush-calculator/) |
+| Java / Maven | `io.github.tejas-mk2:pijush-calculator` | [GitHub Packages](https://github.com/TEJAS-MK2/Calculator/packages) |
+| Java / Gradle | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | [GitHub Packages](https://github.com/TEJAS-MK2/Calculator/packages) |
 
-**`@tejas-mk2/calculator-core` v0.3.2**
+### Install
 
-A safe, dependency-free expression engine for JavaScript applications.
+**JavaScript**
 
 ```bash
 npm install @tejas-mk2/calculator-core
 ```
 
-Registry: `https://npm.pkg.github.com`
-
-### Ruby — GitHub Packages
-
-**`pijush-calculator` v0.1.2**
-
-A lightweight Ruby arithmetic library with explicit division-by-zero handling and no runtime dependencies.
+**Ruby**
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```
 
-### Python — PyPI
-
-**`pijush-calculator` v0.1.2**
-
-A dependency-free Python arithmetic engine for reliable calculator operations and reusable math utilities.
+**Python**
 
 ```bash
 pip install pijush-calculator
 ```
 
-### Java — Apache Maven / GitHub Packages
-
-**`io.github.tejas-mk2:pijush-calculator` v0.1.0**
-
-A lightweight Java arithmetic library using `BigDecimal` and DECIMAL128 precision.
+**Maven**
 
 ```xml
 <dependency>
@@ -114,7 +75,13 @@ A lightweight Java arithmetic library using `BigDecimal` and DECIMAL128 precisio
 </dependency>
 ```
 
-Repository: `https://maven.pkg.github.com/TEJAS-MK2/Calculator`
+**Gradle**
+
+```gradle
+dependencies {
+    implementation 'io.github.tejasmk2.gradle:pijush-calculator-gradle:0.1.0'
+}
+```
 
 ## Calculator Controls
 
@@ -142,7 +109,7 @@ Repository: `https://maven.pkg.github.com/TEJAS-MK2/Calculator`
 
 ## Design and Performance
 
-The interface uses consistent surfaces, borders, typography, spacing, and responsive controls across calculator features and the sidebar. Animations respect `prefers-reduced-motion` and avoid unnecessary main-thread work.
+The interface uses consistent surfaces, borders, typography, spacing, and responsive controls across calculator features and the sidebar. Animations avoid unnecessary main-thread work and respect `prefers-reduced-motion`.
 
 The calculator is a static PWA and does not require a backend server for normal operation.
 
@@ -156,7 +123,8 @@ The calculator is a static PWA and does not require a backend server for normal 
 - `@tejas-mk2/calculator-core`
 - `pijush-calculator` Ruby gem
 - `pijush-calculator` Python package
-- `io.github.tejas-mk2:pijush-calculator` Maven package
+- Apache Maven package
+- Gradle package
 
 ## GitHub Pages
 
@@ -203,11 +171,13 @@ mvn test
 mvn package
 ```
 
-## Testing
+Gradle package:
 
-The JavaScript engine tests precedence, parentheses, implicit multiplication, scientific notation, variables, angle modes, percentages, modulo, exact fractions, domain validation, and typed errors.
-
-Python, Ruby, and Maven packages have their own package-level tests/build checks, while GitHub Actions validates the project and publishing workflows.
+```bash
+cd gradle-package
+gradle test
+gradle build
+```
 
 ## Documentation
 
@@ -218,6 +188,7 @@ Python, Ruby, and Maven packages have their own package-level tests/build checks
 - [`ruby-gem/README.md`](./ruby-gem/README.md)
 - [`python-package/README.md`](./python-package/README.md)
 - [`java-package/README.md`](./java-package/README.md)
+- [`gradle-package/README.md`](./gradle-package/README.md)
 
 ## License
 
