@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   test-engines:
-    name: Test calculation engines
+    name: Test calculation engines (${{ matrix.name }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -32,7 +32,7 @@ jobs:
             command: mvn -B test
           - name: Java Gradle
             path: gradle-package
-            command: ./gradlew test
+            command: gradle test
           - name: .NET
             path: nuget-package
             command: dotnet test tests/Calculator.Tests.csproj
@@ -55,10 +55,15 @@ jobs:
           ruby-version: '3.3'
       - name: Setup Java
         if: matrix.name == 'Java Maven' || matrix.name == 'Java Gradle'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
+      - name: Setup Gradle
+        if: matrix.name == 'Java Gradle'
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
       - name: Setup .NET
         if: matrix.name == '.NET'
         uses: actions/setup-dotnet@v4
@@ -67,11 +72,9 @@ jobs:
       - name: Install Python test dependencies
         if: matrix.name == 'Python'
         working-directory: python-package
-        run: python -m pip install --upgrade pip pytest hatch
-      - name: Install Gradle wrapper dependencies
-        if: matrix.name == 'Java Gradle'
-        working-directory: gradle-package
-        run: chmod +x gradlew
+        run: |
+          python -m pip install --upgrade pip pytest hatch
+          python -m pip install -e .
       - name: Run tests
         working-directory: ${{ matrix.path }}
         run: ${{ matrix.command }}
@@ -103,7 +106,7 @@ jobs:
           dotnet-version: '8.x'
       - name: Pack
         working-directory: nuget-package
-        run: dotnet pack Pijush.Calculator.csproj -c Release --no-restore
+        run: dotnet pack Pijush.Calculator.csproj -c Release
       - name: Publish to GitHub Packages
         working-directory: nuget-package
         env:
@@ -116,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -152,19 +155,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-      - name: Make Gradle wrapper executable
-        working-directory: gradle-package
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
       - name: Publish Gradle package
         working-directory: gradle-package
         env:
           USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew publishGprPublicationToGitHubPackagesRepository
+        run: gradle publishGprPublicationToGitHubPackagesRepository
 
   publish-container:
     name: Publish container
