@@ -4,7 +4,7 @@ A **lightweight, dependency-free JavaScript calculation engine** with a safe exp
 
 ## Current release
 
-**v0.2.1 — Phase 1 calculation engine**
+**v0.3.1 — scientific calculation engine**
 
 The package powers the expression-evaluation layer of the Modern Calculator while remaining independently reusable.
 
@@ -15,10 +15,13 @@ The package powers the expression-evaluation layer of the Modern Calculator whil
 - Unary `+` and `-`
 - Powers and percentages
 - Variables through a scope object
-- `π` and `e` constants
-- Scientific functions
+- Scientific notation such as `1.5e2`
+- `π`, `e`, and advanced constants such as `tau`
+- Scientific functions including trigonometry, logarithms, roots, rounding, and exponentials
+- DEG, RAD, and GRAD angle modes
 - Exact rational arithmetic with `Fraction` and `evaluateExact()`
-- Explicit division-by-zero and invalid-expression errors
+- Explicit division-by-zero, domain, and invalid-expression errors
+- Typed `EvaluationError` instances with error codes
 - No `eval()` or `Function()` constructor
 - Zero runtime dependencies
 - Framework-free and DOM-independent
@@ -40,6 +43,12 @@ Registry:
 https://npm.pkg.github.com
 ```
 
+For a project-level `.npmrc`, use:
+
+```text
+@tejas-mk2:registry=https://npm.pkg.github.com
+```
+
 ## Usage
 
 ```js
@@ -54,6 +63,8 @@ import {
 
 console.log(evaluate('(25 + 5) * 2')); // 60
 console.log(evaluate('2(5 + 3) + 4^2')); // 80
+console.log(evaluate('1.5e2 + 2.5e1')); // 175
+console.log(evaluate('sin(90)', {}, { angleMode: 'DEG' })); // 1
 console.log(evaluate('sin(pi / 2)^2 + cos(pi / 2)^2')); // 1
 console.log(evaluate('x^2 + 1', { x: 5 })); // 26
 console.log(evaluateExact('1 / 3 + 1 / 6').toString()); // 1/2
@@ -91,6 +102,14 @@ console.log(convertTemperature(100, 'C', 'F')); // 212
 evaluate('2*x + y', { x: 5, y: 3 });
 ```
 
+### Angle modes
+
+```js
+evaluate('sin(90)', {}, { angleMode: 'DEG' });
+evaluate('sin(pi / 2)', {}, { angleMode: 'RAD' });
+evaluate('sin(100)', {}, { angleMode: 'GRAD' });
+```
+
 ### Scientific functions
 
 Supported functions include:
@@ -116,9 +135,9 @@ Exact mode intentionally does not approximate irrational constants or scientific
 
 ## API
 
-### `evaluate(expression, scope?)`
+### `evaluate(expression, scope?, options?)`
 
-Parses and evaluates an expression using the tokenizer and recursive-descent parser.
+Parses and evaluates an expression using a tokenizer and recursive-descent parser. The optional `options.angleMode` accepts `RAD`, `DEG`, or `GRAD`.
 
 ### `evaluateExact(expression, scope?)`
 
@@ -140,6 +159,22 @@ Calculates a percentage of a value.
 
 Converts between `C`, `F`, and `K`.
 
+## Error handling
+
+Invalid expressions are rejected rather than silently producing incorrect values. Division by zero, invalid logarithm domains, unknown identifiers, malformed expressions, and invalid angle modes raise explicit errors.
+
+```js
+import { evaluate, EvaluationError } from '@tejas-mk2/calculator-core';
+
+try {
+  evaluate('1 / 0');
+} catch (error) {
+  if (error instanceof EvaluationError) {
+    console.log(error.code); // DIVISION_BY_ZERO
+  }
+}
+```
+
 ## Development and testing
 
 ```bash
@@ -154,7 +189,7 @@ The package is tested before GitHub Actions publishes a new version.
 | Property | Value |
 |---|---|
 | Package | `@tejas-mk2/calculator-core` |
-| Version | `0.2.1` |
+| Version | `0.3.1` |
 | Registry | GitHub Packages npm registry |
 | Runtime dependencies | None |
 | Module format | ES module |
