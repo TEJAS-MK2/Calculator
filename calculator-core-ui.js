@@ -84,17 +84,6 @@ import { evaluate } from './packages/calculator-core/index.js';
     }
   }
 
-  function toggleHistory() {
-    const panel = $('historyPanel');
-    const button = $('historyToggle');
-    if (!panel || !button) return;
-    const open = !panel.classList.contains('is-open');
-    panel.classList.toggle('is-open', open);
-    panel.setAttribute('aria-hidden', String(!open));
-    button.setAttribute('aria-expanded', String(open));
-    if (open) renderHistory();
-  }
-
   function clearHistory() {
     try { localStorage.removeItem('calculatorHistory'); } catch {}
     renderHistory();
@@ -136,7 +125,7 @@ import { evaluate } from './packages/calculator-core/index.js';
   }
 
   function calculate() {
-    if (!expression) return;
+    if (!expression || operators.has(expression.at(-1))) return;
     try {
       const result = evaluate(expression);
       addHistory(expression, result);
@@ -170,9 +159,8 @@ import { evaluate } from './packages/calculator-core/index.js';
     handleButton(button);
   }, true);
 
-  $('historyToggle')?.addEventListener('click', toggleHistory);
-  $('clearHistory')?.addEventListener('click', clearHistory);
-
+  window.renderCalculatorHistory = renderHistory;
+  window.clearCalculatorHistory = clearHistory;
   window.CalculatorCoreUI = Object.freeze({ evaluate });
   window.__calculatorCoreUIReady = true;
   renderHistory();
