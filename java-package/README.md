@@ -1,29 +1,29 @@
 # pijush-calculator — Apache Maven
 
-A lightweight, dependency-free Java arithmetic library for calculator applications and small math utilities, published to **GitHub Packages through Apache Maven**.
+A lightweight, dependency-free Java arithmetic engine published to GitHub Packages through Apache Maven.
 
-## Version
+## Engine
 
-**0.1.0**
+The engine uses `BigDecimal` with `MathContext.DECIMAL128` for predictable decimal arithmetic.
 
-## Features
+### Features
 
-- Addition, subtraction, multiplication, and division
-- `BigDecimal` arithmetic
-- DECIMAL128 precision
-- Explicit division-by-zero handling
+- Addition, subtraction, multiplication, division
+- Modulo
+- Integer power
+- Percentage
+- Explicit null validation
+- Division/modulo-by-zero protection
 - Java 17+
 - Zero runtime dependencies
 
 ## Package coordinates
 
 ```text
-io.github.tejas-mk2:pijush-calculator:0.1.0
+io.github.tejas-mk2:pijush-calculator
 ```
 
 ## Installation from GitHub Packages
-
-Add the repository:
 
 ```xml
 <repositories>
@@ -34,17 +34,15 @@ Add the repository:
 </repositories>
 ```
 
-Then add the dependency:
-
 ```xml
 <dependency>
   <groupId>io.github.tejas-mk2</groupId>
   <artifactId>pijush-calculator</artifactId>
-  <version>0.1.0</version>
+  <version>YOUR_VERSION</version>
 </dependency>
 ```
 
-GitHub Packages Maven artifacts are repository-scoped; package access requires appropriate GitHub authentication and permissions.
+GitHub Packages Maven artifacts are repository-scoped and require appropriate authentication and package permissions.
 
 ## Usage
 
@@ -53,19 +51,24 @@ import io.github.tejasmk2.calculator.Calculator;
 import java.math.BigDecimal;
 
 BigDecimal sum = Calculator.add(new BigDecimal("2"), new BigDecimal("3"));
-BigDecimal quotient = Calculator.divide(new BigDecimal("20"), new BigDecimal("5"));
+BigDecimal remainder = Calculator.modulo(new BigDecimal("20"), new BigDecimal("6"));
+BigDecimal power = Calculator.power(new BigDecimal("2"), 8);
+BigDecimal percent = Calculator.percentage(new BigDecimal("250"), new BigDecimal("20"));
 ```
 
-Division by zero raises `ArithmeticException`.
+Invalid null values raise `NullPointerException`; division and modulo by zero raise `ArithmeticException`.
 
 ## API
 
 | Method | Description |
 |---|---|
-| `Calculator.add(a, b)` | Adds two `BigDecimal` values |
-| `Calculator.subtract(a, b)` | Subtracts the second value from the first |
-| `Calculator.multiply(a, b)` | Multiplies two values |
-| `Calculator.divide(a, b)` | Divides the first value by the second |
+| `add(a, b)` | Adds two values |
+| `subtract(a, b)` | Subtracts two values |
+| `multiply(a, b)` | Multiplies two values |
+| `divide(a, b)` | Divides two values |
+| `modulo(a, b)` | Calculates remainder |
+| `power(a, exponent)` | Integer exponentiation |
+| `percentage(value, percent)` | Calculates a percentage |
 
 ## Development
 
@@ -76,7 +79,7 @@ mvn package
 
 ## Publishing
 
-GitHub Actions publishes the package to the GitHub Packages Maven registry with the workflow-provided `GITHUB_TOKEN`. Package credentials are never committed to the repository.
+GitHub Actions publishes the package to GitHub Packages using the workflow-provided `GITHUB_TOKEN`. Package credentials are never committed to the repository. Published versions are immutable.
 
 ## Links
 
