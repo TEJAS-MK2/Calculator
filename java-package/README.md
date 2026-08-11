@@ -1,27 +1,32 @@
 # pijush-calculator — Apache Maven
 
-Advanced, dependency-free Java arithmetic engine published to GitHub Packages through Apache Maven.
+Advanced, dependency-free Java decimal/scientific engine published to GitHub Packages through Apache Maven.
 
 ## Engine capabilities
 
-The engine uses `BigDecimal` with `MathContext.DECIMAL128` for predictable decimal arithmetic.
+Uses `BigDecimal` with `MathContext.DECIMAL128` for core decimal operations and `Math` for scientific functions.
 
-- Addition, subtraction, multiplication, division, modulo
-- Integer power and percentage
-- Absolute value, min/max, average, clamp, reciprocal
-- Square and cube
-- Explicit null validation
-- Division/modulo-by-zero protection
+- Arithmetic: add, subtract, multiply, divide, modulo, power, percentage
+- Utilities: absolute, minimum, maximum, average/mean, sum, product, clamp, reciprocal, square, cube
+- Roots: square root and cube root
+- Number theory: factorial, GCD, LCM, combinations, permutations
+- Trigonometry: sine, cosine, tangent, secant, cosecant, cotangent
+- Inverse trigonometry and `atan2`
+- Hyperbolic sine, cosine, tangent
+- Logarithms, natural logarithm, exponentials
+- Multi-value hypotenuse
+- Statistics: median, population variance, standard deviation, range
+- Explicit null, domain, and zero-division validation
 - Java 17+
 - Zero runtime dependencies
 
-## Package coordinates
+## Coordinates
 
 ```text
 io.github.tejas-mk2:pijush-calculator
 ```
 
-## Installation
+## Installation from GitHub Packages
 
 ```xml
 <repositories>
@@ -40,31 +45,14 @@ io.github.tejas-mk2:pijush-calculator
 </dependency>
 ```
 
-GitHub Packages Maven artifacts are repository-scoped and require appropriate authentication and package permissions.
-
 ## Usage
 
 ```java
-import io.github.tejasmk2.calculator.Calculator;
-import java.math.BigDecimal;
-
 BigDecimal sum = Calculator.add(new BigDecimal("2"), new BigDecimal("3"));
-BigDecimal remainder = Calculator.modulo(new BigDecimal("20"), new BigDecimal("6"));
-BigDecimal power = Calculator.power(new BigDecimal("2"), 8);
-BigDecimal percent = Calculator.percentage(new BigDecimal("250"), new BigDecimal("20"));
-BigDecimal clamped = Calculator.clamp(new BigDecimal("120"), BigDecimal.ZERO, new BigDecimal("100"));
+BigDecimal power = Calculator.power(new BigDecimal("2"), 10);
+double angle = Calculator.sine(90, true);
+BigDecimal median = Calculator.median(new BigDecimal("9"), new BigDecimal("2"), new BigDecimal("7"));
 ```
-
-## API
-
-| Method | Purpose |
-|---|---|
-| `add`, `subtract`, `multiply`, `divide` | Basic arithmetic |
-| `modulo`, `power`, `percentage` | Extended arithmetic |
-| `absolute`, `minimum`, `maximum`, `average` | Numeric utilities |
-| `clamp`, `reciprocal`, `square`, `cube` | Value transformations |
-
-Null values raise `NullPointerException`; division and modulo by zero raise `ArithmeticException`.
 
 ## Development
 
@@ -75,7 +63,7 @@ mvn package
 
 ## Publishing
 
-GitHub Actions publishes the artifact to GitHub Packages using the workflow-provided `GITHUB_TOKEN`. Credentials are never committed. Published versions are immutable.
+GitHub Actions publishes the package to GitHub Packages using the workflow-provided `GITHUB_TOKEN`. Published versions are immutable and credentials are never committed.
 
 ## Links
 
