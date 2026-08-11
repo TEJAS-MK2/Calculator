@@ -100,17 +100,25 @@ The calculator is deployed as a static website through GitHub Pages.
 
 ## Calculator Core Package
 
-The repository also contains **`@tejas-mk2/calculator-core`**, a lightweight, framework-free JavaScript calculation engine.
+The repository includes **`@tejas-mk2/calculator-core`**, a lightweight, dependency-free JavaScript calculation engine for web apps, Node.js tools, and other JavaScript projects.
 
-It provides reusable calculation logic for arithmetic, scientific functions, variables, factorials, percentages, and temperature conversion without DOM dependencies.
+The package provides reusable calculation logic for arithmetic, scientific functions, variables, factorials, percentages, and temperature conversion without DOM dependencies or runtime dependencies.
 
-Package source:
+### Package
+
+```text
+@tejas-mk2/calculator-core@0.1.1
+```
+
+### Registry
+
+The package is published to **GitHub Packages** and is released through GitHub Actions after automated tests and package verification pass.
+
+### Source
 
 ```text
 packages/calculator-core/
 ```
-
-The package is configured for **GitHub Packages** and is published from GitHub Actions after the package tests and package verification pass.
 
 ## Development
 
