@@ -1,7 +1,7 @@
 # Modern Calculator
 
 <p align="center">
-  <strong>A compact modern calculator UI with a powerful multi-language arithmetic engine family.</strong><br>
+  <strong>A hobbyist calculator UI built around a serious multi-language calculation-engine project.</strong><br>
   HTML · CSS · JavaScript · PWA · Anime.js · npm · RubyGems · PyPI · Maven · Gradle · NuGet · Docker
 </p>
 
@@ -14,15 +14,19 @@
 
 ---
 
-## Overview
+## Project purpose
 
-Modern Calculator is a responsive Progressive Web App for fast everyday calculations, backed by reusable engines for JavaScript, Python, Ruby, Java, Gradle, and .NET.
+**The calculator UI is a hobbyist project. The main aim of this repository is to develop serious, reusable calculation engines.**
 
-The browser UI intentionally stays compact: **AC** is on the keypad, while **History, Clear, and Theme** live in the sidebar. The interface uses solid surfaces, responsive spacing, Anime.js motion, persistent history, and reduced-motion support.
+The browser calculator is intentionally a small, practical demonstration and a place to experiment with UI design, interaction, animation, PWA behavior, and integration with the engines. It is not intended to compete with professional scientific or financial calculator applications.
 
-The package engines are more capable than the intentionally minimal browser keypad and can be used independently in applications, scripts, services, and build systems.
+The core engineering focus is the package ecosystem: reusable calculation libraries for **JavaScript, Python, Ruby, Java/Maven, Java/Gradle, and .NET/NuGet**. These engines are developed with an emphasis on correctness, predictable behavior, validation, reusable APIs, testing, and progressively more capable mathematical functionality.
 
-## UI features
+The npm package is currently the reference implementation and has the most advanced expression parser and mathematical feature set.
+
+## Browser calculator
+
+The UI is deliberately compact and simple:
 
 - Addition, subtraction, multiplication, and division
 - Decimal input
@@ -31,68 +35,75 @@ The package engines are more capable than the intentionally minimal browser keyp
 - **Clear** in the sidebar
 - **Theme** in the sidebar
 - Dark, Light, and System themes
-- Compact responsive layout
 - Keyboard-friendly interaction
+- Responsive layout
+- Persistent calculation history
+- PWA and service-worker support
 - Anime.js-powered motion
 - `prefers-reduced-motion` support
-- PWA and service-worker support
-- Persistent calculation history
 - No `eval()` or `Function()` based expression execution
-- No gradients in the current calculator visual system
+- No gradients in the current visual system
 
-## Animation
+The browser UI does **not** expose every advanced engine capability. That separation is intentional: the UI remains approachable while the underlying libraries can evolve into substantially more capable calculation engines.
 
-The UI uses Anime.js for lightweight calculator entrance, keypad, sidebar, history, and result animations. Motion is reduced automatically when the user's `prefers-reduced-motion` setting is enabled.
+## Serious calculation engines
 
-## Engine family
+The package engines are the primary technical focus of this project.
 
-All package engines now expose a substantially broader arithmetic API. The **npm engine is the most advanced** and includes a real tokenizer/parser, operator precedence, implicit multiplication, variables, constants, angle modes, exact fractions, domain-aware functions, and variadic aggregate functions.
+### Common engine capabilities
 
-### Common capabilities
+Depending on the implementation, the engines provide increasingly broad support for:
 
-- Add / subtract / multiply / divide
+- Addition / subtraction / multiplication / division
 - Modulo
-- Powers
-- Percentages
+- Powers and percentages
 - Absolute value
-- Minimum / maximum
-- Average
+- Minimum / maximum / average
 - Sum / product
-- Clamp
-- Reciprocal
+- Clamp and reciprocal
 - Square / cube
 - Square root / cube root
 - Factorial
 - GCD / LCM
-- Trigonometric operations
-- Logarithms and natural logarithm
-- Exponential
+- Trigonometry
+- Logarithms and exponentials
 - Combinations / permutations
+- Statistics and mathematical utilities
+- Explicit validation and error handling
 
-### npm engine — advanced mode
+### npm — reference engine
 
-`@tejas-mk2/calculator-core` provides the deepest expression engine in the project:
+`@tejas-mk2/calculator-core` is the most advanced implementation in the repository. It provides a real expression engine rather than a collection of simple arithmetic wrappers.
 
-- Tokenizer with scientific notation
-- Recursive-descent parser
+It includes:
+
+- Tokenization with scientific notation
+- Recursive-descent parsing
 - Operator precedence
+- Right-associative powers
 - Parentheses and unary operators
 - Implicit multiplication
-- Variables and custom scopes
-- `π`, `e`, `τ`, and `φ`
+- Variables and controlled scopes
+- Mathematical constants including `pi`, `e`, `tau`, and `phi`
 - DEG / RAD / GRAD angle modes
-- `sin`, `cos`, `tan`
-- Inverse and hyperbolic trigonometry
-- `sqrt`, `cbrt`, `abs`, `floor`, `ceil`, `round`, `trunc`, `sign`
-- `log`, `log2`, `ln`, `exp`
-- Variadic `min`, `max`, `sum`, and `product`
-- Exact rational arithmetic through `Fraction`
-- `evaluateExact()` for exact numeric expressions
-- Typed `EvaluationError` error codes
-- Division/modulo/domain/range protection
-- Reusable utility APIs for factorial, conversions, GCD/LCM, combinations, and permutations
+- Direct and inverse trigonometry
+- Hyperbolic functions
+- Roots and rounding functions
+- Logarithms and exponentials
+- `hypot`
+- Variadic aggregation functions
+- GCD / LCM
+- Exact rational `Fraction` arithmetic
+- `evaluateExact()`
+- Factorial
+- Combinations / permutations
+- Statistics helpers
+- Temperature conversion
+- Typed `EvaluationError` codes
+- Domain, range, overflow, and division-by-zero checks
+- Zero runtime dependencies
 
-Example expressions supported by the npm parser include:
+Example expressions include:
 
 ```text
 2 + 3 * 4
@@ -104,19 +115,17 @@ max(4,9,2,7)
 (1/3) + (2/3)
 ```
 
-The browser UI does not expose every engine feature directly; the advanced engine is available to package consumers.
-
 ## Package ecosystem
 
-| Ecosystem | Package | Distribution | Engine focus |
+| Ecosystem | Package | Distribution | Main focus |
 |---|---|---|---|
-| JavaScript | `@tejas-mk2/calculator-core` | npm / GitHub Packages | Full expression parser + advanced math |
-| Ruby | `pijush-calculator` | RubyGems / GitHub Packages | Extended arithmetic + trig + statistics |
-| Python | `pijush-calculator` | PyPI | Extended arithmetic + math utilities |
-| Java / Maven | `io.github.tejas-mk2:pijush-calculator` | GitHub Packages | BigDecimal arithmetic + math helpers |
-| Java / Gradle | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | GitHub Packages | BigDecimal arithmetic + math helpers |
-| .NET / NuGet | `Pijush.Calculator` | GitHub Packages | Decimal arithmetic + math helpers |
-| Container | `ghcr.io/tejas-mk2/calculator` | GitHub Container Registry | Application/container distribution |
+| JavaScript | `@tejas-mk2/calculator-core` | npm / GitHub Packages | Reference expression engine |
+| Ruby | `pijush-calculator` | RubyGems / GitHub Packages | Reusable advanced math API |
+| Python | `pijush-calculator` | PyPI | Reusable arithmetic/math API |
+| Java / Maven | `io.github.tejas-mk2:pijush-calculator` | GitHub Packages | BigDecimal calculation engine |
+| Java / Gradle | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | GitHub Packages | BigDecimal calculation engine |
+| .NET / NuGet | `Pijush.Calculator` | GitHub Packages | Decimal calculation engine |
+| Container | `ghcr.io/tejas-mk2/calculator` | GitHub Container Registry | Application distribution |
 
 ## Installation
 
@@ -175,9 +184,9 @@ git clone https://github.com/TEJAS-MK2/Calculator.git
 cd Calculator
 ```
 
-Use a local HTTP server when testing ES modules, PWA behavior, service workers, or the browser UI.
+Use a local HTTP server when testing the browser/PWA layer.
 
-### JavaScript package
+### npm engine
 
 ```bash
 cd packages/calculator-core
@@ -190,6 +199,7 @@ npm pack --dry-run
 ```bash
 cd ruby-gem
 gem build pijush-calculator.gemspec
+gem test
 ```
 
 ### Python
@@ -225,20 +235,26 @@ dotnet test tests/Calculator.Tests.csproj
 dotnet pack Pijush.Calculator.csproj -c Release
 ```
 
+## Project philosophy
+
+This repository is primarily an **engineering and learning project**. The goal is not to pretend that the browser calculator is a production-grade replacement for established calculator software. Instead, the UI provides a useful front end while the package engines provide the deeper engineering challenge.
+
+The long-term direction is to make the engines more robust, mathematically capable, portable, well-tested, and useful as standalone libraries.
+
 ## Project structure
 
 ```text
 Calculator/
-├── index.html                 # Calculator UI
-├── styles.css                 # Current solid-surface visual system
+├── index.html                 # Hobbyist calculator UI
+├── styles.css                 # Current visual system
 ├── script.js                  # Sidebar and theme controls
-├── calculator-core-ui.js      # Calculator UI state and history
+├── calculator-core-ui.js      # Browser calculator integration
 ├── packages/calculator-core/  # Advanced JavaScript engine
-├── ruby-gem/                  # Ruby package
-├── python-package/            # Python package
-├── java-package/              # Maven package
-├── gradle-package/            # Gradle package
-├── nuget-package/             # NuGet package
+├── ruby-gem/                  # Ruby engine
+├── python-package/            # Python engine
+├── java-package/              # Maven engine
+├── gradle-package/            # Gradle engine
+├── nuget-package/             # .NET engine
 ├── .github/workflows/         # CI/CD and registry publishing
 └── Dockerfile                 # Container image
 ```
@@ -255,4 +271,4 @@ The main calculator is licensed under Apache-2.0. Package directories document t
 
 ---
 
-<p align="center"><strong>Simple interface. Serious calculation engine.</strong></p>
+<p align="center"><strong>Hobbyist UI. Serious calculation engines.</strong></p>
