@@ -49,7 +49,7 @@ python -m pytest
 python -m build
 ```
 
-The CI workflow installs the package in editable mode before running the test suite so imports are tested against the package layout used for distribution.
+The CI workflow installs the package in editable mode before running the test suite and publishes the built distributions from `python-package/dist/`.
 
 ## Publishing
 
