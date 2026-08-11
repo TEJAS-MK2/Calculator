@@ -6,14 +6,11 @@ A **lightweight, dependency-free Ruby arithmetic library** for reusable calculat
 
 **v0.1.2 — Ruby arithmetic engine**
 
-This gem is independent of the web UI and provides a small, predictable API for basic arithmetic.
+The gem is independent of the web UI and exposes a small, predictable API for basic arithmetic.
 
 ## Features
 
-- Addition
-- Subtraction
-- Multiplication
-- Division
+- Addition, subtraction, multiplication, and division
 - Explicit `ZeroDivisionError` handling
 - Ruby 3.0+
 - Zero runtime dependencies
@@ -21,11 +18,19 @@ This gem is independent of the web UI and provides a small, predictable API for 
 
 ## Installation
 
-The gem is distributed through GitHub Packages RubyGems:
+From RubyGems.org:
+
+```bash
+gem install pijush-calculator
+```
+
+From GitHub Packages RubyGems:
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```
+
+GitHub Packages RubyGems uses the `rubygems.pkg.github.com` registry and requires authentication for package access. citeturn0search3
 
 ## Usage
 
@@ -38,56 +43,30 @@ PijushCalculator.multiply(4, 6)   # 24
 PijushCalculator.divide(20, 5)    # 4.0
 ```
 
-Division by zero is explicit:
-
-```ruby
-PijushCalculator.divide(10, 0)
-# ZeroDivisionError: cannot divide by zero
-```
+Division by zero raises `ZeroDivisionError`.
 
 ## API
 
-### `PijushCalculator.add(a, b)`
-
-Returns `a + b`.
-
-### `PijushCalculator.subtract(a, b)`
-
-Returns `a - b`.
-
-### `PijushCalculator.multiply(a, b)`
-
-Returns `a * b`.
-
-### `PijushCalculator.divide(a, b)`
-
-Returns the quotient as a floating-point value. Raises `ZeroDivisionError` when `b` is zero.
+| Method | Result |
+|---|---|
+| `PijushCalculator.add(a, b)` | `a + b` |
+| `PijushCalculator.subtract(a, b)` | `a - b` |
+| `PijushCalculator.multiply(a, b)` | `a * b` |
+| `PijushCalculator.divide(a, b)` | Floating-point quotient; raises on zero divisor |
 
 ## Development
 
-Build the gem locally:
-
 ```bash
 gem build pijush-calculator.gemspec
-```
-
-Inspect the built metadata:
-
-```bash
 gem specification pijush-calculator-0.1.2.gem
-```
-
-Install the local build:
-
-```bash
 gem install ./pijush-calculator-0.1.2.gem
 ```
 
 ## Publishing
 
-Releases are handled through the repository's GitHub Actions publishing workflow. Registry credentials and tokens must never be committed to source code or workflow files.
+Releases are handled through GitHub Actions. Registry credentials and tokens must never be committed to source code or workflow files.
 
-Published RubyGems package versions are immutable, so future releases must use a new version number.
+Published package versions are immutable, so future releases must use a new version number.
 
 ## Package information
 
@@ -95,7 +74,8 @@ Published RubyGems package versions are immutable, so future releases must use a
 |---|---|
 | Gem | `pijush-calculator` |
 | Version | `0.1.2` |
-| Registry | GitHub Packages RubyGems |
+| RubyGems | `https://rubygems.org/gems/pijush-calculator` |
+| GitHub Packages | `https://github.com/TEJAS-MK2/Calculator/packages` |
 | Runtime dependencies | None |
 | Supported Ruby | 3.0+ |
 | License | MIT |
