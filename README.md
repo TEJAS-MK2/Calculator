@@ -58,23 +58,6 @@
 | `Escape` | Clear all |
 | `C` | Clear current input |
 
-## Architecture
-
-The calculator is intentionally organized around a single core calculator controller:
-
-```text
-Calculator
-├── Calculator engine
-├── History
-├── Memory
-├── Theme system
-├── Minimal sidebar
-├── Anime.js animations
-└── Service-worker cache
-```
-
-The sidebar is navigation only. It does not own calculator feature panels, which helps prevent duplicate event handlers, DOM conflicts, animation races, and inconsistent UI state.
-
 ## Tech Stack
 
 - **HTML5** — structure and accessibility
