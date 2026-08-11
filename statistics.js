@@ -70,3 +70,12 @@ class StatisticsMode {
     clear() { this.input.value = ''; this.result.replaceChildren(); this.status.textContent = 'Enter numbers separated by spaces or commas'; this.status.classList.remove('error'); }
 }
 document.addEventListener('DOMContentLoaded', () => new StatisticsMode());
+
+// Load the sidebar animation repair after Calculator, GraphingCalculator and StatisticsMode
+// have initialized, while preserving the original feature panel DOM nodes and listeners.
+document.addEventListener('DOMContentLoaded', () => {
+    const script = document.createElement('script');
+    script.src = './sidebar-fix.js?v=1';
+    script.async = false;
+    document.body.appendChild(script);
+}, { once: true });
