@@ -40,13 +40,40 @@ import { evaluate } from './packages/calculator-core/index.js';
   function clearHistory() { try { localStorage.removeItem('calculatorHistory'); } catch {} renderHistory(); }
   function clear() { expression = ''; justCalculated = false; display('0', ''); animate('.display-container', { scale: [0.965, 1], duration: 220, easing: 'easeOutQuad' }); }
   function appendNumber(value) { if (justCalculated) expression = ''; justCalculated = false; expression += value; display(expression); }
-  function appendDecimal() { if (justCalculated) expression = ''; justCalculated = false; const tail = expression.split(/[+\-*/]/).pop() || ''; if (tail.includes('.')) return; expression += tail ? '.' : '0.'; display(expression); }
-  function appendOperator(operator) { if (!expression) return; expression = operators.has(expression.at(-1)) ? expression.slice(0, -1) + operator : expression + operator; justCalculated = false; display(expression); }
-  function calculate() {
-    if (!expression || operators.has(expression.at(-1))) return;
-    try { const result = evaluate(expression); addHistory(expression, result); display(format(result), `${expression} =`); expression = String(result); justCalculated = true; animate('.btn-equals', { scale: [0.9, 1], duration: 260, easing: 'easeOutBack' }); }
-    catch (error) { display('Error', error?.message || 'Invalid expression'); setTimeout(() => { if (primary()?.textContent === 'Error') clear(); }, 1500); }
+  function appendDecimal() {
+    if (justCalculated) expression = '';
+    justCalculated = false;
+    const match = expression.match(/(?:^|[+*/-])(-?\d*\.?\d*)$/);
+    const tail = match ? match[1] : '';
+    if (tail.includes('.')) return;
+    if (!expression || operators.has(expression.at(-1))) expression += '0.';
+    else expression += '.';
+    display(expression);
   }
+  function appendOperator(operator) {
+    if (justCalculated) justCalculated = false;
+    if (!expression) { if (operator === '-') expression = '-'; else return; display(expression); return; }
+    const last = expression.at(-1);
+    if (operators.has(last)) {
+      if (operator === '-' && last !== '-') expression += '-';
+      else if (last === '-' && expression.length > 1 && operators.has(expression.at(-2))) {
+        if (operator !== '-') expression = expression.slice(0, -2) + operator;
+      } else expression = expression.slice(0, -1) + operator;
+    } else expression += operator;
+    display(expression);
+  }
+  function calculate() {
+    if (!expression || operators.has(expression.at(-1)) || /[+*/]-$/.test(expression)) return;
+    try {
+      const result = evaluate(expression);
+      addHistory(expression, result);
+      display(format(result), `${expression} =`);
+      expression = String(result);
+      justCalculated = true;
+      animate('.btn-equals', { scale: [0.9, 1], duration: 260, easing: 'easeOutBack' });
+    } catch (error) { display('Error', error?.message || 'Invalid expression'); setTimeout(() => { if (primary()?.textContent === 'Error') clear(); }, 1500); }
+  }
+  function backspace() { if (justCalculated) return clear(); if (!expression) return; expression = expression.slice(0, -1); display(expression || '0'); }
   function handleButton(button) {
     const number = button.dataset.number; const action = button.dataset.action;
     if (number !== undefined) return appendNumber(number);
@@ -57,6 +84,15 @@ import { evaluate } from './packages/calculator-core/index.js';
     if (action === 'clear-all') return clear();
   }
   document.addEventListener('click', event => { const button = event.target.closest('.calculator .btn'); if (!button) return; event.preventDefault(); event.stopImmediatePropagation(); animate(button, { scale: [0.9, 1], duration: 180, easing: 'easeOutQuad' }); handleButton(button); }, true);
+  document.addEventListener('keydown', event => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (/^\d$/.test(event.key)) { event.preventDefault(); appendNumber(event.key); return; }
+    if (event.key === '.') { event.preventDefault(); appendDecimal(); return; }
+    if (operators.has(event.key)) { event.preventDefault(); appendOperator(event.key); return; }
+    if (event.key === 'Enter' || event.key === '=') { event.preventDefault(); calculate(); return; }
+    if (event.key === 'Escape') { event.preventDefault(); clear(); return; }
+    if (event.key === 'Backspace') { event.preventDefault(); backspace(); }
+  });
   window.renderCalculatorHistory = renderHistory;
   window.clearCalculatorHistory = clearHistory;
   window.clearCalculator = clear;
