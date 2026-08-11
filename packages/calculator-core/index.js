@@ -8,6 +8,8 @@ const FUNCTIONS = Object.freeze({
   trunc: Math.trunc, sign: Math.sign,
   log: Math.log10, ln: Math.log, exp: Math.exp,
   log2: Math.log2, min: Math.min, max: Math.max,
+  sum: (...values) => values.reduce((a, b) => a + b, 0),
+  product: (...values) => values.reduce((a, b) => a * b, 1),
 });
 const CONSTANTS = Object.freeze({ pi: Math.PI, e: Math.E, tau: Math.PI * 2, phi: (1 + Math.sqrt(5)) / 2 });
 const IDENTIFIER = /^[A-Za-z_][A-Za-z0-9_]*$/;
@@ -64,12 +66,10 @@ export class Parser {
       if (this.peek('(')) {
         this.position++; const args = [];
         if (!this.peek(')')) { args.push(this.parseAdditive()); while (this.peek(',')) { this.position++; args.push(this.parseAdditive()); } }
-        this.consume(')');
-        const fn = FUNCTIONS[name];
+        this.consume(')'); const fn = FUNCTIONS[name];
         if (!fn) throw new EvaluationError(`Unknown function "${name}"`, 'UNKNOWN_FUNCTION');
-        const expectedOne = !['min', 'max'].includes(name);
-        if (expectedOne && args.length !== 1) throw new EvaluationError(`Function "${name}" expects one argument`, 'ARGUMENT_COUNT');
-        if (!expectedOne && args.length < 1) throw new EvaluationError(`Function "${name}" expects at least one argument`, 'ARGUMENT_COUNT');
+        const multi = ['min', 'max', 'sum', 'product'].includes(name);
+        if ((!multi && args.length !== 1) || (multi && args.length < 1)) throw new EvaluationError(`Invalid argument count for ${name}`, 'ARGUMENT_COUNT');
         return this.checkFinite(applyFunction(name, fn, args, this.angleMode), `Invalid result from ${name}`, 'INVALID_FUNCTION_RESULT');
       }
       if (Object.hasOwn(CONSTANTS, name)) return CONSTANTS[name];
@@ -87,10 +87,9 @@ function applyFunction(name, fn, args, mode) {
   if (['sin', 'cos', 'tan'].includes(name)) return fn(toRadians(args[0], mode));
   if (['asin', 'acos', 'atan'].includes(name)) return fromRadians(fn(args[0]), mode);
   if (name === 'sqrt' && args[0] < 0) throw new EvaluationError('Square root requires a non-negative value', 'DOMAIN_ERROR');
-  if (name === 'cbrt') return Math.cbrt(args[0]);
   if (name === 'acosh' && args[0] < 1) throw new EvaluationError('acosh requires a value of at least 1', 'DOMAIN_ERROR');
-  if (name === 'log' || name === 'ln' || name === 'log2') { if (args[0] <= 0) throw new EvaluationError(`${name} requires a value greater than zero`, 'DOMAIN_ERROR'); }
-  return ['min', 'max'].includes(name) ? fn(...args) : fn(args[0]);
+  if (['log', 'ln', 'log2'].includes(name) && args[0] <= 0) throw new EvaluationError(`${name} requires a value greater than zero`, 'DOMAIN_ERROR');
+  return ['min', 'max', 'sum', 'product'].includes(name) ? fn(...args) : fn(args[0]);
 }
 export function evaluate(expression, scope = {}, options = {}) { if (!scope || typeof scope !== 'object' || Array.isArray(scope)) throw new Error('Scope must be an object'); const result = new Parser(tokenize(expression), scope, options.angleMode ?? 'RAD').parse(); if (typeof result !== 'number' || !Number.isFinite(result)) throw new EvaluationError('Result is not a finite number', 'NON_FINITE_RESULT'); return result; }
 function gcd(a, b) { a = Math.abs(Math.trunc(a)); b = Math.abs(Math.trunc(b)); while (b) [a, b] = [b, a % b]; return a || 1; }
