@@ -1,4 +1,4 @@
-name: Publish NuGet Package
+name: Publish NuGet Package with Docker
 
 on:
   workflow_dispatch:
@@ -14,8 +14,10 @@ permissions:
 
 jobs:
   publish:
-    name: Build and publish NuGet package
+    name: Build and publish NuGet package in Docker
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:8.0
     defaults:
       run:
         working-directory: nuget-package
@@ -24,10 +26,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
+      - name: Show .NET SDK
+        run: dotnet --info
 
       - name: Configure GitHub Packages source
         run: dotnet nuget add source https://nuget.pkg.github.com/TEJAS-MK2/index.json --name github --username "${{ github.actor }}" --password "$GITHUB_TOKEN" --store-password-in-clear-text
