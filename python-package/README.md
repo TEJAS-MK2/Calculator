@@ -1,22 +1,21 @@
 # pijush-calculator
 
-A lightweight, dependency-free Python arithmetic engine for reusable calculator and math applications.
+Advanced, dependency-free Python arithmetic engine for reusable calculator and math applications.
 
-## Current engine
+## Engine capabilities
 
-The Python package provides a predictable function-based arithmetic API with explicit error handling.
-
-### Features
-
-- Addition, subtraction, multiplication, division
-- Modulo
-- Power
-- Percentage
-- Absolute value, min/max, average, clamp, reciprocal, square, and cube helpers
-- Explicit `ZeroDivisionError` handling
+- Addition, subtraction, multiplication, division, modulo, and power
+- Percentage, absolute value, min/max, average, clamp, reciprocal
+- Square, cube, square root, and cube root
+- Factorial
+- GCD and LCM
+- Sine, cosine, tangent with optional degree mode
+- Logarithm, natural logarithm, and exponential
+- Combinations and permutations
+- Variadic aggregation helpers such as `sum` and `product`
+- Explicit domain and zero-division validation
 - Python 3.9+
 - Zero runtime dependencies
-- Framework-free API
 
 ## Installation
 
@@ -27,32 +26,38 @@ pip install pijush-calculator
 ## Usage
 
 ```python
-from pijush_calculator import add, subtract, multiply, divide, modulo, power, percentage
+from pijush_calculator import (
+    add, modulo, power, square_root, factorial,
+    gcd, sine, combinations
+)
 
 print(add(2, 3))
-print(subtract(8, 3))
-print(multiply(4, 6))
-print(divide(20, 5))
 print(modulo(20, 6))
 print(power(2, 8))
-print(percentage(250, 20))
+print(square_root(144))
+print(factorial(5))
+print(gcd(84, 30))
+print(sine(90, degrees=True))
+print(combinations(5, 2))
 ```
-
-Division and modulo by zero raise `ZeroDivisionError`.
 
 ## API
 
-| Function | Result |
+| Function | Purpose |
 |---|---|
-| `add(a, b)` | Sum |
-| `subtract(a, b)` | Difference |
-| `multiply(a, b)` | Product |
-| `divide(a, b)` | Quotient |
-| `modulo(a, b)` | Remainder |
-| `power(a, b)` | Power |
-| `percentage(value, percent)` | Percentage value |
+| `add`, `subtract`, `multiply`, `divide` | Basic arithmetic |
+| `modulo`, `power`, `percentage` | Extended arithmetic |
+| `absolute`, `minimum`, `maximum`, `average` | Numeric utilities |
+| `sum`, `product` | Variadic aggregation |
+| `clamp`, `reciprocal`, `square`, `cube` | Value transformations |
+| `square_root`, `cube_root` | Root operations |
+| `factorial` | Integer factorial |
+| `gcd`, `lcm` | Integer number theory |
+| `sine`, `cosine`, `tangent` | Trigonometry |
+| `logarithm`, `natural_log`, `exponential` | Exponential/logarithmic math |
+| `combinations`, `permutations` | Combinatorics |
 
-Additional utility helpers are available for common arithmetic operations.
+Division and modulo by zero raise `ZeroDivisionError`; invalid mathematical domains raise `ValueError`.
 
 ## Development
 
@@ -64,7 +69,7 @@ python -m build
 
 ## Publishing
 
-The package is published to PyPI through GitHub Actions using PyPI Trusted Publishing (OIDC) where configured. No long-lived PyPI API token is stored in the repository. Published versions are immutable and require a new version for each release.
+The package is published to PyPI through GitHub Actions using Trusted Publishing (OIDC) where configured. No long-lived PyPI credential is committed to the repository. Published versions are immutable and require a new version for each release.
 
 ## Package information
 
