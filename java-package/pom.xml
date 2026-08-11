@@ -3,66 +3,26 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>io.github.tejas-mk2</groupId>
   <artifactId>pijush-calculator</artifactId>
-  <version>0.1.1</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
-
   <name>pijush-calculator</name>
-  <description>Lightweight, dependency-free Java arithmetic engine with BigDecimal DECIMAL128 precision and explicit error handling.</description>
+  <description>Advanced, dependency-free Java numerical engine with BigDecimal DECIMAL128 precision and scientific utilities.</description>
   <url>https://github.com/TEJAS-MK2/Calculator</url>
-
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>https://opensource.org/license/mit/</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <developers>
-    <developer>
-      <name>Pijush Chakraborty</name>
-    </developer>
-  </developers>
-
+  <licenses><license><name>MIT License</name><url>https://opensource.org/license/mit/</url><distribution>repo</distribution></license></licenses>
+  <developers><developer><name>Pijush Chakraborty</name></developer></developers>
   <scm>
     <connection>scm:git:https://github.com/TEJAS-MK2/Calculator.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/TEJAS-MK2/Calculator.git</developerConnection>
     <url>https://github.com/TEJAS-MK2/Calculator</url>
   </scm>
-
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <name>GitHub TEJAS-MK2 Apache Maven Packages</name>
-      <url>https://maven.pkg.github.com/TEJAS-MK2/Calculator</url>
-    </repository>
-  </distributionManagement>
-
+  <distributionManagement><repository><id>github</id><name>GitHub TEJAS-MK2 Maven Packages</name><url>https://maven.pkg.github.com/TEJAS-MK2/Calculator</url></repository></distributionManagement>
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>5.12.2</junit.version>
   </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.2</version>
-      </plugin>
-    </plugins>
-  </build>
+  <dependencies><dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>${junit.version}</version><scope>test</scope></dependency></dependencies>
+  <build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.2</version></plugin></plugins></build>
 </project>
