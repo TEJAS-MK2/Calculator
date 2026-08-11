@@ -1,72 +1,59 @@
-// Minimal sidebar controller.
-// The sidebar intentionally exposes only History, Clear, and Theme.
+// Stable minimal sidebar controller: History, Clear, Theme only.
 (() => {
   const init = () => {
     const sidebar = document.getElementById('featureSidebar');
     const list = sidebar?.querySelector('.feature-list');
     if (!sidebar || !list) return;
 
-    // Replace the list after the calculator and advanced-feature modules have initialized.
-    const freshList = list.cloneNode(false);
-    const make = (label, icon, handler) => {
+    const make = (feature, icon, label) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'feature-item';
-      button.innerHTML = `<i class="fas ${icon}"></i><span>${label}</span>`;
-      button.addEventListener('click', event => {
-        event.preventDefault();
-        event.stopPropagation();
-        handler();
-        document.getElementById('sidebarClose')?.click();
-      });
+      button.dataset.feature = feature;
+      button.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>${label}</span>`;
       return button;
     };
 
-    freshList.append(
-      make('History', 'fa-clock-rotate-left', () => document.getElementById('historyToggle')?.click()),
-      make('Clear', 'fa-eraser', () => document.querySelector('[data-action="clear-all"]')?.click()),
-      make('Change Theme', 'fa-circle-half-stroke', () => document.getElementById('themeToggle')?.click())
+    list.replaceChildren(
+      make('history', 'fa-clock-rotate-left', 'History'),
+      make('clear', 'fa-eraser', 'Clear'),
+      make('theme', 'fa-circle-half-stroke', 'Change Theme')
     );
-    list.replaceWith(freshList);
 
-    // Remove every feature that is no longer part of the minimal calculator.
-    [
-      '#scientificToggle', '#scientificPanel', '.memory-panel',
-      '#graphToggle', '#graphPanel', '#statisticsToggle', '#statisticsPanel',
-      '#advancedFeaturesPanel'
-    ].forEach(selector => document.querySelector(selector)?.remove());
+    const style = document.getElementById('minimal-sidebar-fix-style') || document.createElement('style');
+    style.id = 'minimal-sidebar-fix-style';
+    style.textContent = '.calculator .history-panel.sidebar-feature-visible,.calculator .history-panel.is-open{display:block!important}.calculator .history-panel.sidebar-feature-visible[aria-hidden="true"]{display:none!important}';
+    if (!style.parentNode) document.head.appendChild(style);
 
-    // Remove the old sidebar listeners by replacing its open/close controls.
-    ['sidebarOpen', 'sidebarClose', 'sidebarBackdrop'].forEach(id => {
-      const node = document.getElementById(id);
-      if (node?.parentNode) node.replaceWith(node.cloneNode(true));
-    });
+    // This listener is installed in capture phase so the legacy sidebar handler
+    // cannot also process the same feature click.
+    list.addEventListener('click', event => {
+      const item = event.target.closest('.feature-item');
+      if (!item || !list.contains(item)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
 
-    const openButton = document.getElementById('sidebarOpen');
-    const closeButton = document.getElementById('sidebarClose');
-    const backdrop = document.getElementById('sidebarBackdrop');
-    const close = () => {
-      sidebar.classList.remove('is-open');
-      backdrop?.classList.remove('is-open');
-      sidebar.setAttribute('aria-hidden', 'true');
-      openButton?.setAttribute('aria-expanded', 'false');
-      sidebar.style.removeProperty('transform');
-      if (typeof anime === 'function') anime.remove(sidebar);
-    };
-    const open = () => {
-      sidebar.classList.add('is-open');
-      backdrop?.classList.add('is-open');
-      sidebar.setAttribute('aria-hidden', 'false');
-      openButton?.setAttribute('aria-expanded', 'true');
-    };
-    openButton?.addEventListener('click', event => { event.preventDefault(); open(); });
-    closeButton?.addEventListener('click', event => { event.preventDefault(); close(); });
-    backdrop?.addEventListener('click', close);
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') close(); });
-    close();
+      const calculator = window.calculator;
+      if (!calculator) return;
+      list.querySelectorAll('.feature-item').forEach(button => button.classList.remove('active'));
+      item.classList.add('active');
+
+      if (item.dataset.feature === 'history') {
+        calculator.historyPanel?.classList.add('sidebar-feature-visible', 'is-open');
+        calculator.historyPanel?.setAttribute('aria-hidden', 'false');
+        calculator.historyToggle?.setAttribute('aria-expanded', 'true');
+        calculator.animateHistoryPanel?.();
+      } else if (item.dataset.feature === 'clear') {
+        calculator.clearAll?.();
+      } else if (item.dataset.feature === 'theme') {
+        calculator.toggleTheme?.();
+      }
+
+      document.getElementById('sidebarClose')?.click();
+    }, true);
   };
 
-  const run = () => setTimeout(init, 0);
-  if (document.readyState === 'complete') run();
-  else window.addEventListener('load', run, { once: true });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
 })();
