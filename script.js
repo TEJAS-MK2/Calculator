@@ -7,9 +7,10 @@
 
   const reduceMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const animate = (targets, options) => {
-    if (reduceMotion() || typeof window.anime !== 'function') return;
+    if (reduceMotion() || typeof window.anime !== 'function') return false;
     window.anime.remove(targets);
     window.anime({ targets, ...options });
+    return true;
   };
   const resolvedTheme = () => theme === 'system'
     ? (window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
@@ -26,48 +27,20 @@
       .calculator.has-feature .calculator-feature-panel { margin-top: 0; margin-bottom: 16px; max-height: min(52vh, 390px); overflow: auto; }
       .calculator-feature-panel { width: 100%; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
       .calculator-feature-panel .engine-panel-head { position: sticky; top: -12px; z-index: 3; padding-bottom: 8px; background: inherit; }
-      html[data-theme="dark"] .calculator-feature-panel,
-      html[data-theme="dark"] .about-panel { color-scheme: dark; }
-      html[data-theme="light"] .calculator-feature-panel,
-      html[data-theme="light"] .about-panel { color-scheme: light; }
-      html[data-theme="dark"] .calculator-feature-panel,
-      html[data-theme="dark"] .about-panel { background: #242424; border-color: rgba(255,255,255,.14); color: #f5f5f5; }
-      html[data-theme="light"] .calculator-feature-panel,
-      html[data-theme="light"] .about-panel { background: #f7f7f7; border-color: rgba(0,0,0,.14); color: #111; }
-      html[data-theme="dark"] .calculator-feature-panel .engine-status,
-      html[data-theme="dark"] .calculator-feature-panel .engine-output,
-      html[data-theme="dark"] .calculator-feature-panel textarea,
-      html[data-theme="dark"] .calculator-feature-panel input,
-      html[data-theme="dark"] .calculator-feature-panel .engine-chips button,
-      html[data-theme="dark"] .calculator-feature-panel .engine-actions button,
-      html[data-theme="dark"] .calculator-feature-panel .segmented button,
-      html[data-theme="dark"] .calculator-feature-panel .engine-panel-head button { background: #202020; color: #f5f5f5; border-color: rgba(255,255,255,.14); }
-      html[data-theme="light"] .calculator-feature-panel .engine-status,
-      html[data-theme="light"] .calculator-feature-panel .engine-output,
-      html[data-theme="light"] .calculator-feature-panel textarea,
-      html[data-theme="light"] .calculator-feature-panel input,
-      html[data-theme="light"] .calculator-feature-panel .engine-chips button,
-      html[data-theme="light"] .calculator-feature-panel .engine-actions button,
-      html[data-theme="light"] .calculator-feature-panel .segmented button,
-      html[data-theme="light"] .calculator-feature-panel .engine-panel-head button { background: #fff; color: #111; border-color: rgba(0,0,0,.14); }
-      html[data-theme="dark"] .calculator-feature-panel .segmented button.active,
-      html[data-theme="dark"] .calculator-feature-panel .engine-primary,
-      html[data-theme="dark"] .calculator-feature-panel .engine-chips button:hover,
-      html[data-theme="dark"] .calculator-feature-panel .engine-actions button:hover { background: #f7f7f7; color: #111; }
-      html[data-theme="light"] .calculator-feature-panel .segmented button.active,
-      html[data-theme="light"] .calculator-feature-panel .engine-primary,
-      html[data-theme="light"] .calculator-feature-panel .engine-chips button:hover,
-      html[data-theme="light"] .calculator-feature-panel .engine-actions button:hover { background: #111; color: #fff; }
-      html[data-theme="dark"] .calculator-feature-panel .engine-help,
-      html[data-theme="dark"] .calculator-feature-panel .engine-about p { color: #b9b9b9; }
-      html[data-theme="light"] .calculator-feature-panel .engine-help,
-      html[data-theme="light"] .calculator-feature-panel .engine-about p { color: #555; }
+      html[data-theme="dark"] .calculator-feature-panel, html[data-theme="dark"] .about-panel { color-scheme: dark; }
+      html[data-theme="light"] .calculator-feature-panel, html[data-theme="light"] .about-panel { color-scheme: light; }
+      html[data-theme="dark"] .calculator-feature-panel, html[data-theme="dark"] .about-panel { background: #242424; border-color: rgba(255,255,255,.14); color: #f5f5f5; }
+      html[data-theme="light"] .calculator-feature-panel, html[data-theme="light"] .about-panel { background: #f7f7f7; border-color: rgba(0,0,0,.14); color: #111; }
+      html[data-theme="dark"] .calculator-feature-panel .engine-status, html[data-theme="dark"] .calculator-feature-panel .engine-output, html[data-theme="dark"] .calculator-feature-panel textarea, html[data-theme="dark"] .calculator-feature-panel input, html[data-theme="dark"] .calculator-feature-panel .engine-chips button, html[data-theme="dark"] .calculator-feature-panel .engine-actions button, html[data-theme="dark"] .calculator-feature-panel .segmented button, html[data-theme="dark"] .calculator-feature-panel .engine-panel-head button { background: #202020; color: #f5f5f5; border-color: rgba(255,255,255,.14); }
+      html[data-theme="light"] .calculator-feature-panel .engine-status, html[data-theme="light"] .calculator-feature-panel .engine-output, html[data-theme="light"] .calculator-feature-panel textarea, html[data-theme="light"] .calculator-feature-panel input, html[data-theme="light"] .calculator-feature-panel .engine-chips button, html[data-theme="light"] .calculator-feature-panel .engine-actions button, html[data-theme="light"] .calculator-feature-panel .segmented button, html[data-theme="light"] .calculator-feature-panel .engine-panel-head button { background: #fff; color: #111; border-color: rgba(0,0,0,.14); }
+      html[data-theme="dark"] .calculator-feature-panel .segmented button.active, html[data-theme="dark"] .calculator-feature-panel .engine-primary, html[data-theme="dark"] .calculator-feature-panel .engine-chips button:hover, html[data-theme="dark"] .calculator-feature-panel .engine-actions button:hover { background: #f7f7f7; color: #111; }
+      html[data-theme="light"] .calculator-feature-panel .segmented button.active, html[data-theme="light"] .calculator-feature-panel .engine-primary, html[data-theme="light"] .calculator-feature-panel .engine-chips button:hover, html[data-theme="light"] .calculator-feature-panel .engine-actions button:hover { background: #111; color: #fff; }
+      html[data-theme="dark"] .calculator-feature-panel .engine-help, html[data-theme="dark"] .calculator-feature-panel .engine-about p { color: #b9b9b9; }
+      html[data-theme="light"] .calculator-feature-panel .engine-help, html[data-theme="light"] .calculator-feature-panel .engine-about p { color: #555; }
       html[data-theme="dark"] .btn-equals { background: #000; color: #fff; border-color: #000; }
       html[data-theme="light"] .btn-equals { background: #111; color: #fff; border-color: #111; }
-      html[data-theme="dark"] .sidebar-open,
-      html[data-theme="dark"] .sidebar-close { background: #202020; color: #f5f5f5; }
-      html[data-theme="light"] .sidebar-open,
-      html[data-theme="light"] .sidebar-close { background: #fff; color: #111; }
+      html[data-theme="dark"] .sidebar-open, html[data-theme="dark"] .sidebar-close { background: #202020; color: #f5f5f5; }
+      html[data-theme="light"] .sidebar-open, html[data-theme="light"] .sidebar-close { background: #fff; color: #111; }
     `;
   }
 
@@ -98,9 +71,7 @@
     return true;
   }
 
-  function setCalculatorFeatureMode(open) {
-    calculator()?.classList.toggle('has-feature', open);
-  }
+  function setCalculatorFeatureMode(open) { calculator()?.classList.toggle('has-feature', open); }
 
   function closeSidebarAfterFeature() {
     const sidebar = $('featureSidebar');
@@ -158,21 +129,14 @@
     if (!panel) return;
     mountFeaturePanel(panel);
     panel.hidden = false;
-    const title = {
-      advanced: 'Advanced Engine',
-      scientific: 'Scientific',
-      statistics: 'Statistics',
-      matrix: 'Matrix',
-      exact: 'Exact Arithmetic'
-    }[feature] || 'Advanced Engine';
+    const title = { advanced: 'Advanced Engine', scientific: 'Scientific', statistics: 'Statistics', matrix: 'Matrix', exact: 'Exact Arithmetic' }[feature] || 'Advanced Engine';
     $('engineTitle').textContent = title;
     panel.querySelectorAll('[data-engine-section]').forEach(section => {
       section.hidden = !(['advanced'].includes(feature)
         ? section.dataset.engineSection === 'advanced'
         : section.dataset.engineSection === feature || section.dataset.engineSection === 'advanced');
     });
-    const exact = feature === 'exact';
-    window.CalculatorCoreUI?.setExactMode(exact);
+    window.CalculatorCoreUI?.setExactMode(feature === 'exact');
     document.querySelectorAll('.feature-item').forEach(item => item.classList.toggle('active', item.dataset.feature === feature));
     setCalculatorFeatureMode(true);
     closeSidebarAfterFeature();
@@ -187,26 +151,23 @@
     const backdrop = $('sidebarBackdrop');
     const openButton = $('sidebarOpen');
     if (!sidebar?.classList.contains('is-open')) return;
-    animate(sidebar, {
-      translateX: ['0%', '-105%'],
-      duration: 190,
-      easing: 'easeInCubic',
-      complete: () => {
-        sidebar.classList.remove('is-open');
-        backdrop?.classList.remove('is-open');
-        document.body.classList.remove('sidebar-visible');
-        sidebar.setAttribute('aria-hidden', 'true');
-        openButton?.setAttribute('aria-expanded', 'false');
-        sidebar.style.removeProperty('transform');
-      }
-    });
-    if (reduceMotion() || typeof window.anime !== 'function') {
+
+    window.anime?.remove(sidebar);
+    const finish = () => {
       sidebar.classList.remove('is-open');
       backdrop?.classList.remove('is-open');
       document.body.classList.remove('sidebar-visible');
       sidebar.setAttribute('aria-hidden', 'true');
       openButton?.setAttribute('aria-expanded', 'false');
-    }
+      sidebar.style.removeProperty('transform');
+    };
+
+    if (!animate(sidebar, {
+      translateX: ['0%', '-105%'],
+      duration: 190,
+      easing: 'easeInCubic',
+      complete: finish
+    })) finish();
   }
 
   function setupSidebar() {
@@ -218,33 +179,49 @@
     if (!sidebar || !openButton || !closeButton || !list) return;
 
     const setOpen = open => {
-      sidebar.classList.toggle('is-open', open);
-      backdrop?.classList.toggle('is-open', open);
-      document.body.classList.toggle('sidebar-visible', open);
-      sidebar.setAttribute('aria-hidden', String(!open));
-      openButton.setAttribute('aria-expanded', String(open));
-      if (open) {
-        animate(sidebar, { translateX: ['-105%', '0%'], duration: 280, easing: 'easeOutCubic' });
-        animate(list.querySelectorAll('.feature-item'), {
-          opacity: [0, 1],
-          translateX: [-14, 0],
-          delay: window.anime?.stagger(35),
-          duration: 220,
-          easing: 'easeOutCubic'
-        });
+      window.anime?.remove(sidebar);
+      if (!open) {
+        sidebar.classList.remove('is-open');
+        backdrop?.classList.remove('is-open');
+        document.body.classList.remove('sidebar-visible');
+        sidebar.setAttribute('aria-hidden', 'true');
+        openButton.setAttribute('aria-expanded', 'false');
+        sidebar.style.removeProperty('transform');
+        return;
       }
+
+      sidebar.classList.add('is-open');
+      backdrop?.classList.add('is-open');
+      document.body.classList.add('sidebar-visible');
+      sidebar.setAttribute('aria-hidden', 'false');
+      openButton.setAttribute('aria-expanded', 'true');
+
+      // Keep the sidebar off-screen while the open class is applied so the CSS
+      // rule cannot flash it at translateX(0) before Anime.js starts.
+      sidebar.style.transform = 'translateX(-105%)';
+      if (!animate(sidebar, {
+        translateX: ['-105%', '0%'],
+        duration: 280,
+        easing: 'easeOutCubic',
+        complete: () => sidebar.style.removeProperty('transform')
+      })) sidebar.style.removeProperty('transform');
+
+      animate(list.querySelectorAll('.feature-item'), {
+        opacity: [0, 1],
+        translateX: [-14, 0],
+        delay: window.anime?.stagger(35),
+        duration: 220,
+        easing: 'easeOutCubic'
+      });
     };
 
     const activate = feature => {
-      if (['advanced', 'scientific', 'statistics', 'matrix', 'exact'].includes(feature)) {
-        toggleEngine(feature);
-        return;
-      }
+      if (['advanced', 'scientific', 'statistics', 'matrix', 'exact'].includes(feature)) { toggleEngine(feature); return; }
       if (feature !== 'about') list.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
       if (feature === 'theme') { toggleTheme(); closeSidebar(); return; }
       if (feature === 'clear') { clearCalculator(); closeSidebar(); return; }
       if (feature === 'history') { resetFeaturePanels(); toggleHistory(); closeSidebar(); return; }
-      if (feature === 'about') { toggleAbout(); return; }
+      if (feature === 'about') toggleAbout();
     };
 
     openButton.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); setOpen(true); });
@@ -269,9 +246,7 @@
 
   applyTheme();
   setupSidebar();
-  window.matchMedia?.('(prefers-color-scheme: light)').addEventListener?.('change', () => {
-    if (theme === 'system') applyTheme();
-  });
+  window.matchMedia?.('(prefers-color-scheme: light)').addEventListener?.('change', () => { if (theme === 'system') applyTheme(); });
   window.addEventListener('load', () => {
     animate('.calculator', { opacity: [0, 1], translateY: [14, 0], scale: [0.98, 1], duration: 420, easing: 'easeOutCubic' });
     animate('.btn', { opacity: [0, 1], translateY: [8, 0], delay: window.anime?.stagger(28, { start: 80 }), duration: 260, easing: 'easeOutCubic' });
