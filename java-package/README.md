@@ -1,6 +1,6 @@
 # pijush-calculator — Apache Maven
 
-A lightweight Java arithmetic library for calculator applications and small math utilities, published to **GitHub Packages through Apache Maven**.
+A lightweight, dependency-free Java arithmetic library for calculator applications and small math utilities, published to **GitHub Packages through Apache Maven**.
 
 ## Version
 
@@ -8,12 +8,9 @@ A lightweight Java arithmetic library for calculator applications and small math
 
 ## Features
 
-- Addition
-- Subtraction
-- Multiplication
-- Division
+- Addition, subtraction, multiplication, and division
 - `BigDecimal` arithmetic
-- DECIMAL128 precision for operations
+- DECIMAL128 precision
 - Explicit division-by-zero handling
 - Java 17+
 - Zero runtime dependencies
@@ -26,7 +23,7 @@ io.github.tejas-mk2:pijush-calculator:0.1.0
 
 ## Installation from GitHub Packages
 
-Add the GitHub Packages Maven repository to your Maven project:
+Add the repository:
 
 ```xml
 <repositories>
@@ -47,7 +44,7 @@ Then add the dependency:
 </dependency>
 ```
 
-GitHub Packages requires authentication for package access. In GitHub Actions, the repository `GITHUB_TOKEN` can be used with the required `packages: write` or `packages: read` permission.
+GitHub Packages Maven artifacts are repository-scoped; package access requires appropriate GitHub authentication and permissions. citeturn0search1
 
 ## Usage
 
@@ -56,7 +53,6 @@ import io.github.tejasmk2.calculator.Calculator;
 import java.math.BigDecimal;
 
 BigDecimal sum = Calculator.add(new BigDecimal("2"), new BigDecimal("3"));
-BigDecimal product = Calculator.multiply(new BigDecimal("4"), new BigDecimal("6"));
 BigDecimal quotient = Calculator.divide(new BigDecimal("20"), new BigDecimal("5"));
 ```
 
@@ -80,13 +76,13 @@ mvn package
 
 ## Publishing
 
-The package is published to the **GitHub Packages Maven registry** by GitHub Actions. The workflow uses the repository-provided `GITHUB_TOKEN`; package credentials are never committed to the repository.
+GitHub Actions publishes the package to the GitHub Packages Maven registry with the workflow-provided `GITHUB_TOKEN`. Package credentials are never committed to the repository.
 
 ## Links
 
-- [Calculator repository](https://github.com/TEJAS-MK2/Calculator)
-- [GitHub Packages](https://github.com/TEJAS-MK2/Calculator/packages)
-- [Live calculator](https://tejas-mk2.github.io/Calculator/)
+- Repository: `https://github.com/TEJAS-MK2/Calculator`
+- Packages: `https://github.com/TEJAS-MK2/Calculator/packages`
+- Live calculator: `https://tejas-mk2.github.io/Calculator/`
 
 ## License
 
