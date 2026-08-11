@@ -121,8 +121,6 @@ jobs:
           distribution: temurin
           java-version: '17'
       - name: Configure Maven credentials
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p "$HOME/.m2"
           cat > "$HOME/.m2/settings.xml" <<'EOF'
@@ -138,6 +136,9 @@ jobs:
             </servers>
           </settings>
           EOF
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish Java package
         working-directory: java-package
         env:
@@ -192,7 +193,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-    if: ${{ env.PYPI_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -204,11 +204,15 @@ jobs:
         working-directory: python-package
         run: python -m build
       - name: Publish to PyPI
+        if: ${{ env.PYPI_TOKEN != '' }}
         working-directory: python-package
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: twine upload dist/*
+      - name: Skip PyPI publish when token is unavailable
+        if: ${{ env.PYPI_TOKEN == '' }}
+        run: echo "PYPI_API_TOKEN is not configured; package was built but not uploaded."
 
   publish-ruby:
     name: Publish Ruby gem
@@ -216,7 +220,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RUBYGEMS_TOKEN: ${{ secrets.RUBYGEMS_API_KEY }}
-    if: ${{ env.RUBYGEMS_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -226,7 +229,11 @@ jobs:
         working-directory: ruby-gem
         run: gem build pijush-calculator.gemspec
       - name: Publish to RubyGems
+        if: ${{ env.RUBYGEMS_TOKEN != '' }}
         working-directory: ruby-gem
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
         run: gem push *.gem
+      - name: Skip RubyGems publish when key is unavailable
+        if: ${{ env.RUBYGEMS_TOKEN == '' }}
+        run: echo "RUBYGEMS_API_KEY is not configured; gem was built but not uploaded."
