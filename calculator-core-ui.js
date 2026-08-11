@@ -7,24 +7,20 @@ import { evaluate } from './packages/calculator-core/index.js';
   const preview = () => $('expressionPreview');
   const historyList = () => $('historyList');
   const historyCount = () => $('historyCount');
+  const reduceMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const animate = (targets, options) => { if (!reduceMotion() && typeof window.anime === 'function') { window.anime.remove(targets); window.anime({ targets, ...options }); } };
   let expression = '';
   let justCalculated = false;
   const operators = new Set(['+', '-', '*', '/']);
   const actionOperators = { add: '+', subtract: '-', multiply: '*', divide: '/' };
 
-  function format(value) {
-    const n = Number(value);
-    if (!Number.isFinite(n)) return 'Error';
-    return n.toLocaleString('en-US', { maximumFractionDigits: 10, useGrouping: false });
-  }
+  function format(value) { const n = Number(value); if (!Number.isFinite(n)) return 'Error'; return n.toLocaleString('en-US', { maximumFractionDigits: 10, useGrouping: false }); }
   function display(text = expression || '0', sub = '') {
     if (primary()) primary().textContent = text;
     if (secondary()) secondary().textContent = sub;
     if (preview()) { preview().textContent = expression; preview().classList.toggle('active', Boolean(expression)); }
   }
-  function readHistory() {
-    try { const value = JSON.parse(localStorage.getItem('calculatorHistory') || '[]'); return Array.isArray(value) ? value.slice(0, 50) : []; } catch { return []; }
-  }
+  function readHistory() { try { const value = JSON.parse(localStorage.getItem('calculatorHistory') || '[]'); return Array.isArray(value) ? value.slice(0, 50) : []; } catch { return []; } }
   function saveHistory(items) { try { localStorage.setItem('calculatorHistory', JSON.stringify(items.slice(0, 50))); } catch {} }
   function addHistory(expr, result) { const items = readHistory(); items.unshift({ expression: expr, result: String(result), time: Date.now() }); saveHistory(items); renderHistory(); }
   function renderHistory() {
@@ -37,28 +33,18 @@ import { evaluate } from './packages/calculator-core/index.js';
       const button = document.createElement('button'); button.type = 'button'; button.className = 'history-item';
       const left = document.createElement('span'); const right = document.createElement('span'); left.className = 'history-expression'; right.className = 'history-result';
       left.textContent = item.expression; right.textContent = `= ${format(item.result)}`; button.append(left, right);
-      button.addEventListener('click', () => { expression = String(item.result); justCalculated = true; display(format(item.result), 'History'); });
+      button.addEventListener('click', () => { expression = String(item.result); justCalculated = true; display(format(item.result), 'History'); animate('.display-container', { scale: [0.97, 1], duration: 220, easing: 'easeOutQuad' }); });
       list.appendChild(button);
     }
   }
   function clearHistory() { try { localStorage.removeItem('calculatorHistory'); } catch {} renderHistory(); }
-  function clear() { expression = ''; justCalculated = false; display('0', ''); }
+  function clear() { expression = ''; justCalculated = false; display('0', ''); animate('.display-container', { scale: [0.965, 1], duration: 220, easing: 'easeOutQuad' }); }
   function appendNumber(value) { if (justCalculated) expression = ''; justCalculated = false; expression += value; display(expression); }
-  function appendDecimal() {
-    if (justCalculated) expression = '';
-    justCalculated = false;
-    const tail = expression.split(/[+\-*/]/).pop() || '';
-    if (tail.includes('.')) return;
-    expression += tail ? '.' : '0.'; display(expression);
-  }
-  function appendOperator(operator) {
-    if (!expression) return;
-    expression = operators.has(expression.at(-1)) ? expression.slice(0, -1) + operator : expression + operator;
-    justCalculated = false; display(expression);
-  }
+  function appendDecimal() { if (justCalculated) expression = ''; justCalculated = false; const tail = expression.split(/[+\-*/]/).pop() || ''; if (tail.includes('.')) return; expression += tail ? '.' : '0.'; display(expression); }
+  function appendOperator(operator) { if (!expression) return; expression = operators.has(expression.at(-1)) ? expression.slice(0, -1) + operator : expression + operator; justCalculated = false; display(expression); }
   function calculate() {
     if (!expression || operators.has(expression.at(-1))) return;
-    try { const result = evaluate(expression); addHistory(expression, result); display(format(result), `${expression} =`); expression = String(result); justCalculated = true; }
+    try { const result = evaluate(expression); addHistory(expression, result); display(format(result), `${expression} =`); expression = String(result); justCalculated = true; animate('.btn-equals', { scale: [0.9, 1], duration: 260, easing: 'easeOutBack' }); }
     catch (error) { display('Error', error?.message || 'Invalid expression'); setTimeout(() => { if (primary()?.textContent === 'Error') clear(); }, 1500); }
   }
   function handleButton(button) {
@@ -68,8 +54,9 @@ import { evaluate } from './packages/calculator-core/index.js';
     if (actionOperators[action]) return appendOperator(actionOperators[action]);
     if (action === 'decimal') return appendDecimal();
     if (action === 'equals') return calculate();
+    if (action === 'clear-all') return clear();
   }
-  document.addEventListener('click', event => { const button = event.target.closest('.calculator .btn'); if (!button) return; event.preventDefault(); event.stopImmediatePropagation(); handleButton(button); }, true);
+  document.addEventListener('click', event => { const button = event.target.closest('.calculator .btn'); if (!button) return; event.preventDefault(); event.stopImmediatePropagation(); animate(button, { scale: [0.9, 1], duration: 180, easing: 'easeOutQuad' }); handleButton(button); }, true);
   window.renderCalculatorHistory = renderHistory;
   window.clearCalculatorHistory = clearHistory;
   window.clearCalculator = clear;
