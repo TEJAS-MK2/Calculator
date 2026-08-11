@@ -21,17 +21,35 @@ jobs:
 
       - name: Validate JavaScript syntax
         run: |
-          node --check script.js
-          node --check graph.js
-          node --check statistics.js
-          node --check static/js/calculator.js
-          node --check sw.js
+          set -e
+          for file in script.js graph.js statistics.js advanced-features.js sidebar-fix.js sw.js static/js/calculator.js; do
+            echo "Checking $file"
+            node --check "$file"
+          done
 
       - name: Validate Python syntax
         run: python -m py_compile app.py main.py
 
       - name: Validate manifest JSON
         run: python -m json.tool manifest.json >/dev/null
+
+      - name: Validate HTML references
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('index.html').read_text(encoding='utf-8')
+          refs = re.findall(r'(?:src|href)=["\'](?:\./)?([^"\'?#]+)', html)
+          missing = []
+          for ref in refs:
+              if ref.startswith(('http://', 'https://', '//', '#')):
+                  continue
+              if not Path(ref).exists():
+                  missing.append(ref)
+          if missing:
+              raise SystemExit('Missing local assets: ' + ', '.join(sorted(set(missing))))
+          print('All local HTML assets exist.')
+          PY
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
