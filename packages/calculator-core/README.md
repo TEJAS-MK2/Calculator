@@ -4,9 +4,9 @@ A **lightweight, dependency-free JavaScript calculation engine** with a safe exp
 
 ## Current release
 
-**`0.2.0` — Phase 1 calculation engine**
+**`0.2.1` — Phase 1 calculation engine**
 
-The package powers the expression-evaluation layer of the Modern Calculator web UI while remaining usable independently in other JavaScript projects.
+The package powers the expression-evaluation layer of the Modern Calculator web UI while remaining independently reusable.
 
 ## Features
 
@@ -28,7 +28,7 @@ The package powers the expression-evaluation layer of the Modern Calculator web 
 
 The package is published to **GitHub Packages**.
 
-Configure npm to use the GitHub Packages registry for the `@tejas-mk2` scope, then install:
+Configure npm to use GitHub Packages for the `@tejas-mk2` scope, then install:
 
 ```bash
 npm install @tejas-mk2/calculator-core
@@ -101,20 +101,20 @@ log ln exp
 
 ## Exact mode
 
-`evaluate()` returns JavaScript numbers. When exact rational arithmetic is required, use `evaluateExact()`:
+`evaluate()` returns JavaScript numbers. For supported rational expressions, `evaluateExact()` preserves exact values:
 
 ```js
 const result = evaluateExact('1 / 3 + 1 / 6');
 console.log(result.toString()); // 1/2
 ```
 
-Exact mode preserves rational values and supports integer powers. It intentionally does not approximate irrational constants or scientific functions.
+Exact mode intentionally does not approximate irrational constants or scientific functions.
 
 ## API
 
 ### `evaluate(expression, scope?)`
 
-Parses and evaluates an expression using the package tokenizer and recursive-descent parser.
+Parses and evaluates an expression using the tokenizer and recursive-descent parser.
 
 ### `evaluateExact(expression, scope?)`
 
@@ -150,7 +150,7 @@ npm pack --dry-run
 | Property | Value |
 |---|---|
 | Package | `@tejas-mk2/calculator-core` |
-| Version | `0.2.0` |
+| Version | `0.2.1` |
 | Registry | GitHub Packages |
 | Runtime dependencies | None |
 | Module format | ES module |
