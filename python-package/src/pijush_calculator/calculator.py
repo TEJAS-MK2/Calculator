@@ -1,7 +1,6 @@
-"""Core arithmetic engine for pijush-calculator.
+"""Robust arithmetic engine for pijush-calculator.
 
-The public functions deliberately use Python's numeric types so callers can
-choose int, float, Decimal, or compatible numeric implementations.
+The public API stays dependency-free and works with Python numeric types.
 """
 
 
@@ -39,3 +38,39 @@ def power(a, b):
 
 def percentage(value, percent):
     return _finite(value * percent / 100)
+
+
+def absolute(value):
+    return _finite(abs(value))
+
+
+def minimum(a, b):
+    return a if a <= b else b
+
+
+def maximum(a, b):
+    return a if a >= b else b
+
+
+def average(a, b):
+    return _finite((a + b) / 2)
+
+
+def clamp(value, minimum_value, maximum_value):
+    if minimum_value > maximum_value:
+        raise ValueError("minimum_value cannot exceed maximum_value")
+    return minimum(maximum(value, minimum_value), maximum_value)
+
+
+def reciprocal(value):
+    if value == 0:
+        raise ZeroDivisionError("cannot take reciprocal of zero")
+    return _finite(1 / value)
+
+
+def square(value):
+    return _finite(value * value)
+
+
+def cube(value):
+    return _finite(value * value * value)
