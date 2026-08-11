@@ -109,9 +109,12 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.x'
+      - name: Build
+        working-directory: nuget-package
+        run: dotnet build Pijush.Calculator.csproj -c Release --no-restore
       - name: Pack
         working-directory: nuget-package
-        run: dotnet pack Pijush.Calculator.csproj -c Release
+        run: dotnet pack Pijush.Calculator.csproj -c Release --no-build
       - name: Publish to GitHub Packages
         working-directory: nuget-package
         env:
@@ -204,8 +207,6 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
     needs: test-engines
     runs-on: ubuntu-latest
-    env:
-      PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -217,14 +218,14 @@ jobs:
         working-directory: python-package
         run: python -m build
       - name: Publish to PyPI
-        if: ${{ env.PYPI_TOKEN != '' }}
+        if: ${{ secrets.PYPI_API_TOKEN != '' }}
         working-directory: python-package
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: twine upload dist/*
       - name: Skip PyPI publish when token is unavailable
-        if: ${{ env.PYPI_TOKEN == '' }}
+        if: ${{ secrets.PYPI_API_TOKEN == '' }}
         run: echo "PYPI_API_TOKEN is not configured; package was built but not uploaded."
 
   publish-ruby:
@@ -232,8 +233,6 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
     needs: test-engines
     runs-on: ubuntu-latest
-    env:
-      RUBYGEMS_TOKEN: ${{ secrets.RUBYGEMS_API_KEY }}
     steps:
       - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
@@ -243,11 +242,11 @@ jobs:
         working-directory: ruby-gem
         run: gem build pijush-calculator.gemspec
       - name: Publish to RubyGems
-        if: ${{ env.RUBYGEMS_TOKEN != '' }}
+        if: ${{ secrets.RUBYGEMS_API_KEY != '' }}
         working-directory: ruby-gem
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
         run: gem push *.gem
       - name: Skip RubyGems publish when key is unavailable
-        if: ${{ env.RUBYGEMS_TOKEN == '' }}
+        if: ${{ secrets.RUBYGEMS_API_KEY == '' }}
         run: echo "RUBYGEMS_API_KEY is not configured; gem was built but not uploaded."
