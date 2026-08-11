@@ -7,7 +7,9 @@ on:
     paths:
       - 'packages/calculator-core/package.json'
       - 'packages/calculator-core/index.js'
+      - 'packages/calculator-core/test.js'
       - 'packages/calculator-core/LICENSE'
+      - '.github/workflows/publish-github-package.yml'
     tags:
       - 'calculator-core-v*'
 
