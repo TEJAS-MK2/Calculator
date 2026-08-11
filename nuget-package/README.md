@@ -32,7 +32,7 @@ Then install:
 dotnet add package Pijush.Calculator --version 0.1.0
 ```
 
-GitHub Packages requires appropriate package read permission for package installation. citeturn0search10
+GitHub Packages requires appropriate package read permission for package installation.
 
 ## Usage
 
