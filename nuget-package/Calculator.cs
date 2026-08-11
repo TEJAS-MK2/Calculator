@@ -28,7 +28,7 @@ public static class Calculator
     public static double Logarithm(double value,double baseValue=10){if(value<=0||baseValue<=0||baseValue==1)throw new ArgumentException("Invalid logarithm domain.");return Math.Log(value,baseValue);}
     public static double NaturalLog(double value){if(value<=0)throw new ArgumentException("Natural logarithm requires a positive value.");return Math.Log(value);}
     public static double Exponential(double value)=>Math.Exp(value);
-    public static long GreatestCommonDivisor(long a,long b)=>Math.Abs(a).Gcd(Math.Abs(b));
+    public static long GreatestCommonDivisor(long a,long b){a=Math.Abs(a);b=Math.Abs(b);while(b!=0){var t=a%b;a=b;b=t;}return a;}
     public static long LeastCommonMultiple(long a,long b){if(a==0||b==0)return 0;return Math.Abs(a/GreatestCommonDivisor(a,b)*b);}
     public static decimal Factorial(int n){if(n<0)throw new ArgumentException("Factorial requires a non-negative integer.");decimal result=1m;for(var i=2;i<=n;i++)result*=i;return result;}
 }
