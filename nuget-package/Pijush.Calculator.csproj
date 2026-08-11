@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>Pijush.Calculator</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Pijush Chakraborty</Authors>
     <Description>Lightweight, dependency-free C# calculator library for reliable arithmetic operations with explicit division-by-zero handling.</Description>
     <PackageTags>calculator;math;arithmetic;dotnet;pijush</PackageTags>
