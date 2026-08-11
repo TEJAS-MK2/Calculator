@@ -1,16 +1,20 @@
 # Pijush.Calculator — NuGet
 
-Advanced, dependency-free C# arithmetic engine for .NET applications.
+Advanced, dependency-free C# decimal/scientific engine for .NET applications.
 
 ## Engine capabilities
 
-The engine uses .NET `decimal` values with explicit validation and safe arithmetic operations.
-
-- Addition, subtraction, multiplication, division, modulo
-- Integer power and percentage
-- Absolute value, min/max, average, clamp, reciprocal
-- Square and cube
-- Explicit `DivideByZeroException` handling
+- Arithmetic: Add, Subtract, Multiply, Divide, Modulo, Power, Percentage
+- Utilities: Absolute, Minimum, Maximum, Average/Mean, Sum, Product, Clamp, Reciprocal, Square, Cube
+- Roots: SquareRoot and CubeRoot
+- Number theory: Factorial, GreatestCommonDivisor, LeastCommonMultiple, Combinations, Permutations
+- Trigonometry: Sine, Cosine, Tangent, Secant, Cosecant, Cotangent
+- Inverse trigonometry and Atan2
+- Hyperbolic functions
+- Logarithms and exponentials
+- Multi-value Hypot
+- Statistics: Median, population Variance, StandardDeviation, Range
+- Explicit argument and divide-by-zero validation
 - .NET 8+
 - Zero runtime dependencies
 
@@ -24,7 +28,7 @@ dotnet nuget add source https://nuget.pkg.github.com/TEJAS-MK2/index.json \
   --store-password-in-clear-text
 ```
 
-Then install a published version:
+Then:
 
 ```bash
 dotnet add package Pijush.Calculator --version YOUR_VERSION
@@ -36,22 +40,10 @@ dotnet add package Pijush.Calculator --version YOUR_VERSION
 using Pijush.Calculator;
 
 Console.WriteLine(Calculator.Add(2m, 3m));
-Console.WriteLine(Calculator.Modulo(20m, 6m));
-Console.WriteLine(Calculator.Power(2m, 8));
-Console.WriteLine(Calculator.Percentage(250m, 20m));
-Console.WriteLine(Calculator.Clamp(120m, 0m, 100m));
+Console.WriteLine(Calculator.Power(2m, 10));
+Console.WriteLine(Calculator.Sine(90, true));
+Console.WriteLine(Calculator.Median(9m, 2m, 7m, 4m));
 ```
-
-Division and modulo by zero throw `DivideByZeroException`. Invalid clamp ranges throw `ArgumentException`.
-
-## API
-
-| Method | Purpose |
-|---|---|
-| `Add`, `Subtract`, `Multiply`, `Divide` | Basic arithmetic |
-| `Modulo`, `Power`, `Percentage` | Extended arithmetic |
-| `Absolute`, `Minimum`, `Maximum`, `Average` | Numeric utilities |
-| `Clamp`, `Reciprocal`, `Square`, `Cube` | Value transformations |
 
 ## Development
 
@@ -63,7 +55,7 @@ dotnet pack Pijush.Calculator.csproj -c Release
 
 ## Publishing
 
-GitHub Actions publishes the package to GitHub Packages NuGet using the repository-provided `GITHUB_TOKEN` with `packages: write` permission. No long-lived package credential is committed. Published versions are immutable.
+GitHub Actions publishes the package to GitHub Packages NuGet using the repository `GITHUB_TOKEN` with package write permission. Published versions are immutable and credentials are never committed.
 
 ## Package information
 
