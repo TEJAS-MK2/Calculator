@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pijush-calculator"
+version = "0.1.0"
+description = "A lightweight, dependency-free Python calculator engine."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Pijush Chakraborty" }]
+keywords = ["calculator", "math", "arithmetic", "expression", "pijush"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent"
+]
+
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/TEJAS-MK2/Calculator"
+Repository = "https://github.com/TEJAS-MK2/Calculator"
+Issues = "https://github.com/TEJAS-MK2/Calculator/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pijush_calculator"]
