@@ -44,6 +44,8 @@ public final class Calculator {
     public static double hyperbolicTangent(double value){return Math.tanh(value);}
     public static double logarithm(double value,double base){if(value<=0||base<=0||base==1)throw new IllegalArgumentException("invalid logarithm domain");return Math.log(value)/Math.log(base);}
     public static double log2(double value){if(value<=0)throw new IllegalArgumentException("log2 requires a positive value");return Math.log(value)/Math.log(2);}
+    public static double log1p(double value){if(value<=-1)throw new IllegalArgumentException("log1p requires a value greater than -1");return Math.log1p(value);}
+    public static double expm1(double value){return Math.expm1(value);}
     public static double naturalLog(double value){if(value<=0)throw new IllegalArgumentException("natural logarithm requires a positive value");return Math.log(value);}
     public static double exponential(double value){return Math.exp(value);}
     public static double hypot(double... values){if(values.length==0)throw new IllegalArgumentException("hypot requires a value");return Math.sqrt(java.util.Arrays.stream(values).map(v->v*v).sum());}
@@ -56,7 +58,7 @@ public final class Calculator {
     public static BigDecimal variance(BigDecimal... values){if(values.length==0)throw new IllegalArgumentException("variance requires a value");BigDecimal mean=average(values);BigDecimal total=BigDecimal.ZERO;for(BigDecimal v:values){BigDecimal d=v.subtract(mean,MC);total=total.add(d.multiply(d,MC),MC);}return total.divide(BigDecimal.valueOf(values.length),MC);}
     public static double standardDeviation(BigDecimal... values){return Math.sqrt(variance(values).doubleValue());}
     public static BigDecimal range(BigDecimal... values){return maximum(values).subtract(minimum(values),MC);}
-    public static boolean approximatelyEqual(double a,double b,double tolerance){return Math.abs(a-b)<=tolerance;}
+    public static boolean approximatelyEqual(double a,double b,double tolerance){if(tolerance<0)throw new IllegalArgumentException("tolerance must be non-negative");return Math.abs(a-b)<=tolerance;}
     private static BigDecimal minMax(BigDecimal[] values,boolean min){if(values.length==0)throw new IllegalArgumentException("requires a value");BigDecimal result=require(values[0]);for(int i=1;i<values.length;i++){BigDecimal v=require(values[i]);result=min?result.min(v):result.max(v);}return result;}
     private static BigDecimal require(BigDecimal value){return Objects.requireNonNull(value,"value must not be null");}
 }
