@@ -27,18 +27,20 @@ try {
   const display = page.locator('#displayPrimary');
   const sidebar = page.locator('#featureSidebar');
   const openControls = page.getByRole('button', { name: 'Open calculator controls' });
+  const number = value => page.locator(`.calculator .btn-number[data-number="${value}"]`);
+  const operator = value => page.locator(`.calculator .btn-operator[data-action="${value}"]`);
 
   // Basic arithmetic + history.
-  await page.getByRole('button', { name: '2' }).click();
-  await page.getByRole('button', { name: '+' }).click();
-  await page.getByRole('button', { name: '3' }).click();
-  await page.getByRole('button', { name: '=' }).click();
+  await number('2').click();
+  await operator('add').click();
+  await number('3').click();
+  await page.locator('.calculator .btn-equals').click();
   if ((await display.textContent()) !== '5') throw new Error('Basic calculator flow failed: expected 5.');
 
   await openControls.click();
   if (await sidebar.getAttribute('aria-hidden') !== 'false') throw new Error('Sidebar did not open.');
 
-  await page.getByRole('button', { name: 'History' }).click();
+  await page.getByRole('button', { name: 'History', exact: true }).click();
   if (await page.locator('#historyPanel').getAttribute('aria-hidden') !== 'false') {
     throw new Error('History did not open.');
   }
@@ -46,29 +48,29 @@ try {
 
   // About panel.
   await openControls.click();
-  await page.getByRole('button', { name: 'About' }).click();
+  await page.getByRole('button', { name: 'About', exact: true }).click();
   if (!(await page.locator('#aboutPanel').isVisible())) throw new Error('About panel did not open.');
-  await page.getByRole('button', { name: 'Close controls' }).click();
+  await page.getByRole('button', { name: 'Close controls', exact: true }).click();
   if (await sidebar.getAttribute('aria-hidden') !== 'true') throw new Error('Sidebar did not close.');
 
   // Backspace + decimal input.
-  await page.getByRole('button', { name: '8' }).click();
-  await page.getByRole('button', { name: '9' }).click();
-  await page.getByRole('button', { name: 'Backspace' }).click();
+  await number('8').click();
+  await number('9').click();
+  await page.getByRole('button', { name: 'Backspace', exact: true }).click();
   if ((await display.textContent()) !== '8') throw new Error('Backspace failed.');
-  await page.getByRole('button', { name: '.' }).click();
-  await page.getByRole('button', { name: '2' }).click();
+  await page.getByRole('button', { name: '.', exact: true }).click();
+  await number('2').click();
   if ((await display.textContent()) !== '8.2') throw new Error('Decimal input failed.');
 
   // Clear from the sidebar.
   await openControls.click();
-  await page.getByRole('button', { name: 'Clear' }).click();
+  await page.getByRole('button', { name: 'Clear', exact: true }).click();
   if ((await display.textContent()) !== '0') throw new Error('Sidebar clear failed.');
 
   // Theme control must change the resolved theme.
   const beforeTheme = await page.locator('html').getAttribute('data-theme');
   await openControls.click();
-  await page.getByRole('button', { name: 'Theme' }).click();
+  await page.getByRole('button', { name: 'Theme', exact: true }).click();
   const afterTheme = await page.locator('html').getAttribute('data-theme');
   if (beforeTheme === afterTheme) throw new Error('Theme control did not change the theme.');
 
