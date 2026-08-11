@@ -1,14 +1,8 @@
-const FUNCTIONS = Object.freeze({
-  sin: Math.sin, cos: Math.cos, tan: Math.tan,
-  asin: Math.asin, acos: Math.acos, atan: Math.atan,
-  sqrt: Math.sqrt, abs: Math.abs, floor: Math.floor,
-  ceil: Math.ceil, round: Math.round, log: Math.log10,
-  ln: Math.log, exp: Math.exp
-});
+const FUNCTIONS = Object.freeze({ sin: Math.sin, cos: Math.cos, tan: Math.tan, asin: Math.asin, acos: Math.acos, atan: Math.atan, sqrt: Math.sqrt, abs: Math.abs, floor: Math.floor, ceil: Math.ceil, round: Math.round, log: Math.log10, ln: Math.log, exp: Math.exp });
 const CONSTANTS = Object.freeze({ pi: Math.PI, e: Math.E, tau: Math.PI * 2, phi: (1 + Math.sqrt(5)) / 2 });
 const IDENTIFIER = /^[A-Za-z_][A-Za-z0-9_]*$/;
 function tokenize(expression) { const source=String(expression??'').trim().replaceAll('π','pi').replaceAll('τ','tau').replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/\s+/g,''); if(!source)throw new Error('Expression is empty'); const tokens=[]; let i=0; while(i<source.length){const char=source[i]; if(/\d|\./.test(char)){const match=source.slice(i).match(/^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/i); if(!match)throw new Error(`Invalid number near "${source.slice(i)}"`); const value=Number(match[0]); if(!Number.isFinite(value))throw new Error('Number is outside the supported range'); tokens.push({type:'number',value}); i+=match[0].length; continue;} if(/[A-Za-z_]/.test(char)){const match=source.slice(i).match(/^[A-Za-z_][A-Za-z0-9_]*/); if(!IDENTIFIER.test(match[0]))throw new Error(`Invalid identifier "${match[0]}"`); tokens.push({type:'identifier',value:match[0]}); i+=match[0].length; continue;} if('+-*/%^(),'.includes(char)){tokens.push({type:char,value:char});i++;continue;} throw new Error(`Invalid character "${char}"`);} return tokens; }
-const isValueEnd=token=>token&&(token.type==='number'||token.type==='identifier'||token.type===')'||token.type==='%');
+const isValueEnd=token=>token&&(token.type==='number'||token.type==='identifier'||token.type===')');
 const isValueStart=token=>token&&(token.type==='number'||token.type==='identifier'||token.type==='(');
 function addImplicitMultiplication(tokens){const output=[];for(let i=0;i<tokens.length;i++){const current=tokens[i],next=tokens[i+1];output.push(current);if(isValueEnd(current)&&isValueStart(next)&&!(current.type==='identifier'&&next.type==='('&&FUNCTIONS[current.value]))output.push({type:'*',value:'*'});}return output;}
 export class EvaluationError extends Error{constructor(message,code='EVALUATION_ERROR'){super(message);this.name='EvaluationError';this.code=code;}}
