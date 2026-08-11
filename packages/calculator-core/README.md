@@ -2,25 +2,31 @@
 
 A **lightweight, dependency-free JavaScript calculation engine** with a safe expression parser for web apps, Node.js tools, and other JavaScript projects.
 
-## What's new in 0.2.0
+## Current release
 
-Phase 1 adds a stronger calculation engine:
+**`0.2.0` — Phase 1 calculation engine**
+
+The package powers the expression-evaluation layer of the Modern Calculator web UI while remaining usable independently in other JavaScript projects.
+
+## Features
 
 - Operator precedence and nested parentheses
-- Implicit multiplication such as `2(5 + 3)`
+- Implicit multiplication, such as `2(5 + 3)` and `3pi`
 - Unary `+` and `-`
 - Powers and percentages
 - Variables through a scope object
 - `π` and `e` constants
 - Scientific functions
+- Exact rational arithmetic with `Fraction` and `evaluateExact`
 - Explicit division-by-zero and invalid-expression errors
-- Exact rational arithmetic through `Fraction` and `evaluateExact`
-- No use of `eval()` or the `Function()` constructor
+- No `eval()` or `Function()` constructor
 - Zero runtime dependencies
+- Framework-free and DOM-independent
+- ES module support
 
 ## Installation
 
-This package is published to **GitHub Packages**.
+The package is published to **GitHub Packages**.
 
 Configure npm to use the GitHub Packages registry for the `@tejas-mk2` scope, then install:
 
@@ -41,7 +47,7 @@ import {
 } from '@tejas-mk2/calculator-core';
 
 console.log(evaluate('(25 + 5) * 2')); // 60
-console.log(evaluate('2(5 + 3) + 4^2')); // 32
+console.log(evaluate('2(5 + 3) + 4^2')); // 80
 console.log(evaluate('sin(pi / 2)^2 + cos(pi / 2)^2')); // 1
 console.log(evaluate('x^2 + 1', { x: 5 })); // 26
 
@@ -55,19 +61,19 @@ console.log(convertTemperature(100, 'C', 'F')); // 212
 
 ## Expression syntax
 
-Supported operators:
+### Operators
 
 ```text
 +  -  *  /  %  ^
 ```
 
-Grouping and precedence:
+### Grouping and precedence
 
 ```text
 (2 + 3) * 4
 ```
 
-Implicit multiplication:
+### Implicit multiplication
 
 ```text
 2(5 + 3)
@@ -75,30 +81,40 @@ Implicit multiplication:
 2sin(pi / 2)
 ```
 
-Variables:
+### Variables
 
 ```js
 evaluate('2*x + y', { x: 5, y: 3 });
 ```
 
-Scientific functions include `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `abs`, `floor`, `ceil`, `round`, `log`, `ln`, and `exp`.
+### Scientific functions
+
+Supported functions include:
+
+```text
+sin  cos  tan
+asin acos atan
+sqrt abs
+floor ceil round
+log ln exp
+```
 
 ## Exact mode
 
-`evaluate()` returns JavaScript numbers. For rational arithmetic where you want to preserve fractions, use `evaluateExact()`:
+`evaluate()` returns JavaScript numbers. When exact rational arithmetic is required, use `evaluateExact()`:
 
 ```js
 const result = evaluateExact('1 / 3 + 1 / 6');
 console.log(result.toString()); // 1/2
 ```
 
-Exact mode supports rational arithmetic and integer powers. It intentionally does not approximate irrational constants or scientific functions.
+Exact mode preserves rational values and supports integer powers. It intentionally does not approximate irrational constants or scientific functions.
 
 ## API
 
 ### `evaluate(expression, scope?)`
 
-Parses and evaluates an expression using a tokenizer and recursive-descent parser.
+Parses and evaluates an expression using the package tokenizer and recursive-descent parser.
 
 ### `evaluateExact(expression, scope?)`
 
@@ -106,7 +122,7 @@ Evaluates supported arithmetic using exact rational values and returns a `Fracti
 
 ### `Fraction(numerator, denominator?)`
 
-Creates a normalized immutable rational number with `add`, `subtract`, `multiply`, `divide`, `pow`, and `toString` methods.
+Creates a normalized immutable rational number with arithmetic operations including `add`, `subtract`, `multiply`, `divide`, `pow`, and `toString`.
 
 ### `factorial(n)`
 
@@ -131,11 +147,14 @@ npm pack --dry-run
 
 ## Package information
 
-- **Package:** `@tejas-mk2/calculator-core`
-- **Current version:** `0.2.0`
-- **Registry:** GitHub Packages
-- **Runtime dependencies:** None
-- **License:** MIT
+| Property | Value |
+|---|---|
+| Package | `@tejas-mk2/calculator-core` |
+| Version | `0.2.0` |
+| Registry | GitHub Packages |
+| Runtime dependencies | None |
+| Module format | ES module |
+| License | MIT |
 
 ## License
 
