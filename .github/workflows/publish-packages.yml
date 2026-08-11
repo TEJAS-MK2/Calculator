@@ -1,10 +1,13 @@
-name: Publish Packages
+name: Test and Publish Packages
 
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     tags:
       - 'v*'
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
@@ -81,6 +84,7 @@ jobs:
 
   publish-npm:
     name: Publish npm package
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: test-engines
     runs-on: ubuntu-latest
     steps:
@@ -97,6 +101,7 @@ jobs:
 
   publish-nuget:
     name: Publish NuGet package
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: test-engines
     runs-on: ubuntu-latest
     steps:
@@ -115,6 +120,7 @@ jobs:
 
   publish-maven:
     name: Publish Maven package
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: test-engines
     runs-on: ubuntu-latest
     steps:
@@ -151,6 +157,7 @@ jobs:
 
   publish-gradle:
     name: Publish Gradle package
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: test-engines
     runs-on: ubuntu-latest
     steps:
@@ -172,6 +179,7 @@ jobs:
 
   publish-container:
     name: Publish container
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: test-engines
     runs-on: ubuntu-latest
     steps:
@@ -193,6 +201,7 @@ jobs:
 
   publish-python:
     name: Publish Python package
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: test-engines
     runs-on: ubuntu-latest
     env:
@@ -220,6 +229,7 @@ jobs:
 
   publish-ruby:
     name: Publish Ruby gem
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: test-engines
     runs-on: ubuntu-latest
     env:
