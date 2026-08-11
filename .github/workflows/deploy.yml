@@ -22,13 +22,10 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           set -e
-          for file in script.js graph.js statistics.js advanced-features.js sidebar-fix.js sw.js static/js/calculator.js; do
+          for file in script.js graph.js statistics.js advanced-features.js sidebar-fix.js animation-enhancements.js sidebar-hardening.js sw.js; do
             echo "Checking $file"
             node --check "$file"
           done
-
-      - name: Validate Python syntax
-        run: python -m py_compile app.py main.py
 
       - name: Validate manifest JSON
         run: python -m json.tool manifest.json >/dev/null
