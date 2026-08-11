@@ -1,12 +1,12 @@
 # pijush-calculator
 
-A **lightweight, dependency-free Ruby calculation engine** from the Modern Calculator project.
+A **lightweight, dependency-free Ruby arithmetic library** for reusable calculator operations.
 
 ## Current release
 
-**v0.1.1 — arithmetic engine**
+**v0.1.2 — Ruby arithmetic engine**
 
-The gem provides a small reusable arithmetic API that works independently of the web calculator.
+This gem is independent of the web UI and provides a small, predictable API for basic arithmetic.
 
 ## Features
 
@@ -18,19 +18,10 @@ The gem provides a small reusable arithmetic API that works independently of the
 - Ruby 3.0+
 - Zero runtime dependencies
 - Simple module-based API
-- GitHub Packages RubyGems distribution
 
-## Installation from GitHub Packages
+## Installation
 
-The gem is distributed through the GitHub Packages RubyGems registry.
-
-Registry:
-
-```text
-https://rubygems.pkg.github.com/TEJAS-MK2
-```
-
-Configure RubyGems authentication with an appropriate GitHub token, then install:
+The gem is distributed through GitHub Packages RubyGems:
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
@@ -41,13 +32,13 @@ gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```ruby
 require "pijush_calculator"
 
-PijushCalculator.add(2, 3)       # 5
-PijushCalculator.subtract(8, 3)  # 5
+PijushCalculator.add(2, 3)        # 5
+PijushCalculator.subtract(8, 3)   # 5
 PijushCalculator.multiply(4, 6)   # 24
-PijushCalculator.divide(20, 5)   # 4.0
+PijushCalculator.divide(20, 5)    # 4.0
 ```
 
-Division by zero raises an explicit `ZeroDivisionError`:
+Division by zero is explicit:
 
 ```ruby
 PijushCalculator.divide(10, 0)
@@ -58,47 +49,52 @@ PijushCalculator.divide(10, 0)
 
 ### `PijushCalculator.add(a, b)`
 
-Returns the sum of two values.
+Returns `a + b`.
 
 ### `PijushCalculator.subtract(a, b)`
 
-Returns the difference between two values.
+Returns `a - b`.
 
 ### `PijushCalculator.multiply(a, b)`
 
-Returns the product of two values.
+Returns `a * b`.
 
 ### `PijushCalculator.divide(a, b)`
 
-Returns the quotient as a floating-point value and raises `ZeroDivisionError` when `b` is zero.
+Returns the quotient as a floating-point value. Raises `ZeroDivisionError` when `b` is zero.
 
 ## Development
 
-Build and inspect the gem locally:
+Build the gem locally:
 
 ```bash
 gem build pijush-calculator.gemspec
-gem specification pijush-calculator-0.1.1.gem
 ```
 
-Install the locally built package:
+Inspect the built metadata:
 
 ```bash
-gem install ./pijush-calculator-0.1.1.gem
+gem specification pijush-calculator-0.1.2.gem
+```
+
+Install the local build:
+
+```bash
+gem install ./pijush-calculator-0.1.2.gem
 ```
 
 ## Publishing
 
-Package publishing is handled by the repository's GitHub Actions workflow. Do not commit registry credentials or tokens to the repository.
+Releases are handled through the repository's GitHub Actions publishing workflow. Registry credentials and tokens must never be committed to source code or workflow files.
 
-RubyGems package versions are immutable after publication. The current release is **0.1.1**; future releases must use a new version such as `0.1.2`.
+Published RubyGems package versions are immutable, so future releases must use a new version number.
 
-## Package Information
+## Package information
 
 | Property | Value |
 |---|---|
 | Gem | `pijush-calculator` |
-| Version | `0.1.1` |
+| Version | `0.1.2` |
 | Registry | GitHub Packages RubyGems |
 | Runtime dependencies | None |
 | Supported Ruby | 3.0+ |
