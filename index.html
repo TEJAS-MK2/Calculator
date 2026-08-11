@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A compact modern calculator with history, clear, theme controls, and smooth Anime.js motion.">
+  <meta name="description" content="A modern calculator powered by an advanced dependency-free calculation engine.">
   <meta name="theme-color" content="#191919" id="themeColor">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,13 +18,54 @@
   <button class="sidebar-open" id="sidebarOpen" type="button" aria-label="Open calculator controls" aria-expanded="false"><i class="fas fa-bars" aria-hidden="true"></i></button>
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
   <aside class="feature-sidebar" id="featureSidebar" aria-hidden="true">
-    <div class="sidebar-head"><span class="sidebar-title">Controls</span><button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close controls"><i class="fas fa-xmark" aria-hidden="true"></i></button></div>
+    <div class="sidebar-head"><span class="sidebar-title">Controls &amp; Engine</span><button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close controls"><i class="fas fa-xmark" aria-hidden="true"></i></button></div>
     <nav class="feature-list" aria-label="Calculator controls">
+      <button class="feature-item" data-feature="advanced" type="button"><i class="fas fa-flask" aria-hidden="true"></i><span>Advanced Engine</span></button>
+      <button class="feature-item" data-feature="scientific" type="button"><i class="fas fa-square-root-variable" aria-hidden="true"></i><span>Scientific</span></button>
+      <button class="feature-item" data-feature="statistics" type="button"><i class="fas fa-chart-simple" aria-hidden="true"></i><span>Statistics</span></button>
+      <button class="feature-item" data-feature="matrix" type="button"><i class="fas fa-table-cells" aria-hidden="true"></i><span>Matrix</span></button>
+      <button class="feature-item" data-feature="exact" type="button"><i class="fas fa-divide" aria-hidden="true"></i><span>Exact Arithmetic</span></button>
       <button class="feature-item" data-feature="history" type="button"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i><span>History</span></button>
       <button class="feature-item" data-feature="clear" type="button"><i class="fas fa-eraser" aria-hidden="true"></i><span>Clear</span></button>
       <button class="feature-item" data-feature="theme" type="button"><i class="fas fa-circle-half-stroke" aria-hidden="true"></i><span>Theme</span></button>
       <button class="feature-item" data-feature="about" type="button" aria-expanded="false" aria-controls="aboutPanel"><i class="fas fa-circle-info" aria-hidden="true"></i><span>About</span></button>
     </nav>
+    <section class="engine-panel" id="enginePanel" hidden aria-label="Advanced calculator engine">
+      <div class="engine-panel-head"><strong id="engineTitle">Advanced Engine</strong><button id="engineClose" type="button" aria-label="Close engine panel">×</button></div>
+      <div class="engine-status"><span>Mode</span><strong id="engineModeLabel">Standard</strong></div>
+      <div class="engine-section" data-engine-section="advanced">
+        <div class="engine-label">Functions</div>
+        <div class="engine-chips" id="functionChips"></div>
+      </div>
+      <div class="engine-section" data-engine-section="scientific">
+        <div class="engine-label">Angle mode</div>
+        <div class="segmented" role="group" aria-label="Angle mode">
+          <button type="button" data-angle="DEG">DEG</button><button type="button" data-angle="RAD" class="active">RAD</button><button type="button" data-angle="GRAD">GRAD</button>
+        </div>
+      </div>
+      <div class="engine-section" data-engine-section="statistics">
+        <div class="engine-label">Statistics dataset</div>
+        <textarea id="statsInput" rows="3" placeholder="1, 2, 3, 4, 5"></textarea>
+        <div class="engine-actions"><button type="button" data-stat="mean">Mean</button><button type="button" data-stat="median">Median</button><button type="button" data-stat="variance">Variance</button><button type="button" data-stat="stddev">Std Dev</button></div>
+        <div class="engine-output" id="statsOutput" aria-live="polite">Enter values above.</div>
+      </div>
+      <div class="engine-section" data-engine-section="matrix">
+        <div class="engine-label">2×2 matrix</div>
+        <div class="matrix-grid"><input id="m00" value="1" inputmode="decimal"><input id="m01" value="2" inputmode="decimal"><input id="m10" value="3" inputmode="decimal"><input id="m11" value="4" inputmode="decimal"></div>
+        <div class="engine-actions"><button type="button" data-matrix="det">Determinant</button><button type="button" data-matrix="inverse">Inverse</button><button type="button" data-matrix="transpose">Transpose</button></div>
+        <div class="engine-output" id="matrixOutput" aria-live="polite">[[1, 2], [3, 4]]</div>
+      </div>
+      <div class="engine-section" data-engine-section="exact">
+        <div class="engine-label">Exact rational arithmetic</div>
+        <p class="engine-help">Results stay as fractions instead of silently becoming floating point.</p>
+        <button class="engine-primary" id="exactEvaluate" type="button">Evaluate current expression exactly</button>
+        <div class="engine-output" id="exactOutput" aria-live="polite">1 / 3 + 1 / 6 → 1/2</div>
+      </div>
+      <div class="engine-section engine-about" data-engine-section="advanced">
+        <div class="engine-label">Powered capabilities</div>
+        <p>Scientific functions, constants, variables, exact arithmetic, statistics, number theory, numerical methods, calculus, regression, matrices and vectors.</p>
+      </div>
+    </section>
     <section class="about-panel" id="aboutPanel" hidden aria-labelledby="aboutTitle">
       <div class="about-panel-head"><i class="fas fa-circle-info" aria-hidden="true"></i><span id="aboutTitle">About</span></div>
       <p>This website is made by <strong>Pijush Chakraborty</strong>.</p>
@@ -60,9 +101,7 @@
   <script src="./script.js"></script>
   <script type="module" src="./calculator-core-ui.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(error => console.warn('[Calculator] Service worker registration failed:', error)), { once: true });
-    }
+    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(error => console.warn('[Calculator] service worker:', error)), { once: true });
   </script>
 </body>
 </html>
