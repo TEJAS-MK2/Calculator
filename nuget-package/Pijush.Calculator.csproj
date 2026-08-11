@@ -6,14 +6,20 @@
     <PackageId>Pijush.Calculator</PackageId>
     <Version>0.1.0</Version>
     <Authors>Pijush Chakraborty</Authors>
-    <Description>Lightweight, dependency-free C# calculator library for arithmetic operations.</Description>
-    <PackageTags>calculator;math;arithmetic;pijush</PackageTags>
+    <Description>Lightweight, dependency-free C# calculator library for reliable arithmetic operations with explicit division-by-zero handling.</Description>
+    <PackageTags>calculator;math;arithmetic;dotnet;pijush</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/TEJAS-MK2/Calculator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/TEJAS-MK2/Calculator</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="tests/**/*.cs" />
