@@ -29,7 +29,7 @@ Repository:
 https://maven.pkg.github.com/TEJAS-MK2/Calculator
 ```
 
-GitHub's Gradle registry is Maven-compatible and uses repository-scoped permissions for Gradle packages. citeturn0search1turn0search8
+GitHub's Gradle registry is Maven-compatible and uses repository-scoped permissions for Gradle packages.
 
 ## Usage
 
