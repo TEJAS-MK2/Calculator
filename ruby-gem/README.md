@@ -30,7 +30,7 @@ From GitHub Packages RubyGems:
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```
 
-GitHub Packages RubyGems uses the `rubygems.pkg.github.com` registry and requires authentication for package access. citeturn0search3
+GitHub Packages RubyGems uses the `rubygems.pkg.github.com` registry and requires authentication for package access.
 
 ## Usage
 
