@@ -13,4 +13,4 @@ from .calculator import (
 )
 
 __all__ = [name for name in globals() if not name.startswith("_")]
-__version__ = "0.2.0"
+__version__ = "0.6.0"
