@@ -5,45 +5,32 @@
   let theme = readStorage('calculatorTheme', 'dark');
   if (!['dark', 'light', 'system'].includes(theme)) theme = 'dark';
   const reduceMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  const animate = (targets, options) => {
-    if (reduceMotion() || typeof window.anime !== 'function') return;
-    window.anime.remove(targets);
-    window.anime({ targets, ...options });
-  };
+  const animate = (targets, options) => { if (reduceMotion() || typeof window.anime !== 'function') return; window.anime.remove(targets); window.anime({ targets, ...options }); };
   const resolvedTheme = () => theme === 'system' ? (window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : theme;
   function applyTheme() { const resolved = resolvedTheme(); document.documentElement.dataset.theme = resolved; $('themeColor')?.setAttribute('content', resolved === 'light' ? '#f4f4f4' : '#090b10'); }
   function toggleTheme() { theme = { dark: 'light', light: 'system', system: 'dark' }[theme]; writeStorage('calculatorTheme', theme); applyTheme(); animate('.calculator', { opacity: [0.82, 1], scale: [0.985, 1], duration: 260, easing: 'easeOutQuad' }); }
   function toggleHistory() { const panel = $('historyPanel'); if (!panel) return; const open = !panel.classList.contains('is-open'); panel.classList.toggle('is-open', open); panel.setAttribute('aria-hidden', String(!open)); if (open) { window.renderCalculatorHistory?.(); animate(panel, { opacity: [0, 1], translateY: [-8, 0], duration: 240, easing: 'easeOutCubic' }); } }
   function clearCalculator() { window.clearCalculator?.(); animate(['.display-container', '.btn-function'], { scale: [0.97, 1], duration: 220, easing: 'easeOutQuad' }); }
-  function toggleAbout() {
-    const panel = $('aboutPanel');
-    const button = document.querySelector('.feature-item[data-feature="about"]');
-    if (!panel || !button) return;
-    const open = panel.hidden;
-    panel.hidden = !open;
-    button.classList.toggle('active', open);
-    button.setAttribute('aria-expanded', String(open));
-    if (open) animate(panel, { opacity: [0, 1], translateY: [-8, 0], duration: 240, easing: 'easeOutCubic' });
+  function toggleAbout() { const panel = $('aboutPanel'), button = document.querySelector('.feature-item[data-feature="about"]'); if (!panel || !button) return; const open = panel.hidden; panel.hidden = !open; button.classList.toggle('active', open); button.setAttribute('aria-expanded', String(open)); if (open) animate(panel, { opacity: [0, 1], translateY: [-8, 0], duration: 240, easing: 'easeOutCubic' }); }
+  function toggleEngine(feature = 'advanced') {
+    const panel = $('enginePanel'); if (!panel) return;
+    panel.hidden = false;
+    const title = { advanced: 'Advanced Engine', scientific: 'Scientific', statistics: 'Statistics', matrix: 'Matrix', exact: 'Exact Arithmetic' }[feature] || 'Advanced Engine';
+    $('engineTitle').textContent = title;
+    panel.querySelectorAll('[data-engine-section]').forEach(section => { section.hidden = !(['advanced'].includes(feature) ? section.dataset.engineSection === 'advanced' : section.dataset.engineSection === feature || section.dataset.engineSection === 'advanced'); });
+    const exact = feature === 'exact';
+    window.CalculatorCoreUI?.setExactMode(exact);
+    document.querySelectorAll('.feature-item').forEach(item => item.classList.toggle('active', item.dataset.feature === feature));
+    animate(panel, { opacity: [0, 1], translateY: [8, 0], duration: 220, easing: 'easeOutCubic' });
   }
+  function closeEngine() { const panel = $('enginePanel'); if (!panel) return; panel.hidden = true; document.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active')); }
   function setupSidebar() {
     const sidebar = $('featureSidebar'), openButton = $('sidebarOpen'), closeButton = $('sidebarClose'), backdrop = $('sidebarBackdrop'), list = sidebar?.querySelector('.feature-list');
     if (!sidebar || !openButton || !closeButton || !list) return;
-    const setOpen = open => {
-      sidebar.classList.toggle('is-open', open); backdrop?.classList.toggle('is-open', open); document.body.classList.toggle('sidebar-visible', open);
-      sidebar.setAttribute('aria-hidden', String(!open)); openButton.setAttribute('aria-expanded', String(open));
-      if (open) {
-        animate(sidebar, { translateX: ['-105%', '0%'], duration: 280, easing: 'easeOutCubic' });
-        animate(list.querySelectorAll('.feature-item'), { opacity: [0, 1], translateX: [-14, 0], delay: window.anime?.stagger(45), duration: 220, easing: 'easeOutCubic' });
-      }
-    };
-    const close = () => {
-      if (!sidebar.classList.contains('is-open')) return;
-      animate(sidebar, { translateX: ['0%', '-105%'], duration: 190, easing: 'easeInCubic', complete: () => {
-        sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); sidebar.style.removeProperty('transform');
-      } });
-      if (reduceMotion() || typeof window.anime !== 'function') { sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); }
-    };
+    const setOpen = open => { sidebar.classList.toggle('is-open', open); backdrop?.classList.toggle('is-open', open); document.body.classList.toggle('sidebar-visible', open); sidebar.setAttribute('aria-hidden', String(!open)); openButton.setAttribute('aria-expanded', String(open)); if (open) { animate(sidebar, { translateX: ['-105%', '0%'], duration: 280, easing: 'easeOutCubic' }); animate(list.querySelectorAll('.feature-item'), { opacity: [0, 1], translateX: [-14, 0], delay: window.anime?.stagger(35), duration: 220, easing: 'easeOutCubic' }); } };
+    const close = () => { if (!sidebar.classList.contains('is-open')) return; animate(sidebar, { translateX: ['0%', '-105%'], duration: 190, easing: 'easeInCubic', complete: () => { sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); sidebar.style.removeProperty('transform'); } }); if (reduceMotion() || typeof window.anime !== 'function') { sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); } };
     const activate = feature => {
+      if (['advanced','scientific','statistics','matrix','exact'].includes(feature)) { toggleEngine(feature); return; }
       if (feature !== 'about') list.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
       if (feature === 'theme') { toggleTheme(); close(); return; }
       if (feature === 'clear') { clearCalculator(); close(); return; }
@@ -52,9 +39,10 @@
     };
     openButton.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); setOpen(true); });
     closeButton.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); close(); });
+    $('engineClose')?.addEventListener('click', closeEngine);
     backdrop?.addEventListener('click', close);
     list.addEventListener('click', event => { const item = event.target.closest('.feature-item'); if (!item || !list.contains(item)) return; event.preventDefault(); event.stopPropagation(); activate(item.dataset.feature); });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape' && sidebar.classList.contains('is-open')) { event.preventDefault(); close(); } });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { if (sidebar.classList.contains('is-open')) { event.preventDefault(); close(); } else if (!$('enginePanel')?.hidden) closeEngine(); } });
     setOpen(false);
   }
   applyTheme(); setupSidebar();
