@@ -6,12 +6,25 @@
 </p>
 
 <p align="center">
-  <a href="https://tejas-mk2.github.io/Calculator/">Live Demo</a> ·
+  <a href="https://tejas-mk2.github.io/Calculator/">Live GitHub Pages</a> ·
+  <a href="https://www.npmjs.com/package/@tejas-mk2/calculator-core">npm Package</a> ·
+  <a href="https://github.com/TEJAS-MK2/Calculator/packages">GitHub Packages</a> ·
   <a href="https://github.com/TEJAS-MK2/Calculator/issues">Report a Bug</a> ·
   <a href="https://github.com/TEJAS-MK2/Calculator/pulls">Contribute</a>
 </p>
 
 ---
+
+## Live links
+
+| Resource | Link |
+|---|---|
+| **GitHub Pages** | https://tejas-mk2.github.io/Calculator/ |
+| **Source Repository** | https://github.com/TEJAS-MK2/Calculator |
+| **npm** | https://www.npmjs.com/package/@tejas-mk2/calculator-core |
+| **GitHub Packages** | https://github.com/TEJAS-MK2/Calculator/packages |
+| **Issues** | https://github.com/TEJAS-MK2/Calculator/issues |
+| **Pull Requests** | https://github.com/TEJAS-MK2/Calculator/pulls |
 
 ## Overview
 
@@ -61,9 +74,21 @@ Feature panels are mounted **inside the calculator**, keeping the sidebar focuse
 
 ## Calculation engine
 
-The browser UI uses the dependency-free JavaScript engine in `packages/calculator-core/`.
+The browser UI uses the dependency-free package **`@tejas-mk2/calculator-core`**.
 
-The engine supports:
+### Install from npm
+
+```bash
+npm install @tejas-mk2/calculator-core
+```
+
+### Install/use from GitHub Packages
+
+```ini
+@tejas-mk2:registry=https://npm.pkg.github.com
+```
+
+The package provides:
 
 - Recursive-descent expression parsing
 - Operator precedence and right-associative powers
@@ -86,6 +111,13 @@ The engine supports:
 - Domain, range, overflow, and division-by-zero validation
 - Advanced statistics, number theory, numerical methods, regression, vectors, and matrices
 - Zero runtime dependencies
+
+### Package links
+
+- **npm:** https://www.npmjs.com/package/@tejas-mk2/calculator-core
+- **GitHub Packages:** https://github.com/TEJAS-MK2/Calculator/packages
+- **Package source:** https://github.com/TEJAS-MK2/Calculator/tree/main/packages/calculator-core
+- **Package README:** https://github.com/TEJAS-MK2/Calculator/blob/main/packages/calculator-core/README.md
 
 Example expressions:
 
@@ -121,13 +153,11 @@ The project includes a web app manifest and service worker. The application shel
 
 ## Deployment
 
-**GitHub Pages is the only deployment target for this project.**
-
-The site is deployed from `main` by `.github/workflows/deploy.yml` using GitHub Pages deployment actions.
+**GitHub Pages is the only website deployment target for this project.**
 
 Live site:
 
-`https://tejas-mk2.github.io/Calculator/`
+**https://tejas-mk2.github.io/Calculator/**
 
 There is no custom domain or external hosting provider required for the website.
 
@@ -163,35 +193,6 @@ The browser suite covers:
 - Animation behavior
 - Browser console errors
 
-## Development
-
-```bash
-git clone https://github.com/TEJAS-MK2/Calculator.git
-cd Calculator
-```
-
-Use a local HTTP server when testing ES modules or service-worker behavior.
-
-## Project structure
-
-```text
-.
-├── index.html
-├── styles.css
-├── script.js
-├── calculator-core-ui.js
-├── sw.js
-├── manifest.json
-├── tests/
-│   └── browser-smoke.mjs
-├── packages/
-│   └── calculator-core/
-└── .github/
-    └── workflows/
-        ├── browser-tests.yml
-        └── deploy.yml
-```
-
 ## Project policies
 
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md)
@@ -200,8 +201,8 @@ Use a local HTTP server when testing ES modules or service-worker behavior.
 
 ## License
 
-The main calculator is licensed under Apache-2.0. The calculation engine documents its own package license.
+The main calculator is licensed under Apache-2.0. The `@tejas-mk2/calculator-core` package is licensed under MIT.
 
 ---
 
-<p align="center"><strong>Clean interface. Advanced engine. Smooth interaction. GitHub Pages only.</strong></p>
+<p align="center"><strong>Clean interface. Advanced engine. Smooth interaction. GitHub Pages + npm + GitHub Packages.</strong></p>
