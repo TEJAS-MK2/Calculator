@@ -4,20 +4,20 @@ A **lightweight, dependency-free JavaScript calculation engine** with a safe exp
 
 ## Current release
 
-**`0.2.1` — Phase 1 calculation engine**
+**v0.2.1 — Phase 1 calculation engine**
 
-The package powers the expression-evaluation layer of the Modern Calculator web UI while remaining independently reusable.
+The package powers the expression-evaluation layer of the Modern Calculator while remaining independently reusable.
 
 ## Features
 
 - Operator precedence and nested parentheses
-- Implicit multiplication, such as `2(5 + 3)` and `3pi`
+- Implicit multiplication: `2(5 + 3)`, `3pi`, `2sin(pi / 2)`
 - Unary `+` and `-`
 - Powers and percentages
 - Variables through a scope object
 - `π` and `e` constants
 - Scientific functions
-- Exact rational arithmetic with `Fraction` and `evaluateExact`
+- Exact rational arithmetic with `Fraction` and `evaluateExact()`
 - Explicit division-by-zero and invalid-expression errors
 - No `eval()` or `Function()` constructor
 - Zero runtime dependencies
@@ -142,14 +142,12 @@ Converts between `C`, `F`, and `K`.
 
 ## Development and testing
 
-From the package directory:
-
 ```bash
 npm test
 npm pack --dry-run
 ```
 
-The package is tested before GitHub Actions publishes a new package version.
+The package is tested before GitHub Actions publishes a new version.
 
 ## Package information
 
