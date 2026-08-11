@@ -4,7 +4,7 @@
 
 The **TEJAS-MK2 Calculator** project is committed to providing a welcoming, respectful, inclusive, and constructive environment for users, contributors, maintainers, package consumers, and community members.
 
-Technical discussions, bug reports, code reviews, package contributions, and release discussions should remain professional and focused on improving the project.
+Technical discussions, bug reports, code reviews, UI feedback, package contributions, and release discussions should remain professional and focused on improving the project.
 
 ## Expected Behavior
 
