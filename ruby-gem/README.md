@@ -4,9 +4,9 @@ A **lightweight, dependency-free Ruby calculation engine** from the Modern Calcu
 
 ## Current release
 
-**`0.1.0` — published release**
+**v0.1.0 — published**
 
-The gem provides a small, reusable arithmetic API that can be used independently of the web calculator.
+The gem provides a small reusable arithmetic API that works independently of the web calculator.
 
 ## Features
 
@@ -67,7 +67,7 @@ Returns the quotient and raises an error when `b` is zero.
 
 The repository includes a GitHub Actions workflow that builds, validates, and publishes the gem to GitHub Packages.
 
-RubyGems package versions are immutable. **`0.1.0` is already published**, so every future release must use a new version such as `0.1.1`.
+RubyGems package versions are immutable. **`0.1.0` is already published**, so future releases must use a new version such as `0.1.1`.
 
 ## Development
 
