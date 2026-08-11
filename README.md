@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>A modern, responsive calculator with a clean UI, scientific calculation engine, and reusable package ecosystem.</strong><br>
-  HTML · CSS · JavaScript · Anime.js · npm · RubyGems · PyPI
+  HTML · CSS · JavaScript · Anime.js · npm · RubyGems · PyPI · Apache Maven
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@
 
 ## Overview
 
-Modern Calculator is a responsive Progressive Web App backed by a reusable JavaScript calculation engine. The project also ships lightweight calculator libraries for JavaScript, Ruby, and Python.
+Modern Calculator is a responsive Progressive Web App backed by a reusable JavaScript calculation engine. The project also ships lightweight calculator libraries for JavaScript, Ruby, Python, and Java.
 
 The web calculator focuses on fast everyday calculations while the JavaScript core provides the advanced expression parser used by the scientific features.
 
@@ -100,6 +100,22 @@ A dependency-free Python arithmetic engine for reliable calculator operations an
 pip install pijush-calculator
 ```
 
+### Java — Apache Maven / GitHub Packages
+
+**`io.github.tejas-mk2:pijush-calculator` v0.1.0**
+
+A lightweight Java arithmetic library using `BigDecimal` and DECIMAL128 precision.
+
+```xml
+<dependency>
+  <groupId>io.github.tejas-mk2</groupId>
+  <artifactId>pijush-calculator</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
+Repository: `https://maven.pkg.github.com/TEJAS-MK2/Calculator`
+
 ## Calculator Controls
 
 | Category | Operations |
@@ -140,6 +156,7 @@ The calculator is a static PWA and does not require a backend server for normal 
 - `@tejas-mk2/calculator-core`
 - `pijush-calculator` Ruby gem
 - `pijush-calculator` Python package
+- `io.github.tejas-mk2:pijush-calculator` Maven package
 
 ## GitHub Pages
 
@@ -178,11 +195,19 @@ python -m pytest
 python -m build
 ```
 
+Maven package:
+
+```bash
+cd java-package
+mvn test
+mvn package
+```
+
 ## Testing
 
 The JavaScript engine tests precedence, parentheses, implicit multiplication, scientific notation, variables, angle modes, percentages, modulo, exact fractions, domain validation, and typed errors.
 
-Python and Ruby packages have their own package-level tests/build checks, while GitHub Actions validates the project and publishing workflows.
+Python, Ruby, and Maven packages have their own package-level tests/build checks, while GitHub Actions validates the project and publishing workflows.
 
 ## Documentation
 
@@ -192,6 +217,7 @@ Python and Ruby packages have their own package-level tests/build checks, while 
 - [`packages/calculator-core/README.md`](./packages/calculator-core/README.md)
 - [`ruby-gem/README.md`](./ruby-gem/README.md)
 - [`python-package/README.md`](./python-package/README.md)
+- [`java-package/README.md`](./java-package/README.md)
 
 ## License
 
