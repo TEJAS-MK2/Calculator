@@ -1,113 +1,216 @@
 # Contributing to Calculator
 
-Thank you for contributing to the **TEJAS-MK2 Calculator** project.
+Thank you for contributing to the **TEJAS-MK2 Calculator** project. Contributions of all sizes are welcome, including bug fixes, performance improvements, accessibility fixes, documentation, tests, UI improvements, and new calculator capabilities.
 
-This guide explains how to report problems, suggest improvements, and submit changes while keeping the project clean and maintainable.
+This guide explains how to propose changes while keeping the application, calculation engines, packages, and documentation reliable and maintainable.
 
 ## Code of Conduct
 
 Please read [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) before contributing. All contributors are expected to participate respectfully and constructively.
 
+## Before You Start
+
+1. Check existing issues and pull requests to avoid duplicating work.
+2. Read the relevant documentation before changing an API or package.
+3. Keep changes focused. Large changes should be discussed in an issue first when practical.
+4. Never commit passwords, tokens, API keys, private keys, credentials, or personal information.
+
+## Repository Areas
+
+The repository contains several related parts:
+
+| Area | Purpose |
+|---|---|
+| `index.html` | Calculator page structure and UI markup |
+| `styles.css` | Layout, themes, responsive styling, and visual effects |
+| `script.js` | Legacy/application UI behavior that remains in the web app |
+| `calculator-core-ui.js` | Integration between the web UI and the calculation engine |
+| `packages/calculator-core/` | Reusable JavaScript calculation engine and its tests |
+| `ruby-gem/` | Ruby `pijush-calculator` gem |
+| `.github/workflows/` | CI, deployment, and package publishing workflows |
+| `README.md` and docs | User and developer documentation |
+
+When changing calculation behavior, prefer updating the reusable calculation engine rather than duplicating mathematical logic in the browser UI.
+
 ## Reporting Bugs
 
 Before opening an issue:
 
-1. Search existing issues to make sure the problem has not already been reported.
-2. Confirm that you are testing the current version of the project.
-3. Provide enough information for someone else to reproduce the problem.
+1. Search existing issues for the same problem.
+2. Confirm the issue still exists on the latest `main` branch or deployed version.
+3. Reduce the problem to the smallest reproducible example.
 
-A useful bug report should include:
+Include, when relevant:
 
-- A clear title and description.
-- Steps to reproduce the problem.
+- A clear description of the problem.
+- Steps to reproduce it.
 - Expected behavior.
 - Actual behavior.
-- Browser and device information when relevant.
-- Screenshots or console errors when useful.
+- Calculator expression or input sequence.
+- Browser, operating system, and device information.
+- Console errors or stack traces.
+- Screenshots or screen recordings for visual/animation problems.
+- Whether the issue affects the web calculator, JavaScript package, Ruby gem, or more than one component.
 
 For security vulnerabilities, **do not open a public issue**. Follow [`SECURITY.md`](./SECURITY.md) instead.
 
 ## Suggesting Features
 
-Feature requests are welcome. Open a GitHub issue and explain:
+Feature requests are welcome. Open an issue with:
 
-1. **Problem** — What problem would the feature solve?
-2. **Proposal** — How should the feature work?
-3. **Alternatives** — What other approaches or workarounds have you considered?
-4. **Impact** — How would the change affect the existing calculator experience?
+1. **Problem** — What problem does the feature solve?
+2. **Proposal** — What should it do?
+3. **Examples** — Give example inputs and outputs where applicable.
+4. **Alternatives** — What alternatives have you considered?
+5. **Impact** — How could it affect compatibility, performance, accessibility, or the existing UI?
 
-## Pull Requests
+For changes to the calculation engine or public package APIs, include the proposed API or expression syntax when possible.
 
-### 1. Create a branch
+## Development Setup
 
-Create a focused branch from `main`:
+Clone the repository and create a focused branch:
 
 ```bash
-git checkout main
-git pull origin main
+git clone https://github.com/TEJAS-MK2/Calculator.git
+cd Calculator
 git checkout -b feature/your-feature-name
 ```
 
-### 2. Make your changes
+The web calculator is a static application. You can preview it with any local HTTP server. A local HTTP server is recommended because service workers and ES modules behave differently when opened directly from `file://` URLs.
 
-Keep changes focused and consistent with the existing codebase.
-
-For this project in particular:
-
-- Keep calculator logic in `script.js`.
-- Keep presentation and responsive styling in `styles.css`.
-- Keep page structure in `index.html`.
-- Use Anime.js for new interface animations rather than introducing a second animation framework.
-- Avoid unnecessary dependencies.
-- Preserve keyboard accessibility and mobile responsiveness.
-- Do not commit secrets, API keys, credentials, or personal information.
-
-### 3. Test your changes
-
-Before opening a pull request, verify:
-
-- Basic arithmetic works correctly.
-- Decimal input works correctly.
-- Clear and backspace controls work.
-- Keyboard controls still work.
-- Division by zero is handled safely.
-- The interface works on both mobile and desktop sizes.
-- Animations do not interfere with calculator interaction.
-- The browser console has no new errors.
-
-### 4. Commit and push
-
-Use a short, descriptive commit message:
+For the JavaScript package:
 
 ```bash
-git add .
-git commit -m "fix: correct calculator input handling"
-git push origin feature/your-feature-name
+cd packages/calculator-core
+npm test
+npm pack --dry-run
 ```
 
-### 5. Open a Pull Request
+For the Ruby gem:
 
-Open a pull request against the `main` branch.
+```bash
+cd ruby-gem
+gem build pijush-calculator.gemspec
+```
 
-In the pull request description:
+Do not publish packages manually as part of an ordinary pull request. Package publishing is handled by the repository's configured GitHub Actions workflows.
 
-- Explain what changed.
-- Explain why the change was needed.
-- Mention relevant issues using `Closes #123` when appropriate.
-- Include screenshots or a short demo for visual changes.
+## Making Changes
+
+### Calculator UI
+
+- Preserve responsive behavior on mobile and desktop.
+- Keep History, Clear, Theme, and calculator controls visually consistent.
+- Preserve keyboard accessibility and visible focus states.
+- Use the existing animation system for UI animations rather than introducing another animation framework.
+- Respect `prefers-reduced-motion`.
+- Avoid unnecessary layout-triggering animations that can cause jank.
+- Do not introduce blocking work on the main thread.
+
+### JavaScript Calculation Engine
+
+- Keep the parser deterministic and free of `eval()` and `Function()` execution.
+- Add tests for every new mathematical operation or syntax rule.
+- Define explicit behavior for invalid input and domain errors.
+- Preserve existing public APIs unless a breaking change is intentional and documented.
+- Consider precedence, associativity, unary operators, implicit multiplication, percentages, and edge cases when changing the parser.
+- Keep exact arithmetic behavior separate from floating-point approximations where appropriate.
+
+### Ruby Gem
+
+- Keep the gem API small and predictable.
+- Add tests for new public behavior.
+- Avoid unnecessary runtime dependencies.
+- Update the gemspec version when making a release.
+- Keep the Ruby README synchronized with the actual gem API.
+
+## Testing Checklist
+
+Before opening a pull request, run the relevant automated tests and manually verify the application.
+
+### Core calculations
+
+- Basic arithmetic.
+- Operator precedence.
+- Parentheses and nested expressions.
+- Decimal and scientific notation.
+- Unary `+` and `-`.
+- Powers and percentages.
+- Modulo, including `10 % 3`.
+- Scientific functions and angle modes.
+- Variables and constants.
+- Exact fractions where supported.
+- Division by zero and other domain errors.
+
+### UI
+
+- Number and operator buttons.
+- Enter, Backspace, Escape, and keyboard input.
+- History and Clear.
+- Theme switching.
+- Scientific controls.
+- Responsive layout.
+- Focus states and accessibility.
+- Animation timing and reduced-motion behavior.
+- Browser console for new errors.
+
+### Packages
+
+- JavaScript package tests pass with `npm test`.
+- Package metadata and README match the implementation.
+- Ruby gem builds successfully with `gem build`.
+- Public API changes are documented.
+
+## Pull Requests
+
+Keep pull requests focused and easy to review.
+
+A useful pull request should:
+
+- Explain what changed and why.
+- Link related issues.
+- Include tests for behavior changes.
+- Include screenshots or a short recording for visual changes.
+- Mention any package/API version changes.
+- Mention compatibility or migration concerns for breaking changes.
+- Avoid unrelated formatting or file changes.
+
+Example commit messages:
+
+```text
+feat(core): add degree angle mode
+fix(ui): prevent sidebar animation overlap
+test(core): add modulo regression cases
+docs: update package installation guide
+```
 
 ## Code Review
 
-Maintainers may review code for correctness, accessibility, security, performance, maintainability, and consistency with the project.
+Maintainers may review changes for:
 
-Please respond to review feedback and keep follow-up commits focused. A pull request may be merged once the required review and checks are complete.
+- Correctness and test coverage.
+- Security.
+- Accessibility.
+- Performance and animation smoothness.
+- API compatibility.
+- Maintainability.
+- Documentation accuracy.
+- Consistency with the existing design and architecture.
 
-## Documentation Changes
+Please address review feedback constructively. Additional changes should remain focused on the pull request's purpose.
 
-Documentation improvements are welcome. Keep documentation accurate and consistent with the current application, GitHub Pages deployment, and repository structure.
+## Documentation
 
-## License
+Keep the following documentation synchronized with implementation changes:
 
-By contributing to this repository, you agree that your contributions are provided under the project's [`LICENSE`](./LICENSE).
+- Main `README.md`.
+- `packages/calculator-core/README.md`.
+- `ruby-gem/README.md`.
+- Package version and API documentation.
+- Contribution, security, and code-of-conduct guidance when relevant.
 
-Thank you for helping improve Calculator.
+## Licensing
+
+By contributing to this repository, you agree that your contributions are provided under the project's [`LICENSE`](./LICENSE) and any applicable package-specific license terms.
+
+Thank you for helping make Calculator more reliable, accessible, and useful.
