@@ -17,24 +17,38 @@
   function clearCalculator() { window.clearCalculator?.(); animate(['.display-container', '.btn-function'], { scale: [0.97, 1], duration: 220, easing: 'easeOutQuad' }); }
   function toggleAbout() {
     const panel = $('aboutPanel');
-    if (!panel) return;
-    const hidden = panel.hidden;
-    panel.hidden = !hidden;
-    if (!hidden) return;
-    animate(panel, { opacity: [0, 1], translateY: [-8, 0], duration: 240, easing: 'easeOutCubic' });
+    const button = document.querySelector('.feature-item[data-feature="about"]');
+    if (!panel || !button) return;
+    const open = panel.hidden;
+    panel.hidden = !open;
+    button.classList.toggle('active', open);
+    button.setAttribute('aria-expanded', String(open));
+    if (open) animate(panel, { opacity: [0, 1], translateY: [-8, 0], duration: 240, easing: 'easeOutCubic' });
   }
   function setupSidebar() {
     const sidebar = $('featureSidebar'), openButton = $('sidebarOpen'), closeButton = $('sidebarClose'), backdrop = $('sidebarBackdrop'), list = sidebar?.querySelector('.feature-list');
     if (!sidebar || !openButton || !closeButton || !list) return;
-    const setOpen = open => { sidebar.classList.toggle('is-open', open); backdrop?.classList.toggle('is-open', open); document.body.classList.toggle('sidebar-visible', open); sidebar.setAttribute('aria-hidden', String(!open)); openButton.setAttribute('aria-expanded', String(open)); if (open) { animate(sidebar, { translateX: ['-105%', '0%'], duration: 280, easing: 'easeOutCubic' }); animate(list.querySelectorAll('.feature-item'), { opacity: [0, 1], translateX: [-14, 0], delay: window.anime?.stagger(45), duration: 220, easing: 'easeOutCubic' }); } };
-    const close = () => { if (!sidebar.classList.contains('is-open')) return; animate(sidebar, { translateX: ['0%', '-105%'], duration: 190, easing: 'easeInCubic', complete: () => { sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); sidebar.style.removeProperty('transform'); } }); if (reduceMotion() || typeof window.anime !== 'function') { sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); } };
+    const setOpen = open => {
+      sidebar.classList.toggle('is-open', open); backdrop?.classList.toggle('is-open', open); document.body.classList.toggle('sidebar-visible', open);
+      sidebar.setAttribute('aria-hidden', String(!open)); openButton.setAttribute('aria-expanded', String(open));
+      if (open) {
+        animate(sidebar, { translateX: ['-105%', '0%'], duration: 280, easing: 'easeOutCubic' });
+        animate(list.querySelectorAll('.feature-item'), { opacity: [0, 1], translateX: [-14, 0], delay: window.anime?.stagger(45), duration: 220, easing: 'easeOutCubic' });
+      }
+    };
+    const close = () => {
+      if (!sidebar.classList.contains('is-open')) return;
+      animate(sidebar, { translateX: ['0%', '-105%'], duration: 190, easing: 'easeInCubic', complete: () => {
+        sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); sidebar.style.removeProperty('transform');
+      } });
+      if (reduceMotion() || typeof window.anime !== 'function') { sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); }
+    };
     const activate = feature => {
-      list.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
-      list.querySelector(`[data-feature="${feature}"]`)?.classList.add('active');
+      if (feature !== 'about') list.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
       if (feature === 'theme') { toggleTheme(); close(); return; }
       if (feature === 'clear') { clearCalculator(); close(); return; }
       if (feature === 'history') { toggleHistory(); close(); return; }
-      if (feature === 'about') { toggleAbout(); }
+      if (feature === 'about') { toggleAbout(); return; }
     };
     openButton.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); setOpen(true); });
     closeButton.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); close(); });
