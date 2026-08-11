@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module PijushCalculator
-  VERSION = "0.1.7"
+  VERSION = "0.2.0"
   module_function
 
   def add(a,b)=a+b
@@ -9,7 +9,7 @@ module PijushCalculator
   def multiply(a,b)=a*b
   def divide(a,b);raise ZeroDivisionError,"cannot divide by zero" if b==0;a.to_f/b;end
   def modulo(a,b);raise ZeroDivisionError,"cannot modulo by zero" if b==0;a%b;end
-  def power(a,b)=a**b
+  def power(a,b);raise ZeroDivisionError,"cannot raise zero to a negative power" if a==0&&b.to_f<0;a**b;end
   def percentage(value,percent)=value*percent/100.0
   def absolute(value)=value.abs
   def minimum(*values);raise ArgumentError,"minimum requires a value" if values.empty?;values.min;end
@@ -24,6 +24,7 @@ module PijushCalculator
   def cube(value)=value*value*value
   def square_root(value);raise ArgumentError,"square root requires a non-negative value" if value<0;Math.sqrt(value);end
   def cube_root(value)=Math.cbrt(value)
+  def nth_root(value,degree);raise ArgumentError,"root degree cannot be zero" if degree==0;raise ArgumentError,"even root requires a non-negative value" if value<0&&degree.to_i.even?;value<0 ? -((-value)**(1.0/degree)) : value**(1.0/degree);end
   def factorial(value);n=Integer(value);raise ArgumentError,"factorial requires a non-negative integer" if n<0;(1..n).reduce(1,:*);end
   def gcd(a,b)=a.to_i.gcd(b.to_i)
   def lcm(a,b)=a.to_i.lcm(b.to_i)
@@ -36,10 +37,12 @@ module PijushCalculator
   def arcsine(value,degrees=false);r=Math.asin(value);degrees ? r*180/Math::PI : r;end
   def arccosine(value,degrees=false);r=Math.acos(value);degrees ? r*180/Math::PI : r;end
   def arctangent(value,degrees=false);r=Math.atan(value);degrees ? r*180/Math::PI : r;end
+  def atan2(y,x,degrees=false);r=Math.atan2(y,x);degrees ? r*180/Math::PI : r;end
   def hyperbolic_sine(value)=Math.sinh(value)
   def hyperbolic_cosine(value)=Math.cosh(value)
   def hyperbolic_tangent(value)=Math.tanh(value)
   def logarithm(value,base=10);raise ArgumentError,"invalid logarithm domain" if value<=0||base<=0||base==1;Math.log(value,base);end
+  def log2(value);raise ArgumentError,"log2 requires a positive value" if value<=0;Math.log(value,2);end
   def natural_log(value);raise ArgumentError,"natural logarithm requires a positive value" if value<=0;Math.log(value);end
   def exponential(value)=Math.exp(value)
   def hypot(*values);raise ArgumentError,"hypot requires a value" if values.empty?;Math.hypot(*values);end
