@@ -45,7 +45,7 @@ The calculator avoids `eval()` and `Function()` for expression execution and res
 | .NET / NuGet | `Pijush.Calculator` | [GitHub Packages](https://github.com/TEJAS-MK2/Calculator/packages) |
 | Container | `ghcr.io/tejas-mk2/calculator` | [GitHub Container Registry](https://github.com/TEJAS-MK2/Calculator/packages) |
 
-GitHub Packages officially supports npm, RubyGems, Maven, Gradle, NuGet, and container images; Maven and Gradle use the Maven-compatible GitHub Packages registry. citeturn0search0turn0search1
+GitHub Packages supports npm, RubyGems, Maven, Gradle, NuGet, and container images. Maven and Gradle packages use the Maven-compatible GitHub Packages registry.
 
 ## Installation
 
