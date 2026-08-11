@@ -22,7 +22,7 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           set -e
-          for file in script.js calculator-core-ui.js sidebar-fix.js animation-enhancements.js sidebar-hardening.js sw.js packages/calculator-core/index.js packages/calculator-core/test.js; do
+          for file in script.js calculator-core-ui.js sw.js packages/calculator-core/index.js packages/calculator-core/test.js; do
             echo "Checking $file"
             node --check "$file"
           done
@@ -33,6 +33,17 @@ jobs:
 
       - name: Validate manifest JSON
         run: python -m json.tool manifest.json >/dev/null
+
+      - name: Validate required application assets
+        run: |
+          set -e
+          test -f index.html
+          test -f styles.css
+          test -f script.js
+          test -f calculator-core-ui.js
+          test -f sw.js
+          test -f manifest.json
+          test -f packages/calculator-core/index.js
 
       - name: Validate HTML references
         run: |
@@ -53,7 +64,7 @@ jobs:
           PY
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
