@@ -1,10 +1,10 @@
-const CACHE_NAME = 'modern-calculator-v50';
+const CACHE_NAME = 'modern-calculator-v51';
 const APP_SHELL = [
   './',
   './index.html',
-  './styles.css?v=19',
-  './script.js?v=20',
-  './calculator-core-ui.js?v=7',
+  './styles.css',
+  './script.js',
+  './calculator-core-ui.js',
   './packages/calculator-core/index.js',
   './manifest.json'
 ];
@@ -36,11 +36,16 @@ self.addEventListener('fetch', event => {
     caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
       if (response.ok) {
         const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => {});
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(error => {
+          console.warn('[Calculator] Cache write failed:', error);
+        });
       }
       return response;
-    }).catch(() => event.request.mode === 'navigate'
-      ? caches.match('./index.html')
-      : Response.error()))
+    }).catch(error => {
+      console.warn('[Calculator] Network request failed:', event.request.url, error);
+      return event.request.mode === 'navigate'
+        ? caches.match('./index.html')
+        : Response.error();
+    }))
   );
 });
