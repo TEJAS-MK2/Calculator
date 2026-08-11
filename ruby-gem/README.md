@@ -4,7 +4,7 @@ A **lightweight, dependency-free Ruby calculation engine** from the Modern Calcu
 
 ## Current release
 
-**`0.1.0` — first published release**
+**`0.1.0` — published release**
 
 The gem provides a small, reusable arithmetic API that can be used independently of the web calculator.
 
@@ -18,7 +18,7 @@ The gem provides a small, reusable arithmetic API that can be used independently
 - Ruby 3.0+
 - Zero runtime dependencies
 - Simple module-based API
-- Published through GitHub Packages
+- GitHub Packages RubyGems distribution
 
 ## Installation
 
@@ -67,12 +67,20 @@ Returns the quotient and raises an error when `b` is zero.
 
 The repository includes a GitHub Actions workflow that builds, validates, and publishes the gem to GitHub Packages.
 
-**Important:** RubyGems versions are immutable. Version `0.1.0` is already published, so future releases must increment the gem version before publishing.
+RubyGems package versions are immutable. **`0.1.0` is already published**, so every future release must use a new version such as `0.1.1`.
 
 ## Development
 
+Build and inspect the gem locally:
+
 ```bash
 gem build pijush-calculator.gemspec
+gem specification pijush-calculator-0.1.0.gem
+```
+
+Install the locally built package:
+
+```bash
 gem install ./pijush-calculator-0.1.0.gem
 ```
 
