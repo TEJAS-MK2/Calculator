@@ -1,22 +1,20 @@
 # pijush-calculator
 
-A lightweight, dependency-free Ruby arithmetic engine for reusable calculator and math applications.
+Advanced, dependency-free Ruby arithmetic engine for reusable calculator and math applications.
 
-## Current engine
+## Engine capabilities
 
-The Ruby engine now provides a consistent arithmetic API with explicit error handling.
-
-### Features
-
-- Addition, subtraction, multiplication, division
-- Modulo
-- Power
-- Percentage
-- Absolute value, min/max, average, clamp, reciprocal, square, and cube helpers
-- Explicit `ZeroDivisionError` handling
+- Addition, subtraction, multiplication, division, modulo, and power
+- Percentage, absolute value, min/max, average, clamp, reciprocal
+- Square, cube, square root, and cube root
+- Factorial
+- GCD and LCM
+- Sine, cosine, tangent with optional degree mode
+- Logarithm, natural logarithm, and exponential
+- Combinations and permutations
+- Explicit validation and `ZeroDivisionError` handling
 - Ruby 3.0+
 - Zero runtime dependencies
-- Simple module-based API
 
 ## Installation
 
@@ -35,30 +33,30 @@ gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```ruby
 require "pijush_calculator"
 
-PijushCalculator.add(2, 3)        # 5
-PijushCalculator.subtract(8, 3)   # 5
-PijushCalculator.multiply(4, 6)   # 24
-PijushCalculator.divide(20, 5)    # 4.0
-PijushCalculator.modulo(20, 6)    # 2
-PijushCalculator.power(2, 8)      # 256
-PijushCalculator.percentage(250, 20) # 50.0
+PijushCalculator.add(2, 3)                 # 5
+PijushCalculator.modulo(20, 6)             # 2
+PijushCalculator.power(2, 8)               # 256
+PijushCalculator.square_root(144)          # 12.0
+PijushCalculator.factorial(5)              # 120
+PijushCalculator.gcd(84, 30)               # 6
+PijushCalculator.sine(90, true)            # 1.0
+PijushCalculator.combinations(5, 2)        # 10.0
 ```
-
-Division and modulo by zero raise `ZeroDivisionError`.
 
 ## API
 
-| Method | Result |
+| Method | Purpose |
 |---|---|
-| `add(a, b)` | Sum |
-| `subtract(a, b)` | Difference |
-| `multiply(a, b)` | Product |
-| `divide(a, b)` | Quotient |
-| `modulo(a, b)` | Remainder |
-| `power(a, b)` | Power |
-| `percentage(value, percent)` | Percentage value |
-
-Additional utility helpers are available in the engine for common arithmetic operations.
+| `add`, `subtract`, `multiply`, `divide` | Basic arithmetic |
+| `modulo`, `power`, `percentage` | Extended arithmetic |
+| `absolute`, `minimum`, `maximum`, `average` | Numeric utilities |
+| `clamp`, `reciprocal`, `square`, `cube` | Value transformations |
+| `square_root`, `cube_root` | Root operations |
+| `factorial` | Integer factorial |
+| `gcd`, `lcm` | Integer number theory |
+| `sine`, `cosine`, `tangent` | Trigonometry |
+| `logarithm`, `natural_log`, `exponential` | Exponential/logarithmic math |
+| `combinations`, `permutations` | Combinatorics |
 
 ## Development
 
@@ -69,7 +67,7 @@ gem test
 
 ## Publishing
 
-Releases are handled through GitHub Actions. Registry credentials must never be committed to source code or workflow files. Published versions are immutable; every release requires a new version.
+Releases are handled through GitHub Actions. Registry credentials must never be committed. Published versions are immutable; every release requires a new version.
 
 ## Package information
 
