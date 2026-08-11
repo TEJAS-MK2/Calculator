@@ -1,8 +1,8 @@
 # Modern Calculator
 
 <p align="center">
-  <strong>A modern, responsive web calculator with a polished UI and reusable calculation engines.</strong><br>
-  HTML · CSS · JavaScript · Anime.js · GitHub Packages
+  <strong>A modern, responsive calculator with a clean UI, scientific calculation engine, and reusable package ecosystem.</strong><br>
+  HTML · CSS · JavaScript · Anime.js · npm · RubyGems · PyPI
 </p>
 
 <p align="center">
@@ -15,49 +15,46 @@
 
 ## Overview
 
-Modern Calculator combines a responsive, modern interface with a reusable calculation engine. The web application delegates expression evaluation to **`@tejas-mk2/calculator-core`**, while **`pijush-calculator`** provides a separate Ruby arithmetic API.
+Modern Calculator is a responsive Progressive Web App backed by a reusable JavaScript calculation engine. The project also ships lightweight calculator libraries for JavaScript, Ruby, and Python.
+
+The web calculator focuses on fast everyday calculations while the JavaScript core provides the advanced expression parser used by the scientific features.
 
 ## Highlights
 
-- Modern glass-inspired responsive interface
+- Modern responsive calculator interface
+- History, Clear, memory, and theme controls
+- Dark, light, and system themes
+- Keyboard support and responsive mobile layout
 - Operator precedence and nested parentheses
-- Implicit multiplication such as `2(5 + 3)`
-- Scientific notation, variables, powers, and percentages
-- Modulo with correct `%` handling
+- Implicit multiplication
+- Scientific notation, variables, powers, percentages, and modulo
 - Scientific functions and trigonometry
 - DEG, RAD, and GRAD angle modes
 - `π`, `e`, `τ`, and `φ` constants
 - Exact rational arithmetic for supported expressions
-- Calculation history and memory
-- Dark, light, and system themes
-- Keyboard support
-- Typed and explicit calculation errors
-- No `eval()` or `Function()` in the calculation engine
-- Anime.js animations with reduced-motion support
-- PWA/service-worker support
-- JavaScript and Ruby packages distributed through GitHub Packages
-
-> The sidebar focuses on **History**, **Clear**, and **Change Theme**. These controls share the calculator's visual system and open their functionality in the main interface.
+- Explicit, typed calculation errors
+- Safe expression parsing without `eval()` or `Function()`
+- Smooth Anime.js interactions with reduced-motion support
+- PWA and service-worker support
 
 ## Calculation Engine
 
-The main calculator uses **`@tejas-mk2/calculator-core` v0.3.1**.
+The web calculator uses **`@tejas-mk2/calculator-core` v0.3.2**.
 
-Supported capabilities include:
+It supports:
 
-- Arithmetic precedence and nested expressions
-- Implicit multiplication
+- Arithmetic precedence
+- Parentheses and implicit multiplication
 - Unary operators
 - Powers, percentages, and modulo
 - Variables and constants
 - Scientific notation
-- Scientific functions
-- DEG/RAD/GRAD trigonometry
+- Trigonometric and scientific functions
+- DEG/RAD/GRAD angle modes
 - Exact `Fraction` arithmetic
-- Explicit error codes through `EvaluationError`
-- Safe parsing without `eval()` or `Function()`
+- Typed `EvaluationError` codes
 
-Example expressions:
+Examples:
 
 ```text
 (25 + 5) * 2
@@ -71,29 +68,37 @@ x^2 + 1
 
 ## Packages
 
-### JavaScript / GitHub Packages
+### JavaScript — GitHub Packages
 
-**`@tejas-mk2/calculator-core` v0.3.1**
+**`@tejas-mk2/calculator-core` v0.3.2**
+
+A safe, dependency-free expression engine for JavaScript applications.
 
 ```bash
 npm install @tejas-mk2/calculator-core
 ```
 
-Registry:
+Registry: `https://npm.pkg.github.com`
 
-```text
-https://npm.pkg.github.com
-```
+### Ruby — GitHub Packages
 
-### Ruby / GitHub Packages
+**`pijush-calculator` v0.1.2**
 
-**`pijush-calculator` v0.1.1**
+A lightweight Ruby arithmetic API with explicit division-by-zero handling.
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```
 
-The Ruby gem is a lightweight arithmetic API with no runtime dependencies.
+### Python — PyPI
+
+**`pijush-calculator` v0.1.1**
+
+A dependency-free Python arithmetic engine for reusable calculator operations.
+
+```bash
+pip install pijush-calculator
+```
 
 ## Calculator Controls
 
@@ -121,19 +126,20 @@ The Ruby gem is a lightweight arithmetic API with no runtime dependencies.
 
 ## Design and Performance
 
-The interface uses layered surfaces, consistent borders, rounded controls, responsive sizing, and matched sidebar components. Animation effects respect `prefers-reduced-motion` and avoid unnecessary work during calculation.
+The interface uses consistent surfaces, borders, typography, spacing, and responsive controls across calculator features and the sidebar. Animations respect `prefers-reduced-motion` and avoid unnecessary main-thread work.
 
-The application is a static PWA and does not require a backend server for normal calculator operation.
+The calculator is a static PWA and does not require a backend server for normal operation.
 
 ## Tech Stack
 
 - HTML5 / CSS3
-- JavaScript ES6+
+- JavaScript ES modules
 - Anime.js
 - Font Awesome
-- Service Worker / PWA
+- PWA / Service Worker
 - `@tejas-mk2/calculator-core`
-- `pijush-calculator`
+- `pijush-calculator` Ruby gem
+- `pijush-calculator` Python package
 
 ## GitHub Pages
 
@@ -146,7 +152,7 @@ git clone https://github.com/TEJAS-MK2/Calculator.git
 cd Calculator
 ```
 
-Use a local HTTP server when testing the PWA or ES modules.
+Use a local HTTP server when testing PWA features or ES modules.
 
 JavaScript package:
 
@@ -163,24 +169,33 @@ cd ruby-gem
 gem build pijush-calculator.gemspec
 ```
 
-## Testing
-
-The JavaScript package has automated coverage for precedence, parentheses, implicit multiplication, scientific notation, variables, angle modes, percentages, modulo, exact fractions, domain validation, and typed errors.
+Python package:
 
 ```bash
-cd packages/calculator-core
-npm test
+cd python-package
+python -m pip install -e .
+python -m pytest
+python -m build
 ```
 
-GitHub Actions also validates JavaScript syntax, package tests, manifest JSON, HTML references, and GitHub Pages deployment.
+## Testing
 
-## Documentation and Contribution
+The JavaScript engine tests precedence, parentheses, implicit multiplication, scientific notation, variables, angle modes, percentages, modulo, exact fractions, domain validation, and typed errors.
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md), [`SECURITY.md`](./SECURITY.md), and [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) before contributing.
+Python and Ruby packages have their own package-level tests/build checks, while GitHub Actions validates the project and publishing workflows.
+
+## Documentation
+
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- [`SECURITY.md`](./SECURITY.md)
+- [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md)
+- [`packages/calculator-core/README.md`](./packages/calculator-core/README.md)
+- [`ruby-gem/README.md`](./ruby-gem/README.md)
+- [`python-package/README.md`](./python-package/README.md)
 
 ## License
 
-The main calculator is licensed under the Apache License 2.0. Each reusable package retains the license documented in its own directory.
+The main calculator is licensed under the Apache License 2.0. Reusable packages retain the license documented in their respective package directories.
 
 ---
 
