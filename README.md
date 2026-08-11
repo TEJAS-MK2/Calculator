@@ -84,7 +84,7 @@ Registry: `https://npm.pkg.github.com`
 
 **`pijush-calculator` v0.1.2**
 
-A lightweight Ruby arithmetic API with explicit division-by-zero handling.
+A lightweight Ruby arithmetic library with explicit division-by-zero handling and no runtime dependencies.
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
@@ -92,9 +92,9 @@ gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 
 ### Python — PyPI
 
-**`pijush-calculator` v0.1.1**
+**`pijush-calculator` v0.1.2**
 
-A dependency-free Python arithmetic engine for reusable calculator operations.
+A dependency-free Python arithmetic engine for reliable calculator operations and reusable math utilities.
 
 ```bash
 pip install pijush-calculator
