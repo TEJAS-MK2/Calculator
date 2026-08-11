@@ -1,27 +1,31 @@
 # pijush-calculator-gradle
 
-Advanced, dependency-free Java arithmetic engine published to GitHub Packages using Gradle and `maven-publish`.
+Advanced, dependency-free Java decimal/scientific engine published to GitHub Packages using Gradle and `maven-publish`.
 
 ## Engine capabilities
 
-The Gradle engine uses `BigDecimal` with `MathContext.DECIMAL128` for predictable decimal arithmetic.
-
-- Addition, subtraction, multiplication, division, modulo
-- Integer power and percentage
-- Absolute value, min/max, average, clamp, reciprocal
-- Square and cube
-- Null validation and division/modulo-by-zero protection
-- Java 17
-- JUnit 5 tests
+- Arithmetic: add, subtract, multiply, divide, modulo, power, percentage
+- Utilities: absolute, minimum, maximum, average/mean, sum, product, clamp, reciprocal, square, cube
+- Roots: square root and cube root
+- Number theory: factorial, GCD, LCM, combinations, permutations
+- Trigonometry and inverse trigonometry
+- Secant, cosecant, cotangent, `atan2`
+- Hyperbolic functions
+- Logarithms and exponentials
+- Hypotenuse calculation
+- Statistics: median, variance, standard deviation, range
+- `BigDecimal` core arithmetic with `DECIMAL128`
+- Null and domain validation
+- Java 17 and JUnit 5
 - No runtime dependencies
 
-## Package coordinates
+## Coordinates
 
 ```text
 io.github.tejasmk2.gradle:pijush-calculator-gradle
 ```
 
-GitHub Packages Maven-compatible registry:
+Registry:
 
 ```text
 https://maven.pkg.github.com/TEJAS-MK2/Calculator
@@ -30,23 +34,10 @@ https://maven.pkg.github.com/TEJAS-MK2/Calculator
 ## Usage
 
 ```java
-import io.github.tejasmk2.gradle.calculator.Calculator;
-import java.math.BigDecimal;
-
 BigDecimal result = Calculator.add(new BigDecimal("2"), new BigDecimal("3"));
-BigDecimal remainder = Calculator.modulo(new BigDecimal("20"), new BigDecimal("6"));
-BigDecimal power = Calculator.power(new BigDecimal("2"), 8);
-BigDecimal percent = Calculator.percentage(new BigDecimal("250"), new BigDecimal("20"));
+BigDecimal combinations = Calculator.combinations(10, 3);
+double angle = Calculator.sine(90, true);
 ```
-
-## API
-
-| Method | Purpose |
-|---|---|
-| `add`, `subtract`, `multiply`, `divide` | Basic arithmetic |
-| `modulo`, `power`, `percentage` | Extended arithmetic |
-| `absolute`, `minimum`, `maximum`, `average` | Numeric utilities |
-| `clamp`, `reciprocal`, `square`, `cube` | Value transformations |
 
 ## Development
 
@@ -55,15 +46,11 @@ gradle test
 gradle build
 ```
 
-For local publishing, configure credentials through environment variables and run:
-
-```bash
-gradle publish
-```
+For local publishing, configure credentials through environment variables and run `gradle publish`.
 
 ## CI / Publishing
 
-GitHub Actions sets up Java 17, runs the JUnit suite, builds the artifact, and publishes the Maven-compatible package to GitHub Packages. Credentials are supplied through GitHub Actions and are never committed.
+GitHub Actions runs the JUnit suite, builds the artifact, and publishes the Maven-compatible package to GitHub Packages. Credentials are supplied by the workflow and are never committed.
 
 ## Links
 
