@@ -32,7 +32,7 @@ Repository:
 https://maven.pkg.github.com/TEJAS-MK2/Calculator
 ```
 
-GitHub's Gradle registry publishes Java artifacts using Gradle's `maven-publish` plugin and the `gradle publish` task. The repository-scoped package uses the workflow's `GITHUB_TOKEN` for publishing. citeturn1search2turn1search7
+GitHub's Gradle registry uses Gradle's `maven-publish` plugin and the `gradle publish` task. The repository-scoped package is published from GitHub Actions using the workflow's `GITHUB_TOKEN`.
 
 ## Usage
 
@@ -58,7 +58,7 @@ gradle build
 gradle publish
 ```
 
-For GitHub Packages authentication, configure `USERNAME` and `GITHUB_TOKEN` in the environment when publishing locally. GitHub Actions can use the workflow-provided `GITHUB_TOKEN` with `packages: write`. citeturn0search0turn1search2
+For local GitHub Packages publishing, configure `USERNAME` and `GITHUB_TOKEN` in the environment. GitHub Actions uses the workflow-provided `GITHUB_TOKEN` with `packages: write` permission.
 
 ## License
 
