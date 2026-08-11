@@ -140,3 +140,5 @@ npm pack --dry-run
 ## License
 
 MIT
+
+> Phase 1 calculation engine release.
