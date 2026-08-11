@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.name = "pijush-calculator"
   spec.version = PijushCalculator::VERSION
   spec.authors = ["Pijush Chakraborty"]
-  spec.summary = "A lightweight Ruby calculator engine."
-  spec.description = "A small, dependency-free Ruby calculation engine for basic arithmetic, designed as part of the Modern Calculator project."
+  spec.summary = "A lightweight Ruby arithmetic engine for reusable calculator operations."
+  spec.description = "A dependency-free Ruby arithmetic API providing predictable addition, subtraction, multiplication, and division with explicit division-by-zero handling."
   spec.homepage = "https://github.com/TEJAS-MK2/Calculator"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0"
