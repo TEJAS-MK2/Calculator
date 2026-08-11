@@ -4,7 +4,7 @@ A **lightweight, dependency-free JavaScript calculation engine** with a safe exp
 
 ## Current release
 
-**v0.3.1 — scientific calculation engine**
+**v0.3.1 — Phase 2 scientific calculation engine**
 
 The package powers the expression-evaluation layer of the Modern Calculator while remaining independently reusable.
 
@@ -13,11 +13,11 @@ The package powers the expression-evaluation layer of the Modern Calculator whil
 - Operator precedence and nested parentheses
 - Implicit multiplication: `2(5 + 3)`, `3pi`, `2sin(pi / 2)`
 - Unary `+` and `-`
-- Powers and percentages
+- Powers, percentages, and modulo
 - Variables through a scope object
 - Scientific notation such as `1.5e2`
-- `π`, `e`, and advanced constants such as `tau`
-- Scientific functions including trigonometry, logarithms, roots, rounding, and exponentials
+- Constants: `pi`, `e`, `tau`, and `phi`
+- Scientific functions: trigonometry, logarithms, roots, rounding, and exponentials
 - DEG, RAD, and GRAD angle modes
 - Exact rational arithmetic with `Fraction` and `evaluateExact()`
 - Explicit division-by-zero, domain, and invalid-expression errors
@@ -29,9 +29,7 @@ The package powers the expression-evaluation layer of the Modern Calculator whil
 
 ## Installation from GitHub Packages
 
-This package is published to the GitHub Packages npm registry.
-
-Configure npm authentication for GitHub Packages and the `@tejas-mk2` scope, then install:
+Configure npm authentication for the GitHub Packages npm registry and the `@tejas-mk2` scope, then install:
 
 ```bash
 npm install @tejas-mk2/calculator-core
@@ -43,7 +41,7 @@ Registry:
 https://npm.pkg.github.com
 ```
 
-For a project-level `.npmrc`, use:
+For a project-level `.npmrc`:
 
 ```text
 @tejas-mk2:registry=https://npm.pkg.github.com
@@ -63,6 +61,7 @@ import {
 
 console.log(evaluate('(25 + 5) * 2')); // 60
 console.log(evaluate('2(5 + 3) + 4^2')); // 80
+console.log(evaluate('10 % 3')); // 1
 console.log(evaluate('1.5e2 + 2.5e1')); // 175
 console.log(evaluate('sin(90)', {}, { angleMode: 'DEG' })); // 1
 console.log(evaluate('sin(pi / 2)^2 + cos(pi / 2)^2')); // 1
@@ -74,12 +73,24 @@ console.log(percentage(250, 20)); // 50
 console.log(convertTemperature(100, 'C', 'F')); // 212
 ```
 
-## Expression syntax
+## Expression Syntax
 
 ### Operators
 
 ```text
 +  -  *  /  %  ^
+```
+
+`%` is modulo in binary form:
+
+```text
+10 % 3       → 1
+```
+
+A postfix percentage is also supported:
+
+```text
+50%          → 0.5
 ```
 
 ### Grouping and precedence
@@ -99,10 +110,10 @@ console.log(convertTemperature(100, 'C', 'F')); // 212
 ### Variables
 
 ```js
-evaluate('2*x + y', { x: 5, y: 3 });
+evaluate('2*x + y', { x: 5, y: 3 }); // 13
 ```
 
-### Angle modes
+### Angle Modes
 
 ```js
 evaluate('sin(90)', {}, { angleMode: 'DEG' });
@@ -110,9 +121,7 @@ evaluate('sin(pi / 2)', {}, { angleMode: 'RAD' });
 evaluate('sin(100)', {}, { angleMode: 'GRAD' });
 ```
 
-### Scientific functions
-
-Supported functions include:
+### Scientific Functions
 
 ```text
 sin  cos  tan
@@ -122,7 +131,7 @@ floor ceil round
 log ln exp
 ```
 
-## Exact mode
+## Exact Mode
 
 `evaluate()` returns JavaScript numbers. For supported rational expressions, `evaluateExact()` preserves exact values:
 
@@ -131,13 +140,13 @@ const result = evaluateExact('1 / 3 + 1 / 6');
 console.log(result.toString()); // 1/2
 ```
 
-Exact mode intentionally does not approximate irrational constants or scientific functions.
+Exact mode supports rational arithmetic and modulo but intentionally does not approximate irrational constants or scientific functions.
 
 ## API
 
 ### `evaluate(expression, scope?, options?)`
 
-Parses and evaluates an expression using a tokenizer and recursive-descent parser. The optional `options.angleMode` accepts `RAD`, `DEG`, or `GRAD`.
+Evaluates an expression using a tokenizer and recursive-descent parser. `options.angleMode` accepts `RAD`, `DEG`, or `GRAD`.
 
 ### `evaluateExact(expression, scope?)`
 
@@ -145,7 +154,7 @@ Evaluates supported arithmetic using exact rational values and returns a `Fracti
 
 ### `Fraction(numerator, denominator?)`
 
-Creates a normalized immutable rational number with arithmetic operations including `add`, `subtract`, `multiply`, `divide`, `pow`, and `toString`.
+Creates a normalized immutable rational number with `add`, `subtract`, `multiply`, `divide`, `pow`, `valueOf`, and `toString` operations.
 
 ### `factorial(n)`
 
@@ -159,9 +168,17 @@ Calculates a percentage of a value.
 
 Converts between `C`, `F`, and `K`.
 
-## Error handling
+### `constants`
 
-Invalid expressions are rejected rather than silently producing incorrect values. Division by zero, invalid logarithm domains, unknown identifiers, malformed expressions, and invalid angle modes raise explicit errors.
+Exports the numeric values of `pi`, `e`, `tau`, and `phi`.
+
+### `EvaluationError`
+
+Typed evaluation error with a machine-readable `code` such as `DIVISION_BY_ZERO`, `DOMAIN_ERROR`, or `UNKNOWN_IDENTIFIER`.
+
+## Error Handling
+
+Invalid expressions are rejected rather than silently producing incorrect values.
 
 ```js
 import { evaluate, EvaluationError } from '@tejas-mk2/calculator-core';
@@ -175,16 +192,16 @@ try {
 }
 ```
 
-## Development and testing
+## Development and Testing
 
 ```bash
 npm test
 npm pack --dry-run
 ```
 
-The package is tested before GitHub Actions publishes a new version.
+Tests cover precedence, implicit multiplication, scientific notation, angle modes, variables, percentages, modulo, exact fractions, and error handling.
 
-## Package information
+## Package Information
 
 | Property | Value |
 |---|---|
