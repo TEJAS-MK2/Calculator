@@ -20,6 +20,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: Initialize test workspace
+        run: npm init -y
+
       - name: Install Playwright
         run: npm install --no-save playwright@1.54.2
 
