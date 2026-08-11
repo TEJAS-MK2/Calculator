@@ -241,24 +241,6 @@ This repository is primarily an **engineering and learning project**. The goal i
 
 The long-term direction is to make the engines more robust, mathematically capable, portable, well-tested, and useful as standalone libraries.
 
-## Project structure
-
-```text
-Calculator/
-├── index.html                 # Hobbyist calculator UI
-├── styles.css                 # Current visual system
-├── script.js                  # Sidebar and theme controls
-├── calculator-core-ui.js      # Browser calculator integration
-├── packages/calculator-core/  # Advanced JavaScript engine
-├── ruby-gem/                  # Ruby engine
-├── python-package/            # Python engine
-├── java-package/              # Maven engine
-├── gradle-package/            # Gradle engine
-├── nuget-package/             # .NET engine
-├── .github/workflows/         # CI/CD and registry publishing
-└── Dockerfile                 # Container image
-```
-
 ## Project policies
 
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md)
