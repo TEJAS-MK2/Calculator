@@ -1,4 +1,4 @@
-const CACHE_NAME='aesthetic-calculator-v22';
+const CACHE_NAME='aesthetic-calculator-v23';
 const APP_SHELL=['./','./index.html','./styles.css?v=12','./graph.css?v=1','./statistics.css?v=1','./script.js?v=12','./graph.js?v=3','./statistics.js?v=1','./sidebar-fix.js?v=5','./manifest.json'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
