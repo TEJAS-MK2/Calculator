@@ -1,66 +1,109 @@
-class Calculator {
-    constructor() {
-        this.primary=document.getElementById('displayPrimary');this.secondary=document.getElementById('displaySecondary');this.preview=document.getElementById('expressionPreview');this.scientificToggle=document.getElementById('scientificToggle');this.scientificPanel=document.getElementById('scientificPanel');this.historyToggle=document.getElementById('historyToggle');this.historyPanel=document.getElementById('historyPanel');this.historyList=document.getElementById('historyList');this.historyCount=document.getElementById('historyCount');this.clearHistoryButton=document.getElementById('clearHistory');this.memoryDisplay=document.getElementById('memoryValue');this.themeToggle=document.getElementById('themeToggle');
-        this.current='0';this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=false;this.errorTimer=null;this.history=this.readHistory();this.memory=this.readMemory();this.theme=this.readTheme();this.reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||false;this.bindEvents();this.bindSidebar();this.applyTheme(false);this.renderHistory();this.renderMemory();this.render(false);this.updatePreview();this.animateEntrance();
-    }
-    bindEvents(){if(!window.__calculatorCoreUIEnabled){document.querySelectorAll('.btn,.memory-button').forEach(b=>b.addEventListener('click',()=>{this.handleAction(b.dataset.action,b.dataset.number);this.animateButton(b);}));document.addEventListener('keydown',e=>this.keyboard(e));}this.scientificToggle?.addEventListener('click',()=>this.toggleScientific());this.historyToggle?.addEventListener('click',()=>this.toggleHistory());this.clearHistoryButton?.addEventListener('click',()=>this.clearHistory());this.themeToggle?.addEventListener('click',()=>this.toggleTheme());const media=window.matchMedia?.('(prefers-color-scheme: light)');media?.addEventListener?.('change',()=>{if(this.theme==='system')this.applyTheme(false);});}
-    bindSidebar(){
-        const sidebar=document.getElementById('featureSidebar'),openButton=document.getElementById('sidebarOpen'),closeButton=document.getElementById('sidebarClose'),backdrop=document.getElementById('sidebarBackdrop'),list=sidebar?.querySelector('.feature-list');
-        if(!sidebar||!openButton||!closeButton||!list)return;
-        const setOpen=open=>{sidebar.classList.toggle('is-open',open);backdrop?.classList.toggle('is-open',open);sidebar.setAttribute('aria-hidden',String(!open));openButton.setAttribute('aria-expanded',String(open));if(!open){if(this.canAnimate())anime.remove(sidebar);sidebar.style.removeProperty('transform');}};
-        const openSidebar=()=>{setOpen(true);if(this.canAnimate()){anime.remove(sidebar);sidebar.style.transform='translateX(-105%)';anime({targets:sidebar,translateX:['-105%','0%'],duration:240,easing:'easeOutCubic',complete:()=>sidebar.style.removeProperty('transform')});}};
-        const closeSidebar=()=>{if(this.canAnimate()){anime.remove(sidebar);anime({targets:sidebar,translateX:['0%','-105%'],duration:190,easing:'easeInCubic',complete:()=>sidebar.style.removeProperty('transform')});}setOpen(false);};
-        const panels={history:[this.historyPanel],memory:[document.querySelector('.memory-panel')],scientific:[this.scientificPanel],graph:[document.getElementById('graphPanel')],statistics:[document.getElementById('statisticsPanel')]};
-        const all=[...new Set(Object.values(panels).flat().filter(Boolean))];
-        const hideAll=()=>{all.forEach(p=>{p.classList.remove('sidebar-feature-visible','is-open');p.setAttribute('aria-hidden','true');});[this.historyToggle,this.scientificToggle,document.getElementById('graphToggle'),document.getElementById('statisticsToggle')].filter(Boolean).forEach(b=>b.setAttribute('aria-expanded','false'));list.querySelectorAll('.feature-item').forEach(i=>i.classList.remove('active'));};
-        const activate=feature=>{hideAll();list.querySelector(`[data-feature="${feature}"]`)?.classList.add('active');if(feature==='theme'){this.toggleTheme();closeSidebar();return;}if(feature==='basic'){closeSidebar();return;}const selected=panels[feature]||[];selected.forEach(p=>{p.classList.add('sidebar-feature-visible','is-open');p.setAttribute('aria-hidden','false');});if(feature==='history')this.historyToggle?.setAttribute('aria-expanded','true');if(feature==='scientific')this.scientificToggle?.setAttribute('aria-expanded','true');closeSidebar();requestAnimationFrame(()=>{if(feature==='graph')window.dispatchEvent(new Event('resize'));if(this.canAnimate()){anime.remove(selected);anime({targets:selected,opacity:[0,1],translateY:[8,0],duration:220,delay:anime.stagger(18),easing:'easeOutCubic'});}});};
-        openButton.setAttribute('aria-expanded','false');sidebar.setAttribute('aria-hidden','true');openButton.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openSidebar();});closeButton.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();closeSidebar();});backdrop?.addEventListener('click',closeSidebar);list.addEventListener('click',e=>{const item=e.target.closest('.feature-item');if(!item||!list.contains(item))return;e.preventDefault();e.stopPropagation();activate(item.dataset.feature);});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sidebar.classList.contains('is-open')){e.preventDefault();closeSidebar();}});hideAll();
-    }
-    readTheme(){try{const v=localStorage.getItem('calculatorTheme');return['dark','light','system'].includes(v)?v:'dark';}catch{return'dark';}}
-    saveTheme(){try{localStorage.setItem('calculatorTheme',this.theme);}catch{}}
-    resolvedTheme(){return this.theme==='system'?(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):this.theme;}
-    applyTheme(animate=true){const r=this.resolvedTheme();document.documentElement.dataset.theme=r;if(!this.themeToggle)return;const icons={dark:'fa-moon',light:'fa-sun',system:'fa-circle-half-stroke'};this.themeToggle.innerHTML=`<i class="fas ${icons[this.theme]}"></i>`;this.themeToggle.setAttribute('aria-label',`Theme: ${this.theme}. Click to change`);this.themeToggle.title=`Theme: ${this.theme}`;if(animate)this.animateThemeChange();}
-    toggleTheme(){this.theme={dark:'light',light:'system',system:'dark'}[this.theme];this.saveTheme();this.applyTheme();}
-    readHistory(){try{const v=JSON.parse(localStorage.getItem('calculatorHistory')||'[]');return Array.isArray(v)?v.slice(0,50):[];}catch{return[];}}
-    saveHistory(){try{localStorage.setItem('calculatorHistory',JSON.stringify(this.history));}catch{}}
-    readMemory(){try{const v=Number(localStorage.getItem('calculatorMemory')||0);return Number.isFinite(v)?v:0;}catch{return 0;}}
-    saveMemory(){try{localStorage.setItem('calculatorMemory',String(this.memory));}catch{}}
-    renderMemory(){if(this.memoryDisplay)this.memoryDisplay.textContent=this.format(this.memory);}
-    memoryAction(a){this.cancelError();const v=Number(this.current);if(a==='memory-clear')this.memory=0;else if(a==='memory-recall'){this.current=String(this.memory);this.waiting=false;this.justCalculated=true;this.secondary.textContent='Memory recall';}else if(a==='memory-add'){if(!Number.isFinite(v))return this.showError('Invalid number');this.memory=this.round(this.memory+v);}else if(a==='memory-subtract'){if(!Number.isFinite(v))return this.showError('Invalid number');this.memory=this.round(this.memory-v);}else if(a==='memory-store'){if(!Number.isFinite(v))return this.showError('Invalid number');this.memory=this.round(v);}else return;this.saveMemory();this.renderMemory();this.render();this.updatePreview();this.animateMemoryAction(a);}
-    handleAction(a,n){if(n!==undefined)return this.inputNumber(n);if(!a)return;if(a.startsWith('memory-'))return this.memoryAction(a);if(a==='decimal')return this.decimal();if(a==='equals')return this.calculate();if(a==='clear')return this.clearCurrent();if(a==='clear-all')return this.clearAll();if(a==='backspace')return this.backspace();if(['add','subtract','multiply','divide'].includes(a))return this.setOperator(a);if(['sin','cos','tan','log','ln','sqrt','square','reciprocal','percent','factorial'].includes(a))return this.scientific(a);if(a==='pi')return this.constant(Math.PI,'π');if(a==='e')return this.constant(Math.E,'e');}
-    inputNumber(n){this.cancelError();if(this.waiting||this.justCalculated){this.current=n;this.waiting=false;this.justCalculated=false;if(!this.operator)this.secondary.textContent='';}else this.current=this.current==='0'?n:this.current+n;this.render();this.updatePreview();}
-    decimal(){this.cancelError();if(this.waiting||this.justCalculated){this.current='0.';this.waiting=false;this.justCalculated=false;this.secondary.textContent='';}else if(!this.current.includes('.'))this.current+='.';this.render();this.updatePreview();}
-    setOperator(next){this.cancelError();const v=Number(this.current);if(!Number.isFinite(v))return this.showError('Invalid number');if(this.previous===null)this.previous=v;else if(this.operator&&!this.waiting){const r=this.compute();if(r===null)return;this.current=String(r);this.previous=r;}this.operator=next;this.waiting=true;this.justCalculated=false;this.updateSecondary();this.render();this.updatePreview();}
-    compute(){const a=Number(this.previous),b=Number(this.current);if(!Number.isFinite(a)||!Number.isFinite(b))return null;switch(this.operator){case'add':return this.round(a+b);case'subtract':return this.round(a-b);case'multiply':return this.round(a*b);case'divide':if(b===0){this.showError('Cannot divide by zero');return null;}return this.round(a/b);default:return null;}}
-    calculate(){this.cancelError();if(this.previous===null||!this.operator||this.waiting)return;const left=this.format(this.previous),right=this.format(this.current),symbol=this.symbol(this.operator),r=this.compute();if(r===null)return;this.addHistory(`${left} ${symbol} ${right}`,r);this.secondary.textContent=`${left} ${symbol} ${right} =`;this.current=String(r);this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=true;this.render();this.updatePreview();this.animateResult();}
-    scientific(type){this.cancelError();const v=Number(this.current);if(!Number.isFinite(v))return this.showError('Invalid number');let r;switch(type){case'sin':r=Math.sin(v*Math.PI/180);break;case'cos':r=Math.cos(v*Math.PI/180);break;case'tan':{const x=v*Math.PI/180;if(Math.abs(Math.cos(x))<1e-12)return this.showError('Undefined tan');r=Math.tan(x);break;}case'log':if(v<=0)return this.showError('log requires > 0');r=Math.log10(v);break;case'ln':if(v<=0)return this.showError('ln requires > 0');r=Math.log(v);break;case'sqrt':if(v<0)return this.showError('√ requires ≥ 0');r=Math.sqrt(v);break;case'square':r=v*v;break;case'reciprocal':if(v===0)return this.showError('Cannot divide by zero');r=1/v;break;case'percent':r=v/100;break;case'factorial':if(!Number.isInteger(v)||v<0||v>170)return this.showError('Use an integer 0–170');r=1;for(let i=2;i<=v;i++)r*=i;break;default:return;}this.current=String(this.round(r));this.justCalculated=true;this.waiting=false;this.secondary.textContent=`${type}(${this.format(v)})`;this.render();this.updatePreview();this.animateResult();}
-    constant(v,name){this.cancelError();this.current=String(this.round(v));this.justCalculated=true;this.waiting=false;this.secondary.textContent=name;this.render();this.updatePreview();this.animateResult();}
-    clearCurrent(){this.cancelError();this.current='0';this.render();this.updatePreview();}
-    clearAll(){this.cancelError();this.current='0';this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=false;this.secondary.textContent='';this.render();this.updatePreview();}
-    backspace(){this.cancelError();if(this.waiting||this.justCalculated)return;this.current=this.current.length>1?this.current.slice(0,-1):'0';this.render();this.updatePreview();}
-    updateSecondary(){if(this.previous!==null&&this.operator)this.secondary.textContent=`${this.format(this.previous)} ${this.symbol(this.operator)}`;}
-    symbol(o){return{add:'+',subtract:'−',multiply:'×',divide:'÷'}[o]||'';}
-    updatePreview(){if(!this.preview)return;let text='';if(this.previous!==null&&this.operator){const left=this.format(this.previous),op=this.symbol(this.operator);if(this.waiting)text=`${left} ${op}`;else text=`${left} ${op} ${this.format(this.current)}`;}else if(!this.justCalculated&&this.current!=='0')text=this.format(this.current);this.preview.textContent=text;this.preview.classList.toggle('active',Boolean(text));}
-    render(animate=true){if(this.primary)this.primary.textContent=this.format(this.current);if(this.primary)this.primary.classList.remove('display-error');if(animate)this.animateDisplay();}
-    format(v){const n=Number(v);if(!Number.isFinite(n))return'Error';if(Math.abs(n)>=1e10||(Math.abs(n)<1e-6&&n!==0))return n.toExponential(6);return n.toLocaleString('en-US',{maximumFractionDigits:8,useGrouping:false});}
-    round(v){return Number.isFinite(v)?Math.round((v+Number.EPSILON)*1e8)/1e8:v;}
-    addHistory(expression,result){this.history.unshift({expression,result:String(result),time:Date.now()});this.history=this.history.slice(0,50);this.saveHistory();this.renderHistory();this.animateHistoryItem();}
-    renderHistory(){if(!this.historyCount||!this.historyList)return;this.historyCount.textContent=String(this.history.length);if(!this.history.length){this.historyList.innerHTML='<div class="history-empty">No calculations yet</div>';return;}this.historyList.innerHTML='';this.history.forEach(e=>{const b=document.createElement('button');b.type='button';b.className='history-item';const x=document.createElement('span'),r=document.createElement('span');x.className='history-expression';r.className='history-result';x.textContent=e.expression;r.textContent='= '+this.format(e.result);b.append(x,r);b.addEventListener('click',()=>{this.current=e.result;this.previous=null;this.operator=null;this.waiting=false;this.justCalculated=true;this.secondary.textContent='';this.render();this.updatePreview();this.toggleHistory(false);this.animateResult();});this.historyList.appendChild(b);});}
-    clearHistory(){this.history=[];this.saveHistory();this.renderHistory();}
-    toggleHistory(force){if(!this.historyPanel||!this.historyToggle)return;const open=typeof force==='boolean'?force:!this.historyPanel.classList.contains('is-open');this.historyPanel.classList.toggle('is-open',open);this.historyPanel.setAttribute('aria-hidden',String(!open));this.historyToggle.setAttribute('aria-expanded',String(open));if(open)this.animateHistoryPanel();}
-    toggleScientific(){if(!this.scientificPanel||!this.scientificToggle)return;const open=this.scientificPanel.classList.toggle('is-open');this.scientificPanel.setAttribute('aria-hidden',String(!open));this.scientificToggle.setAttribute('aria-expanded',String(open));this.scientificToggle.innerHTML=open?'<i class="fas fa-flask"></i> Hide Scientific Mode':'<i class="fas fa-flask"></i> Scientific Mode';if(open)this.animateScientificPanel();}
-    keyboard(e){const k=e.key;if(/^[0-9]$/.test(k)){e.preventDefault();this.inputNumber(k);return;}const a={'+':'add','-':'subtract','*':'multiply','/':'divide','.':'decimal','=':'equals',Enter:'equals',Escape:'clear-all',Backspace:'backspace',c:'clear',C:'clear'};if(a[k]){e.preventDefault();this.handleAction(a[k]);}}
-    showError(m){this.cancelError();if(!this.primary)return;this.primary.textContent='Error';this.primary.classList.add('display-error');if(this.secondary)this.secondary.textContent=m;if(this.preview){this.preview.textContent='';this.preview.classList.remove('active');}this.errorTimer=setTimeout(()=>{this.errorTimer=null;this.clearAll();},2000);}
-    cancelError(){if(this.errorTimer!==null){clearTimeout(this.errorTimer);this.errorTimer=null;}}
-    canAnimate(){return typeof anime==='function'&&!this.reduceMotion;}
-    animateEntrance(){if(!this.canAnimate())return;anime.remove('.calculator-header,.calculator,.calculator-footer,.button-grid .btn');const tl=anime.timeline({easing:'easeOutCubic'});tl.add({targets:'.calculator-header',opacity:[0,1],translateY:[-14,0],duration:420}).add({targets:'.calculator',opacity:[0,1],translateY:[14,0],duration:520,offset:'-=250'}).add({targets:'.button-grid .btn',opacity:[0,1],translateY:[8,0],duration:280,delay:anime.stagger(22,{grid:[4,5],from:'center'}),offset:'-=180'}).add({targets:'.calculator-footer',opacity:[0,1],duration:220,offset:'-=120'});}
-    animateButton(b){if(!this.canAnimate()||!b)return;anime.remove(b);anime({targets:b,scale:[1,.96,1],duration:180,easing:'easeOutCubic'});}
-    animateDisplay(){if(!this.canAnimate()||!this.primary)return;anime.remove(this.primary);anime({targets:this.primary,opacity:[.72,1],duration:120,easing:'easeOutQuad'});}
-    animateResult(){if(!this.canAnimate()||!this.primary)return;anime.remove(this.primary);anime({targets:this.primary,opacity:[.7,1],scale:[.96,1],duration:240,easing:'easeOutCubic'});}
-    animateMemoryAction(a){if(!this.canAnimate())return;const panel=document.querySelector('.memory-panel');if(panel){anime.remove(panel);anime({targets:panel,scale:[1,.985,1],duration:220,easing:'easeOutCubic'});}if(a==='memory-recall')this.animateResult();}
-    animateHistoryPanel(){if(!this.canAnimate()||!this.historyList)return;const items=this.historyList.querySelectorAll('.history-item,.history-empty');if(!items.length)return;anime.remove(items);anime({targets:items,opacity:[0,1],translateX:[-8,0],duration:220,delay:anime.stagger(28),easing:'easeOutCubic'});}
-    animateHistoryItem(){if(!this.canAnimate()||!this.historyList)return;const item=this.historyList.querySelector('.history-item');if(!item)return;anime.remove(item);anime({targets:item,opacity:[0,1],translateX:[-8,0],duration:240,easing:'easeOutCubic'});}
-    animateScientificPanel(){if(!this.canAnimate()||!this.scientificPanel)return;const items=this.scientificPanel.querySelectorAll('.btn');if(!items.length)return;anime.remove(items);anime({targets:items,opacity:[0,1],translateY:[-6,0],duration:240,delay:anime.stagger(22,{grid:[4,3],from:'center'}),easing:'easeOutCubic'});}
-    animateThemeChange(){if(!this.canAnimate()||!this.themeToggle)return;anime.remove(this.themeToggle);anime({targets:this.themeToggle,rotate:[0,180],duration:260,easing:'easeOutCubic'});const surfaces=document.querySelectorAll('.display-container,.history-panel');anime.remove(surfaces);anime({targets:surfaces,opacity:[.85,1],duration:180,easing:'easeOutQuad'});}
-}
-document.addEventListener('DOMContentLoaded',()=>new Calculator());
+(() => {
+  const $ = id => document.getElementById(id);
+  const readStorage = (key, fallback = null) => {
+    try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
+  };
+  const writeStorage = (key, value) => {
+    try { localStorage.setItem(key, value); } catch {}
+  };
+
+  let theme = readStorage('calculatorTheme', 'dark');
+  if (!['dark', 'light', 'system'].includes(theme)) theme = 'dark';
+
+  function resolvedTheme() {
+    if (theme !== 'system') return theme;
+    return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  function applyTheme() {
+    document.documentElement.dataset.theme = resolvedTheme();
+    const button = $('themeToggle');
+    if (!button) return;
+    const icons = { dark: 'fa-moon', light: 'fa-sun', system: 'fa-circle-half-stroke' };
+    button.innerHTML = `<i class="fas ${icons[theme]}" aria-hidden="true"></i>`;
+    button.setAttribute('aria-label', `Theme: ${theme}. Click to change`);
+    button.title = `Theme: ${theme}`;
+  }
+
+  function toggleTheme() {
+    theme = { dark: 'light', light: 'system', system: 'dark' }[theme];
+    writeStorage('calculatorTheme', theme);
+    applyTheme();
+  }
+
+  function setupSidebar() {
+    const sidebar = $('featureSidebar');
+    const openButton = $('sidebarOpen');
+    const closeButton = $('sidebarClose');
+    const backdrop = $('sidebarBackdrop');
+    const list = sidebar?.querySelector('.feature-list');
+    if (!sidebar || !openButton || !closeButton || !list) return;
+
+    const panels = {
+      history: $('historyPanel'),
+      scientific: $('phase2ScientificPanel')
+    };
+
+    const setOpen = open => {
+      sidebar.classList.toggle('is-open', open);
+      backdrop?.classList.toggle('is-open', open);
+      sidebar.setAttribute('aria-hidden', String(!open));
+      openButton.setAttribute('aria-expanded', String(open));
+    };
+
+    const close = () => setOpen(false);
+
+    const hidePanels = () => {
+      Object.values(panels).forEach(panel => {
+        panel?.classList.remove('sidebar-feature-visible', 'is-open');
+        if (panel) panel.setAttribute('aria-hidden', 'true');
+        if (panel) panel.hidden = panel.id === 'phase2ScientificPanel' ? true : panel.hidden;
+      });
+      $('historyToggle')?.setAttribute('aria-expanded', 'false');
+      $('phase2ScientificToggle')?.setAttribute('aria-expanded', 'false');
+      list.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
+    };
+
+    const activate = feature => {
+      hidePanels();
+      list.querySelector(`[data-feature="${feature}"]`)?.classList.add('active');
+      if (feature === 'theme') { toggleTheme(); close(); return; }
+      if (feature === 'clear') {
+        $('displayPrimary')?.dispatchEvent(new Event('click', { bubbles: true }));
+        const ac = document.querySelector('[data-action="clear-all"]');
+        ac?.click();
+        close();
+        return;
+      }
+      const panel = panels[feature];
+      if (!panel) { close(); return; }
+      panel.hidden = false;
+      panel.classList.add('sidebar-feature-visible', 'is-open');
+      panel.setAttribute('aria-hidden', 'false');
+      if (feature === 'history') $('historyToggle')?.setAttribute('aria-expanded', 'true');
+      if (feature === 'scientific') $('phase2ScientificToggle')?.setAttribute('aria-expanded', 'true');
+      close();
+    };
+
+    openButton.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); setOpen(true); });
+    closeButton.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); close(); });
+    backdrop?.addEventListener('click', close);
+    list.addEventListener('click', e => {
+      const item = e.target.closest('.feature-item');
+      if (!item || !list.contains(item)) return;
+      e.preventDefault(); e.stopPropagation(); activate(item.dataset.feature);
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && sidebar.classList.contains('is-open')) { e.preventDefault(); close(); }
+    });
+
+    hidePanels();
+    setOpen(false);
+  }
+
+  applyTheme();
+  setupSidebar();
+  window.matchMedia?.('(prefers-color-scheme: light)').addEventListener?.('change', () => {
+    if (theme === 'system') applyTheme();
+  });
+})();
