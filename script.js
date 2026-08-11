@@ -83,19 +83,35 @@
     animate('.calculator', { opacity: [0.82, 1], scale: [0.985, 1], duration: 260, easing: 'easeOutQuad' });
   }
 
+  function calculator() { return document.querySelector('.calculator'); }
+
   function mountFeaturePanel(panel) {
-    const calculator = document.querySelector('.calculator');
-    if (!panel || !calculator) return false;
-    if (panel.parentElement !== calculator) calculator.appendChild(panel);
+    const root = calculator();
+    if (!panel || !root) return false;
+    if (panel.parentElement !== root) root.appendChild(panel);
     panel.classList.add('calculator-feature-panel');
     return true;
   }
 
+  function setCalculatorFeatureMode(open) {
+    calculator()?.classList.toggle('has-feature', open);
+  }
+
   function closeSidebarAfterFeature() {
     const sidebar = $('featureSidebar');
-    if (sidebar?.classList.contains('is-open')) {
-      closeSidebar();
-    }
+    if (sidebar?.classList.contains('is-open')) closeSidebar();
+  }
+
+  function resetFeaturePanels() {
+    const engine = $('enginePanel');
+    const about = $('aboutPanel');
+    if (engine) engine.hidden = true;
+    if (about) about.hidden = true;
+    document.querySelectorAll('.feature-item').forEach(item => {
+      item.classList.remove('active');
+      if (item.dataset.feature === 'about') item.setAttribute('aria-expanded', 'false');
+    });
+    setCalculatorFeatureMode(false);
   }
 
   function toggleHistory() {
@@ -111,6 +127,7 @@
   }
 
   function clearCalculator() {
+    resetFeaturePanels();
     window.clearCalculator?.();
     animate(['.display-container', '.btn-function'], { scale: [0.97, 1], duration: 220, easing: 'easeOutQuad' });
   }
@@ -119,15 +136,16 @@
     const panel = $('aboutPanel');
     const button = document.querySelector('.feature-item[data-feature="about"]');
     if (!panel || !button) return;
-    mountFeaturePanel(panel);
     const open = panel.hidden;
-    panel.hidden = !open;
-    button.classList.toggle('active', open);
-    button.setAttribute('aria-expanded', String(open));
+    resetFeaturePanels();
+    if (!open) return;
+    mountFeaturePanel(panel);
+    panel.hidden = false;
+    button.classList.add('active');
+    button.setAttribute('aria-expanded', 'true');
+    setCalculatorFeatureMode(true);
     closeSidebarAfterFeature();
-    if (open) {
-      animate(panel, { opacity: [0, 1], translateY: [8, 0], duration: 240, easing: 'easeOutCubic' });
-    }
+    animate(panel, { opacity: [0, 1], translateY: [12, 0], scale: [0.985, 1], duration: 260, easing: 'easeOutCubic' });
   }
 
   function toggleEngine(feature = 'advanced') {
@@ -151,24 +169,17 @@
     const exact = feature === 'exact';
     window.CalculatorCoreUI?.setExactMode(exact);
     document.querySelectorAll('.feature-item').forEach(item => item.classList.toggle('active', item.dataset.feature === feature));
+    setCalculatorFeatureMode(true);
     closeSidebarAfterFeature();
     animate(panel, { opacity: [0, 1], translateY: [12, 0], scale: [0.985, 1], duration: 260, easing: 'easeOutCubic' });
   }
 
   function closeEngine() {
-    const panel = $('enginePanel');
-    if (!panel) return;
-    panel.hidden = true;
-    document.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
+    resetFeaturePanels();
   }
 
   function closeAbout() {
-    const panel = $('aboutPanel');
-    const button = document.querySelector('.feature-item[data-feature="about"]');
-    if (!panel) return;
-    panel.hidden = true;
-    button?.classList.remove('active');
-    button?.setAttribute('aria-expanded', 'false');
+    resetFeaturePanels();
   }
 
   function closeSidebar() {
@@ -232,7 +243,7 @@
       if (feature !== 'about') list.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
       if (feature === 'theme') { toggleTheme(); closeSidebar(); return; }
       if (feature === 'clear') { clearCalculator(); closeSidebar(); return; }
-      if (feature === 'history') { toggleHistory(); closeSidebar(); return; }
+      if (feature === 'history') { resetFeaturePanels(); toggleHistory(); closeSidebar(); return; }
       if (feature === 'about') { toggleAbout(); return; }
     };
 
@@ -250,8 +261,8 @@
     document.addEventListener('keydown', event => {
       if (event.key !== 'Escape') return;
       if (sidebar.classList.contains('is-open')) { event.preventDefault(); closeSidebar(); return; }
-      if (!$('enginePanel')?.hidden) { closeEngine(); return; }
-      if (!$('aboutPanel')?.hidden) closeAbout();
+      if (!$('enginePanel')?.hidden || !$('aboutPanel')?.hidden) { closeEngine(); return; }
+      if ($('historyPanel')?.classList.contains('is-open')) toggleHistory();
     });
     setOpen(false);
   }
