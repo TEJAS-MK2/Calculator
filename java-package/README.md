@@ -1,6 +1,6 @@
 # pijush-calculator — Apache Maven
 
-A lightweight, dependency-free Java arithmetic library for calculator applications and small math utilities.
+A lightweight Java arithmetic library for calculator applications and small math utilities, published to **GitHub Packages through Apache Maven**.
 
 ## Version
 
@@ -17,6 +17,12 @@ A lightweight, dependency-free Java arithmetic library for calculator applicatio
 - Explicit division-by-zero handling
 - Java 17+
 - Zero runtime dependencies
+
+## Package coordinates
+
+```text
+io.github.tejas-mk2:pijush-calculator:0.1.0
+```
 
 ## Installation from GitHub Packages
 
@@ -41,7 +47,7 @@ Then add the dependency:
 </dependency>
 ```
 
-GitHub Packages requires authentication for Maven package access. For GitHub Actions, the repository `GITHUB_TOKEN` can be used for packages associated with the workflow repository.
+GitHub Packages requires authentication for package access. In GitHub Actions, the repository `GITHUB_TOKEN` can be used with the required `packages: write` or `packages: read` permission.
 
 ## Usage
 
@@ -74,9 +80,13 @@ mvn package
 
 ## Publishing
 
-The project uses GitHub Actions and GitHub Packages' Apache Maven registry. The Maven `pom.xml` contains `distributionManagement` pointing to the Calculator repository's Maven registry.
+The package is published to the **GitHub Packages Maven registry** by GitHub Actions. The workflow uses the repository-provided `GITHUB_TOKEN`; package credentials are never committed to the repository.
 
-The publishing workflow uses the repository's `GITHUB_TOKEN`; no package credential should be committed to the repository.
+## Links
+
+- [Calculator repository](https://github.com/TEJAS-MK2/Calculator)
+- [GitHub Packages](https://github.com/TEJAS-MK2/Calculator/packages)
+- [Live calculator](https://tejas-mk2.github.io/Calculator/)
 
 ## License
 
