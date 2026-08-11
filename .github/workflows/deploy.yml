@@ -76,6 +76,9 @@ jobs:
           print('All local HTML assets exist.')
           PY
 
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Prepare Pages artifact
         run: |
           set -e
