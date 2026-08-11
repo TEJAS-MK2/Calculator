@@ -1,16 +1,19 @@
 # pijush-calculator-gradle
 
-A lightweight Java arithmetic library published to **GitHub Packages using Gradle** and Gradle's `maven-publish` plugin.
+A lightweight Java arithmetic engine published to GitHub Packages using Gradle and `maven-publish`.
 
-## Version
+## Engine
 
-**0.1.0**
+The Gradle package uses `BigDecimal` with `MathContext.DECIMAL128` for predictable decimal arithmetic.
 
-## Features
+### Features
 
-- Addition, subtraction, multiplication, and division
-- Explicit division-by-zero handling
-- `BigDecimal` arithmetic with `DECIMAL128` precision
+- Addition, subtraction, multiplication, division
+- Modulo
+- Integer power
+- Percentage
+- Null validation
+- Division/modulo-by-zero protection
 - Java 17
 - JUnit 5 tests
 - No runtime dependencies
@@ -18,18 +21,14 @@ A lightweight Java arithmetic library published to **GitHub Packages using Gradl
 ## Package coordinates
 
 ```text
-io.github.tejasmk2.gradle:pijush-calculator-gradle:0.1.0
+io.github.tejasmk2.gradle:pijush-calculator-gradle
 ```
 
-## GitHub Packages
-
-Repository:
+GitHub Packages Maven-compatible registry:
 
 ```text
 https://maven.pkg.github.com/TEJAS-MK2/Calculator
 ```
-
-GitHub's Gradle registry is Maven-compatible and uses repository-scoped permissions for Gradle packages.
 
 ## Usage
 
@@ -41,7 +40,24 @@ BigDecimal result = Calculator.add(
     new BigDecimal("2"),
     new BigDecimal("3")
 );
+
+BigDecimal remainder = Calculator.modulo(
+    new BigDecimal("20"),
+    new BigDecimal("6")
+);
 ```
+
+## API
+
+| Method | Description |
+|---|---|
+| `add(a, b)` | Adds values |
+| `subtract(a, b)` | Subtracts values |
+| `multiply(a, b)` | Multiplies values |
+| `divide(a, b)` | Divides values |
+| `modulo(a, b)` | Calculates remainder |
+| `power(a, exponent)` | Integer exponentiation |
+| `percentage(value, percent)` | Calculates a percentage |
 
 ## Development
 
@@ -58,15 +74,7 @@ gradle publish
 
 ## CI / Publishing
 
-The repository workflow:
-
-1. Sets up Java 17.
-2. Sets up Gradle.
-3. Runs the JUnit test suite.
-4. Builds the package.
-5. Publishes the Maven-compatible artifact to GitHub Packages.
-
-No package credentials are committed to the repository.
+The workflow sets up Java 17, runs the JUnit suite, builds the artifact, and publishes the Maven-compatible package to GitHub Packages. Credentials are supplied through GitHub Actions and are not committed to the repository.
 
 ## Links
 
