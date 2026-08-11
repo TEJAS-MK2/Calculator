@@ -1,14 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluate, evaluateExact, Fraction, factorial, percentage, convertTemperature } from './index.js';
+import { evaluate, evaluateExact, Fraction, factorial, percentage, convertTemperature, normalizeAngleMode, constants, EvaluationError } from './index.js';
 
 test('respects arithmetic precedence', () => assert.equal(evaluate('2 + 3 * 4'), 14));
 test('respects right-associative powers', () => assert.equal(evaluate('2^3^2'), 512));
 test('supports nested parentheses', () => assert.equal(evaluate('(2 + 3) * (4 - 1)'), 15));
 test('supports implicit multiplication', () => assert.equal(evaluate('2(5 + 3) + 4^2'), 32));
 test('supports implicit multiplication with functions', () => assert.ok(Math.abs(evaluate('2sin(pi / 2)') - 2) < 1e-12));
-test('supports scientific expressions', () => assert.ok(Math.abs(evaluate('sin(pi / 2)^2 + cos(pi / 2)^2') - 1) < 1e-12));
+test('supports scientific notation', () => assert.equal(evaluate('1.5e2 + 2.5e1'), 175));
+test('supports advanced functions', () => assert.equal(evaluate('abs(-5) + floor(2.9) + ceil(3.1) + round(4.6)'), 15));
+test('supports scientific expressions', () => assert.ok(Math.abs(evaluate('sin(90)', {}, { angleMode: 'DEG' }) - 1) < 1e-12));
+test('supports inverse trig in degrees', () => assert.ok(Math.abs(evaluate('asin(1)', {}, { angleMode: 'DEG' }) - 90) < 1e-12));
+test('supports radians by default', () => assert.ok(Math.abs(evaluate('sin(pi / 2)') - 1) < 1e-12));
+test('supports grad mode', () => assert.ok(Math.abs(evaluate('sin(100)', {}, { angleMode: 'GRAD' }) - 1) < 1e-12));
 test('supports variables and constants', () => assert.equal(evaluate('2*x + pi - pi', { x: 5 }), 10));
+test('supports advanced constants', () => assert.equal(constants.tau, Math.PI * 2));
 test('supports unary operators and percentages', () => assert.equal(evaluate('-50 + 20% * 250'), 0));
 test('supports postfix percentages', () => assert.equal(evaluate('50%'), 0.5));
 test('calculates factorial', () => assert.equal(factorial(5), 120));
@@ -22,3 +28,6 @@ test('rejects division by zero', () => assert.throws(() => evaluate('10 / (5 - 5
 test('rejects unknown identifiers', () => assert.throws(() => evaluate('unknown + 1'), /Unknown identifier/));
 test('rejects invalid characters', () => assert.throws(() => evaluate('2 @ 3'), /Invalid character/));
 test('rejects malformed parentheses', () => assert.throws(() => evaluate('(2 + 3'), /Expected \)/));
+test('rejects invalid angle modes', () => assert.throws(() => normalizeAngleMode('degrees'), /Angle mode/));
+test('uses typed evaluation errors', () => assert.throws(() => evaluate('1 / 0'), e => e instanceof EvaluationError && e.code === 'DIVISION_BY_ZERO'));
+test('rejects invalid logarithm domain', () => assert.throws(() => evaluate('log(0)'), /greater than zero/));
