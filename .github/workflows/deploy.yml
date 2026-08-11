@@ -13,11 +13,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  validate-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check script.js
+          node --check graph.js
+          node --check statistics.js
+          node --check static/js/calculator.js
+          node --check sw.js
+
+      - name: Validate Python syntax
+        run: python -m py_compile app.py main.py
+
+      - name: Validate manifest JSON
+        run: python -m json.tool manifest.json >/dev/null
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
