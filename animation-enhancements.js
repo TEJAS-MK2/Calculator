@@ -1,4 +1,10 @@
 (() => {
+  // Load the shared calculation engine into the browser UI without duplicating
+  // its parser. The module installs a capture-phase controller before user input.
+  import('./calculator-core-ui.js?v=1').catch(error => {
+    console.error('Calculator core UI integration failed:', error);
+  });
+
   const boot = () => {
     // Calculator is a classic-script global lexical binding, not necessarily a window property.
     if (typeof Calculator === 'undefined') return;
