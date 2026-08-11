@@ -11,13 +11,25 @@
       const panels=[...new Set(Object.values(panelMap).flat().filter(Boolean))];
       const style=document.getElementById('main-sidebar-theme-style')||document.createElement('style');style.id='main-sidebar-theme-style';style.textContent=`
         .calculator .sidebar-feature-visible{display:block!important;visibility:visible!important;opacity:1}
-        .calculator .sidebar-feature-visible.calculator-tools{display:flex!important}
+        .calculator .sidebar-feature-visible.calculator-tools{display:flex!important;gap:6px}
         .calculator .sidebar-feature-visible.scientific-panel{display:grid!important}
         .calculator .sidebar-feature-visible.history-panel,.calculator .sidebar-feature-visible.graph-panel,.calculator .sidebar-feature-visible.statistics-panel{display:block!important}
         .calculator .sidebar-feature-visible.memory-panel{display:block!important}
         .calculator .sidebar-feature-visible button{color:var(--text-primary);background:var(--surface-2);border-color:var(--border)}
         .calculator .sidebar-feature-visible,.calculator .sidebar-feature-visible .history-header,.calculator .sidebar-feature-visible .history-item,.calculator .sidebar-feature-visible .memory-status{color:var(--text-primary);background:var(--surface);border-color:var(--border)}
         .calculator .sidebar-feature-visible input,.calculator .sidebar-feature-visible select{color:var(--text-primary);background:var(--display);border-color:var(--border)}
+        .calculator .calculator-tools{padding:.4rem;margin-bottom:.35rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+        .calculator .tool-button{min-height:36px;flex:1;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--text-primary);font:600 .68rem Inter,sans-serif;cursor:pointer}
+        .calculator .tool-button:hover{background:var(--display)}
+        .calculator .history-panel,.calculator .memory-panel{margin-bottom:.35rem;padding:.55rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text-primary)}
+        .calculator .history-header{display:flex;justify-content:space-between;align-items:center;padding:.15rem .1rem .45rem;font:600 .68rem Inter,sans-serif;border-bottom:1px solid var(--border)}
+        .calculator .history-count{min-width:22px;padding:2px 6px;border-radius:999px;background:var(--surface-2);text-align:center;color:var(--text-secondary);font-size:.58rem}
+        .calculator .history-list{display:grid;gap:5px;max-height:170px;overflow:auto;padding-top:.45rem}
+        .calculator .history-item{display:flex;justify-content:space-between;gap:8px;width:100%;padding:.45rem .5rem;border:1px solid var(--border);border-radius:9px;background:var(--surface-2);color:var(--text-primary);font:500 .62rem Inter,sans-serif;text-align:left;cursor:pointer}
+        .calculator .history-item:hover{border-color:var(--border-strong);background:var(--display)}
+        .calculator .history-result{font-weight:650}
+        .calculator .history-empty{padding:.7rem;text-align:center;color:var(--text-secondary);font-size:.62rem}
+        .calculator .memory-status{display:flex;align-items:center;gap:7px;padding:.35rem .1rem .45rem;border-bottom:1px solid var(--border);font:600 .66rem Inter,sans-serif}.calculator .memory-status strong{margin-left:auto;font-variant-numeric:tabular-nums}.calculator .memory-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding-top:.45rem}.calculator .memory-button{min-height:32px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);color:var(--text-primary);font:650 .62rem Inter,sans-serif;cursor:pointer}.calculator .memory-button:hover{background:var(--display)}
         .feature-sidebar{background:var(--bg-secondary);color:var(--text-primary);border-color:var(--border)}
         .feature-sidebar .feature-item{background:var(--surface);color:var(--text-primary);border-color:var(--border)}
         .feature-sidebar .feature-item:hover,.feature-sidebar .feature-item.active{background:var(--surface-2);border-color:var(--border-strong)}
