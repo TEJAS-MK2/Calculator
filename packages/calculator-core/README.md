@@ -6,10 +6,10 @@
 
 ## Engine architecture
 
-The npm engine now has two complementary layers:
+The npm engine has two complementary layers:
 
-1. **Expression engine** — parses and evaluates calculator-style mathematical expressions safely.
-2. **Advanced numerical toolkit** — provides statistics, number theory, combinatorics, numerical methods, interpolation, and matrix operations through explicit APIs.
+1. **Expression engine** — safely parses and evaluates calculator-style mathematical expressions.
+2. **Advanced numerical toolkit** — provides statistics, number theory, numerical methods, interpolation, linear algebra, vector algebra, regression, and numerical utilities.
 
 Both layers are dependency-free and avoid `eval()` and `Function()`.
 
@@ -57,18 +57,22 @@ Supported syntax includes:
 
 ### Roots, rounding, and logarithms
 
-- `sqrt`, `cbrt`
+- `sqrt`, `cbrt`, `root`, `nthRoot`
 - `abs`
 - `floor`, `ceil`, `round`, `trunc`, `sign`
 - `log`, `ln`, `log2`, `log1p`
 - `exp`, `expm1`
 - `hypot`
+- `pow`
+- `gamma`, `erf`
 
-### Aggregation
+### Aggregation and arithmetic
 
 - `min`, `max`
-- `sum`, `product`, `mean`
+- `sum`, `product`, `mean`, `average`
 - GCD / LCM
+- `clamp`, `reciprocal`, `square`, `cube`
+- `percentage`, `factorial`
 
 ## Exact arithmetic
 
@@ -85,56 +89,57 @@ Exact mode supports rational arithmetic, integer powers, modulo, unary operators
 
 ## Advanced numerical toolkit
 
-The new advanced API is available from the `@tejas-mk2/calculator-core/advanced` subpath.
+The advanced API is available from the `@tejas-mk2/calculator-core/advanced` subpath.
 
 ```js
 import {
   median,
   variance,
-  standardDeviation,
   correlation,
   combinations,
   primeFactors,
-  solveQuadratic,
   newtonRaphson,
   bisection,
-  integrateSimpson,
-  derivative,
   matrixMultiply,
-  determinant
+  matrixInverse,
+  determinant,
+  linearRegression
 } from '@tejas-mk2/calculator-core/advanced';
 ```
 
 ### Statistics
 
 - Arithmetic, geometric, and harmonic mean
-- Median
-- Quantiles
+- Median, quantiles, percentiles
 - Population/sample variance
 - Population/sample standard deviation
-- Covariance
-- Pearson correlation
+- Covariance and Pearson correlation
+- Skewness and excess kurtosis
+- Z-scores
+- Covariance matrices
 - Sum and product
 
-### Number theory
+### Number theory and combinatorics
 
 - GCD / LCM
 - Prime detection
 - Next-prime search
 - Prime factorization
 - Factorial
-- Combinations
-- Permutations
+- Combinations / permutations
 
 ### Numerical methods
 
 - Quadratic equation solver
 - Newton-Raphson root finding
+- Secant root finding
 - Bisection root finding
-- Numerical derivative
-- Simpson numerical integration
+- Fixed-point iteration
+- Numerical first and second derivatives
+- Trapezoidal integration
+- Simpson integration
 - Configurable tolerance and iteration limits
-- Explicit convergence results instead of silently returning a questionable root
+- Explicit convergence results
 
 Example:
 
@@ -149,21 +154,39 @@ console.log(result.root);       // approximately sqrt(2)
 console.log(result.converged);  // true
 ```
 
-### Interpolation and mapping
+### Interpolation, polynomials, and regression
 
 - Linear interpolation (`lerp`)
 - Inverse interpolation (`inverseLerp`)
 - Range remapping (`remap`)
-- Safe clamping (`clamp`)
+- Horner polynomial evaluation
+- Polynomial derivatives
+- Polynomial antiderivatives
+- Simple linear regression
+- Prediction, correlation, and R²
 
-### Matrix operations
+```js
+const model = linearRegression([1, 2, 3, 4], [3, 5, 7, 9]);
+console.log(model.slope);       // 2
+console.log(model.intercept);   // 1
+console.log(model.predict(5));  // 11
+```
+
+### Matrix and vector algebra
 
 - Matrix validation
-- Matrix addition
+- Matrix addition/subtraction
 - Matrix multiplication
 - Transpose
-- Determinant calculation with pivoting
-- Dimension and square-matrix validation
+- Trace
+- Determinant with pivoting
+- Matrix inverse
+- Integer matrix powers
+- Identity matrices
+- Dot product
+- Vector norm
+- Euclidean distance
+- Cosine similarity
 
 ```js
 const A = [[1, 2], [3, 4]];
@@ -171,11 +194,22 @@ const B = [[5, 6], [7, 8]];
 
 matrixMultiply(A, B); // [[19, 22], [43, 50]]
 determinant(A);       // -2
+matrixInverse(A);     // [[-2, 1], [1.5, -0.5]]
 ```
+
+### Numerical utility layer
+
+- Stable sigmoid
+- Logit with domain validation
+- Softmax with max-shift stabilization
+- Configurable root-finding tolerances
+- Explicit singular-matrix detection
+- Dimension validation
+- Finite-number validation
 
 ### Numerical constants
 
-The advanced module exposes common constants including:
+The advanced module exposes:
 
 - `PI`
 - `E`
@@ -224,7 +258,7 @@ Important typed `EvaluationError` codes include:
 - `INVALID_FUNCTION_RESULT`
 - `NON_FINITE_RESULT`
 
-The advanced numerical APIs also validate inputs, matrix dimensions, root brackets, convergence limits, and mathematical domains.
+The advanced numerical APIs also validate inputs, matrix dimensions, root brackets, convergence limits, singular matrices, and mathematical domains.
 
 ## Installation
 
@@ -256,7 +290,7 @@ import { determinant } from '@tejas-mk2/calculator-core/advanced';
 | `percentage()` | Percentage calculation |
 | `convertTemperature()` | Temperature conversion |
 | `EvaluationError` | Typed evaluation errors |
-| `advanced` subpath | Statistics, numerical methods, matrices, number theory, interpolation |
+| `advanced` subpath | Statistics, solvers, calculus, matrices, vectors, regression, number theory, interpolation |
 
 ## Development
 
@@ -266,7 +300,7 @@ npm test
 npm pack --dry-run
 ```
 
-The test suite covers the core parser and the advanced numerical toolkit, including statistics, combinatorics, number theory, numerical solvers, integration, derivatives, interpolation, and matrix operations.
+The test suite should cover the core parser and advanced numerical toolkit, including statistics, combinatorics, number theory, numerical solvers, integration, derivatives, interpolation, regression, vector algebra, and matrix operations.
 
 Before publishing:
 
