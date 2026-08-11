@@ -4,9 +4,9 @@ plugins {
 }
 
 group = 'io.github.tejasmk2.gradle'
-version = '0.1.1'
+version = '0.2.0'
 
-description = 'Lightweight, dependency-free Java arithmetic engine published with Gradle.'
+description = 'Advanced, dependency-free Java numerical engine published with Gradle.'
 
 java {
     toolchain {
@@ -34,7 +34,7 @@ publishing {
             version = project.version
             pom {
                 name = 'pijush-calculator-gradle'
-                description = 'Lightweight, dependency-free Java arithmetic engine published with Gradle.'
+                description = 'Advanced, dependency-free Java numerical engine published with Gradle.'
                 url = 'https://github.com/TEJAS-MK2/Calculator'
             }
         }
