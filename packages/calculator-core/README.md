@@ -56,10 +56,8 @@ console.log(evaluate('(25 + 5) * 2')); // 60
 console.log(evaluate('2(5 + 3) + 4^2')); // 80
 console.log(evaluate('sin(pi / 2)^2 + cos(pi / 2)^2')); // 1
 console.log(evaluate('x^2 + 1', { x: 5 })); // 26
-
 console.log(evaluateExact('1 / 3 + 1 / 6').toString()); // 1/2
 console.log(new Fraction(2, 3).multiply(new Fraction(3, 4)).toString()); // 1/2
-
 console.log(factorial(5)); // 120
 console.log(percentage(250, 20)); // 50
 console.log(convertTemperature(100, 'C', 'F')); // 212
@@ -142,7 +140,7 @@ Calculates a percentage of a value.
 
 Converts between `C`, `F`, and `K`.
 
-## Development
+## Development and testing
 
 From the package directory:
 
@@ -150,6 +148,8 @@ From the package directory:
 npm test
 npm pack --dry-run
 ```
+
+The package is tested before GitHub Actions publishes a new package version.
 
 ## Package information
 
@@ -165,5 +165,3 @@ npm pack --dry-run
 ## License
 
 MIT
-
-> Phase 1 calculation engine release.
