@@ -1,54 +1,76 @@
 (() => {
   const init = () => {
     const sidebar = document.getElementById('featureSidebar');
-    const oldOpen = document.getElementById('sidebarOpen');
-    const oldBackdrop = document.getElementById('sidebarBackdrop');
-    if (!sidebar || !oldOpen) return;
+    const open = document.getElementById('sidebarOpen');
+    const close = document.getElementById('sidebarClose');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const list = sidebar?.querySelector('.feature-list');
+    const calculator = document.querySelector('.calculator');
+    const buttonGrid = document.querySelector('.button-grid');
+    if (!sidebar || !open || !close || !list || !calculator || !buttonGrid) return;
 
-    // Replace only controls so the existing graph/statistics/calculator panel instances
-    // and their event listeners remain intact.
-    const open = oldOpen.cloneNode(true);
-    oldOpen.replaceWith(open);
-    const oldClose = document.getElementById('sidebarClose');
-    const close = oldClose ? oldClose.cloneNode(true) : null;
-    if (oldClose && close) oldClose.replaceWith(close);
-    const backdrop = oldBackdrop ? oldBackdrop.cloneNode(true) : null;
-    if (oldBackdrop && backdrop) oldBackdrop.replaceWith(backdrop);
+    const oldContent = sidebar.querySelector('.sidebar-feature-content');
+    oldContent?.remove();
 
-    const list = sidebar.querySelector('.feature-list');
-    const content = sidebar.querySelector('.sidebar-feature-content');
-    if (!list || !content) return;
+    // The feature panels belong to the main calculator. Never move them into the sidebar.
+    const featureIds = ['historyToggle', 'clearHistory', 'historyPanel', 'scientificToggle', 'scientificPanel', 'graphToggle', 'graphPanel', 'statisticsToggle', 'statisticsPanel'];
+    const memoryPanel = calculator.querySelector('.memory-panel');
+    const featureNodes = {
+      history: ['historyToggle', 'clearHistory', 'historyPanel'],
+      memory: ['memory-panel'],
+      scientific: ['scientificToggle', 'scientificPanel'],
+      graph: ['graphToggle', 'graphPanel'],
+      statistics: ['statisticsToggle', 'statisticsPanel']
+    };
 
-    sidebar.style.transition = 'none';
+    // Restore anything previously moved by the legacy sidebar code.
+    const restoreNode = node => {
+      if (!node || node.parentElement !== sidebar) return;
+      calculator.insertBefore(node, buttonGrid);
+    };
+    featureIds.forEach(id => restoreNode(document.getElementById(id)));
+    restoreNode(memoryPanel);
+
+    // Main-calculator feature layout.
+    if (!document.getElementById('sidebar-main-layout-style')) {
+      const style = document.createElement('style');
+      style.id = 'sidebar-main-layout-style';
+      style.textContent = `
+        .calculator .sidebar-main-feature-hidden { display:none !important; }
+        .calculator .sidebar-main-feature-visible { display:block !important; }
+        .calculator .sidebar-main-feature-visible.history-panel { display:block !important; }
+        .calculator .sidebar-main-feature-visible.scientific-panel { display:grid !important; }
+        .calculator .sidebar-main-feature-visible.graph-panel,
+        .calculator .sidebar-main-feature-visible.statistics-panel { display:block !important; }
+      `;
+      document.head.appendChild(style);
+    }
+
     const canAnimate = () => typeof window.anime === 'function' && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const getBack = () => content.querySelector('.sidebar-back');
+    const allFeatureNodes = Object.values(featureNodes).flat().map(id => id === 'memory-panel' ? memoryPanel : document.getElementById(id)).filter(Boolean);
 
-    const resetView = () => {
-      content.querySelectorAll('.sidebar-feature-active').forEach(node => {
-        node.classList.remove('sidebar-feature-active', 'is-open');
-        node.setAttribute('aria-hidden', 'true');
-        node.style.removeProperty('opacity');
-        node.style.removeProperty('transform');
+    const setPanelVisibility = (visibleFeature = 'basic') => {
+      allFeatureNodes.forEach(node => {
+        const active = visibleFeature !== 'basic' && featureNodes[visibleFeature]?.includes(node.id || (node.classList.contains('memory-panel') ? 'memory-panel' : ''));
+        node.classList.toggle('sidebar-main-feature-visible', active);
+        node.classList.toggle('sidebar-main-feature-hidden', !active);
+        node.setAttribute('aria-hidden', String(!active));
       });
-      sidebar.querySelectorAll('[aria-expanded="true"]').forEach(node => node.setAttribute('aria-expanded', 'false'));
-      getBack()?.remove();
-      sidebar.classList.remove('feature-view-open');
-      list.style.removeProperty('display');
+    };
+
+    const resetFeatureControls = () => {
+      ['historyToggle', 'scientificToggle', 'graphToggle', 'statisticsToggle'].forEach(id => {
+        document.getElementById(id)?.setAttribute('aria-expanded', 'false');
+      });
     };
 
     const closeSidebar = () => {
       if (canAnimate()) {
         anime.remove(sidebar);
-        anime({
-          targets: sidebar,
-          translateX: ['0%', '-105%'],
-          duration: 300,
-          easing: 'easeInCubic',
-          complete: () => {
-            sidebar.classList.remove('is-open');
-            sidebar.style.removeProperty('transform');
-          }
-        });
+        anime({ targets: sidebar, translateX: ['0%', '-105%'], duration: 280, easing: 'easeInCubic', complete: () => {
+          sidebar.classList.remove('is-open');
+          sidebar.style.removeProperty('transform');
+        }});
       } else {
         sidebar.classList.remove('is-open');
       }
@@ -62,99 +84,64 @@
         anime.remove(sidebar);
         sidebar.classList.add('is-open');
         sidebar.style.transform = 'translateX(-105%)';
-        anime({
-          targets: sidebar,
-          translateX: ['-105%', '0%'],
-          duration: 360,
-          easing: 'easeOutCubic',
-          complete: () => sidebar.style.removeProperty('transform')
-        });
-      } else {
-        sidebar.classList.add('is-open');
-      }
+        anime({ targets: sidebar, translateX: ['-105%', '0%'], duration: 340, easing: 'easeOutCubic', complete: () => sidebar.style.removeProperty('transform') });
+      } else sidebar.classList.add('is-open');
       backdrop?.classList.add('is-open');
       sidebar.setAttribute('aria-hidden', 'false');
       open.setAttribute('aria-expanded', 'true');
     };
 
-    const showFeature = feature => {
-      if (feature === 'basic') {
-        resetView();
-        closeSidebar();
-        return;
-      }
+    const showFeatureInMain = feature => {
       if (feature === 'theme') {
         document.getElementById('themeToggle')?.click();
         return;
       }
+      if (feature === 'basic') {
+        resetFeatureControls();
+        setPanelVisibility('basic');
+        closeSidebar();
+        return;
+      }
+      if (!featureNodes[feature]) return;
 
-      resetView();
-      const map = {
-        history: ['historyToggle', 'clearHistory', 'historyPanel'],
-        memory: ['memory-panel'],
-        scientific: ['scientificPanel'],
-        graph: ['graphPanel'],
-        statistics: ['statisticsPanel']
-      };
-      const nodes = (map[feature] || []).map(id => id === 'memory-panel' ? document.querySelector('.memory-panel') : document.getElementById(id)).filter(Boolean);
-      if (!nodes.length) return;
+      resetFeatureControls();
+      setPanelVisibility(feature);
+      sidebar.querySelectorAll('.feature-item').forEach(item => item.classList.toggle('active', item.dataset.feature === feature));
+      closeSidebar();
 
-      sidebar.classList.add('feature-view-open');
-      list.style.display = 'none';
-
-      const back = document.createElement('button');
-      back.type = 'button';
-      back.className = 'sidebar-back';
-      back.innerHTML = '<i class="fas fa-arrow-left" aria-hidden="true"></i><span>Back to Features</span>';
-      content.prepend(back);
-
-      nodes.forEach(node => {
-        node.classList.add('sidebar-feature-active', 'is-open');
-        node.setAttribute('aria-hidden', 'false');
-      });
+      const nodes = featureNodes[feature].map(id => id === 'memory-panel' ? memoryPanel : document.getElementById(id)).filter(Boolean);
       if (feature === 'history') document.getElementById('historyToggle')?.setAttribute('aria-expanded', 'true');
       if (feature === 'scientific') document.getElementById('scientificToggle')?.setAttribute('aria-expanded', 'true');
-
-      back.addEventListener('click', () => {
-        if (!canAnimate()) return resetView();
-        const targets = [back, ...nodes];
-        anime.remove(targets);
-        anime({ targets, opacity: [1, 0], translateX: [0, 10], duration: 160, delay: anime.stagger(15), easing: 'easeInQuad', complete: resetView });
-      });
+      if (feature === 'graph') document.getElementById('graphToggle')?.setAttribute('aria-expanded', 'true');
+      if (feature === 'statistics') document.getElementById('statisticsToggle')?.setAttribute('aria-expanded', 'true');
 
       if (canAnimate()) {
-        const targets = [back, ...nodes];
-        anime.remove(targets);
-        anime({ targets, opacity: [0, 1], translateX: [14, 0], duration: 300, delay: anime.stagger(45), easing: 'easeOutCubic' });
+        anime.remove(nodes);
+        anime({ targets: nodes, opacity: [0, 1], translateY: [12, 0], duration: 320, delay: anime.stagger(45), easing: 'easeOutCubic' });
       }
     };
 
     open.addEventListener('click', openSidebar);
-    close?.addEventListener('click', closeSidebar);
+    close.addEventListener('click', closeSidebar);
     backdrop?.addEventListener('click', closeSidebar);
 
-    sidebar.querySelectorAll('.feature-item').forEach(original => {
-      const item = original.cloneNode(true);
-      original.replaceWith(item);
+    sidebar.querySelectorAll('.feature-item').forEach(item => {
       item.addEventListener('click', () => {
         if (canAnimate()) {
           anime.remove(item);
           anime({ targets: item, scale: [1, .97, 1], duration: 180, easing: 'easeOutCubic' });
         }
-        showFeature(item.dataset.feature);
+        showFeatureInMain(item.dataset.feature);
       });
     });
 
     document.addEventListener('keydown', event => {
       if (event.key !== 'Escape' || !sidebar.classList.contains('is-open')) return;
-      if (!sidebar.classList.contains('feature-view-open')) return closeSidebar();
-      const targets = [getBack(), ...content.querySelectorAll('.sidebar-feature-active')].filter(Boolean);
-      if (!canAnimate()) return resetView();
-      anime.remove(targets);
-      anime({ targets, opacity: [1, 0], translateX: [0, 10], duration: 160, easing: 'easeInQuad', complete: resetView });
+      closeSidebar();
     });
 
-    resetView();
+    // Start with the basic calculator visible in the main area.
+    setPanelVisibility('basic');
     sidebar.classList.remove('is-open');
     sidebar.style.removeProperty('transform');
     sidebar.setAttribute('aria-hidden', 'true');
