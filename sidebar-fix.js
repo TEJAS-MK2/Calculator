@@ -1,46 +1,21 @@
+// Sidebar controller is implemented by script.js.
+// This file intentionally contains only a safe compatibility layer so it does not
+// register a second set of listeners or move calculator panels between containers.
 (() => {
-  const init=()=>{
-    let sidebar=document.getElementById('featureSidebar'),openBtn=document.getElementById('sidebarOpen'),closeBtn=document.getElementById('sidebarClose'),backdrop=document.getElementById('sidebarBackdrop'),calculator=document.querySelector('.calculator');
-    if(!sidebar||!openBtn||!closeBtn||!calculator)return;
-    // Capture feature panels BEFORE replacing the legacy sidebar. script.js may have moved them.
-    const nodes={
-      history:[calculator.querySelector('.calculator-tools'),document.getElementById('historyPanel')],
-      memory:[calculator.querySelector('.memory-panel')],
-      scientific:[document.getElementById('scientificPanel')],
-      graph:[document.getElementById('graphPanel')],
-      statistics:[document.getElementById('statisticsPanel')]
-    };
-    const all=[...new Set(Object.values(nodes).flat().filter(Boolean))];
-    // Remove legacy listeners/DOM while preserving the already-captured feature panels.
-    const clone=n=>n?.parentNode?.replaceChild(n.cloneNode(true),n);
-    clone(openBtn);clone(closeBtn);clone(backdrop);clone(sidebar);
-    sidebar=document.getElementById('featureSidebar');openBtn=document.getElementById('sidebarOpen');closeBtn=document.getElementById('sidebarClose');backdrop=document.getElementById('sidebarBackdrop');
-    const list=sidebar?.querySelector('.feature-list');if(!sidebar||!list)return;
-    const grid=calculator.querySelector('.button-grid');
-    all.forEach(n=>{if(n.parentElement!==calculator)calculator.insertBefore(n,grid);});
-    const style=document.getElementById('sidebar-main-layout-style')||document.createElement('style');style.id='sidebar-main-layout-style';style.textContent=`.calculator .sidebar-feature-visible{display:block!important}.calculator .sidebar-feature-visible.calculator-tools,.calculator .sidebar-feature-visible.scientific-panel{display:grid!important}.feature-sidebar{background:var(--bg-secondary);color:var(--text-primary);border-color:var(--border)}.feature-sidebar .feature-item{background:var(--surface);color:var(--text-primary);border-color:var(--border);transition:transform .16s ease,background .16s ease,border-color .16s ease}.feature-sidebar .feature-item:hover,.feature-sidebar .feature-item.active{background:var(--surface-2);border-color:var(--border-strong);transform:translateX(2px)}.feature-sidebar .feature-item:active{transform:scale(.98)}.feature-sidebar .feature-list{gap:8px}.feature-sidebar .feature-item[data-feature="theme"]{margin-top:6px}`;if(!style.parentNode)document.head.appendChild(style);
-    const motion=()=>typeof anime==='function'&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const state=open=>{sidebar.classList.toggle('is-open',open);backdrop?.classList.toggle('is-open',open);sidebar.setAttribute('aria-hidden',String(!open));openBtn.setAttribute('aria-expanded',String(open));};
-    const close=()=>{if(motion()){anime.remove(sidebar);anime({targets:sidebar,translateX:['0%','-105%'],duration:190,easing:'easeInCubic',complete:()=>sidebar.style.removeProperty('transform')});}else sidebar.style.removeProperty('transform');state(false);};
-    const open=()=>{state(true);if(motion()){anime.remove(sidebar);sidebar.style.transform='translateX(-105%)';anime({targets:sidebar,translateX:['-105%','0%'],duration:240,easing:'easeOutCubic',complete:()=>sidebar.style.removeProperty('transform')});}else sidebar.style.removeProperty('transform');};
-    const reset=()=>{all.forEach(n=>{n.classList.remove('sidebar-feature-visible','is-open');n.setAttribute('aria-hidden','true');});['historyToggle','scientificToggle','graphToggle','statisticsToggle'].forEach(id=>document.getElementById(id)?.setAttribute('aria-expanded','false'));list.querySelectorAll('.feature-item').forEach(i=>i.classList.remove('active'));};
-    const activate=feature=>{
-      reset();
-      list.querySelector(`[data-feature="${feature}"]`)?.classList.add('active');
-      if(feature==='theme'){document.getElementById('themeToggle')?.click();close();return;}
-      if(feature==='basic'){close();return;}
-      const selected=(nodes[feature]||[]).filter(Boolean);if(!selected.length){close();return;}
-      selected.forEach(n=>{n.classList.add('sidebar-feature-visible','is-open');n.setAttribute('aria-hidden','false');});
-      if(feature==='history')document.getElementById('historyToggle')?.setAttribute('aria-expanded','true');
-      close();
-      requestAnimationFrame(()=>{if(feature==='graph')window.dispatchEvent(new Event('resize'));if(motion()){anime.remove(selected);anime({targets:selected,opacity:[0,1],translateY:[8,0],duration:220,delay:anime.stagger(20),easing:'easeOutCubic'});}});
-    };
-    openBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();open();});
-    closeBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();close();});
-    backdrop?.addEventListener('click',e=>{e.preventDefault();close();});
-    list.addEventListener('click',e=>{const item=e.target.closest('.feature-item');if(!item||!list.contains(item))return;e.preventDefault();e.stopPropagation();activate(item.dataset.feature);});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sidebar.classList.contains('is-open')){e.preventDefault();close();}});
-    reset();state(false);sidebar.style.removeProperty('transform');
+  const init = () => {
+    const sidebar = document.getElementById('featureSidebar');
+    const list = sidebar?.querySelector('.feature-list');
+    if (!sidebar || !list) return;
+
+    // Keep feature spacing consistent without interfering with script.js state.
+    list.style.gap = '8px';
+    const theme = list.querySelector('[data-feature="theme"]');
+    if (theme) theme.style.marginTop = '6px';
   };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
 })();
