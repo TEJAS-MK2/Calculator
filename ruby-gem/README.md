@@ -4,7 +4,7 @@ A **lightweight, dependency-free Ruby calculation engine** from the Modern Calcu
 
 ## Current release
 
-**v0.1.0 — published**
+**v0.1.1 — arithmetic engine**
 
 The gem provides a small reusable arithmetic API that works independently of the web calculator.
 
@@ -43,11 +43,16 @@ require "pijush_calculator"
 
 PijushCalculator.add(2, 3)        # 5
 PijushCalculator.subtract(8, 3)   # 5
-PijushCalculator.multiply(4, 6)   # 24
+PijushCalculator.multiply(4, 6)    # 24
 PijushCalculator.divide(20, 5)    # 4.0
 ```
 
-Division by zero raises an explicit error instead of returning an invalid result.
+Division by zero raises an explicit `ZeroDivisionError` instead of returning an invalid result:
+
+```ruby
+PijushCalculator.divide(10, 0)
+# ZeroDivisionError: cannot divide by zero
+```
 
 ## API
 
@@ -61,13 +66,13 @@ Returns the difference between two values.
 Returns the product of two values.
 
 ### `PijushCalculator.divide(a, b)`
-Returns the quotient and raises an error when `b` is zero.
+Returns the quotient as a floating-point value and raises `ZeroDivisionError` when `b` is zero.
 
 ## GitHub Packages
 
 The repository includes a GitHub Actions workflow that builds, validates, and publishes the gem to GitHub Packages.
 
-RubyGems package versions are immutable. **`0.1.0` is already published**, so future releases must use a new version such as `0.1.1`.
+RubyGems package versions are immutable. **`0.1.1` is the current release**, so future releases must use a new version number such as `0.1.2`.
 
 ## Development
 
@@ -75,13 +80,13 @@ Build and inspect the gem locally:
 
 ```bash
 gem build pijush-calculator.gemspec
-gem specification pijush-calculator-0.1.0.gem
+gem specification pijush-calculator-0.1.1.gem
 ```
 
 Install the locally built package:
 
 ```bash
-gem install ./pijush-calculator-0.1.0.gem
+gem install ./pijush-calculator-0.1.1.gem
 ```
 
 ## Package information
@@ -89,7 +94,7 @@ gem install ./pijush-calculator-0.1.0.gem
 | Property | Value |
 |---|---|
 | Gem | `pijush-calculator` |
-| Version | `0.1.0` |
+| Version | `0.1.1` |
 | Registry | GitHub Packages RubyGems |
 | Runtime dependencies | None |
 | Supported Ruby | 3.0+ |
