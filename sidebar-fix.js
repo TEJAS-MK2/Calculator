@@ -4,7 +4,7 @@
   const loadAnimationEnhancements = (done) => {
     if (window.__calculatorAnimationEnhancements) return done();
     const script = document.createElement('script');
-    script.src = './animation-enhancements.js?v=1';
+    script.src = './animation-enhancements.js?v=2';
     script.onload = () => { window.__calculatorAnimationEnhancements = true; done(); };
     script.onerror = done;
     document.head.appendChild(script);
@@ -17,14 +17,18 @@
       if (!sidebar || !list) return;
 
       const freshList = list.cloneNode(false);
-      const make = (label, icon, handler) => {
+      const make = (feature, label, icon, handler) => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'feature-item';
-        button.innerHTML = `<i class="fas ${icon}"></i><span>${label}</span>`;
+        button.dataset.feature = feature;
+        button.setAttribute('aria-label', label);
+        button.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>${label}</span>`;
         button.addEventListener('click', event => {
           event.preventDefault();
           event.stopPropagation();
+          freshList.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
+          button.classList.add('active');
           handler();
           document.getElementById('sidebarClose')?.click();
         });
@@ -32,17 +36,13 @@
       };
 
       freshList.append(
-        make('History', 'fa-clock-rotate-left', () => document.getElementById('historyToggle')?.click()),
-        make('Clear', 'fa-eraser', () => document.querySelector('[data-action="clear-all"]')?.click()),
-        make('Change Theme', 'fa-circle-half-stroke', () => document.getElementById('themeToggle')?.click())
+        make('history', 'History', 'fa-clock-rotate-left', () => document.getElementById('historyToggle')?.click()),
+        make('clear', 'Clear', 'fa-eraser', () => document.querySelector('[data-action="clear-all"]')?.click()),
+        make('theme', 'Change Theme', 'fa-circle-half-stroke', () => document.getElementById('themeToggle')?.click())
       );
       list.replaceWith(freshList);
 
-      [
-        '#scientificToggle', '#scientificPanel', '.memory-panel',
-        '#graphToggle', '#graphPanel', '#statisticsToggle', '#statisticsPanel',
-        '#advancedFeaturesPanel'
-      ].forEach(selector => document.querySelector(selector)?.remove());
+      ['#scientificToggle', '#scientificPanel', '.memory-panel', '#graphToggle', '#graphPanel', '#statisticsToggle', '#statisticsPanel', '#advancedFeaturesPanel'].forEach(selector => document.querySelector(selector)?.remove());
 
       ['sidebarOpen', 'sidebarClose', 'sidebarBackdrop'].forEach(id => {
         const node = document.getElementById(id);
