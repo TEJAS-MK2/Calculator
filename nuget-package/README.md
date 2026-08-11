@@ -8,17 +8,15 @@ A lightweight, dependency-free C# calculator library for .NET applications.
 
 ## Features
 
-- Addition
-- Subtraction
-- Multiplication
-- Division
-- Explicit division-by-zero handling
+- Addition, subtraction, multiplication, and division
+- Explicit `DivideByZeroException` handling
 - .NET 8+
 - Zero runtime dependencies
+- Simple API for application and library use
 
-## Installation
+## Installation from GitHub Packages
 
-Once published to GitHub Packages, add the GitHub Packages NuGet source:
+Add the GitHub Packages NuGet source:
 
 ```bash
 dotnet nuget add source https://nuget.pkg.github.com/TEJAS-MK2/index.json \
@@ -33,6 +31,8 @@ Then install:
 ```bash
 dotnet add package Pijush.Calculator --version 0.1.0
 ```
+
+GitHub Packages requires appropriate package read permission for package installation. citeturn0search10
 
 ## Usage
 
@@ -57,7 +57,20 @@ dotnet pack Pijush.Calculator.csproj -c Release
 
 ## Publishing
 
-The package is published to **GitHub Packages — NuGet registry** through GitHub Actions using the repository-provided `GITHUB_TOKEN` with `packages: write` permission. No long-lived package credential is committed to the repository.
+GitHub Actions publishes the package to the GitHub Packages NuGet registry using the repository-provided `GITHUB_TOKEN` with `packages: write` permission. No long-lived package credential is committed to the repository.
+
+## Package information
+
+| Property | Value |
+|---|---|
+| Package | `Pijush.Calculator` |
+| Version | `0.1.0` |
+| Registry | GitHub Packages NuGet |
+| Runtime dependencies | None |
+| Target framework | .NET 8+ |
+| Repository | `https://github.com/TEJAS-MK2/Calculator` |
+| Packages | `https://github.com/TEJAS-MK2/Calculator/packages` |
+| License | MIT |
 
 ## License
 
