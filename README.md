@@ -1,51 +1,61 @@
 # Modern Calculator
 
 <p align="center">
-  <strong>A modern, responsive calculator with a reusable scientific calculation engine and packages for JavaScript, Ruby, Python, Java, and .NET.</strong><br>
-  HTML · CSS · JavaScript · Anime.js · npm · RubyGems · PyPI · Maven · Gradle · NuGet · Docker
+  <strong>A compact, modern calculator focused on fast everyday arithmetic.</strong><br>
+  HTML · CSS · JavaScript · PWA · npm · RubyGems · PyPI · Maven · Gradle · NuGet · Docker
 </p>
 
 <p align="center">
   <a href="https://tejas-mk2.github.io/Calculator/">Live Demo</a> ·
   <a href="https://github.com/TEJAS-MK2/Calculator/issues">Report a Bug</a> ·
   <a href="https://github.com/TEJAS-MK2/Calculator/pulls">Contribute</a> ·
-  <a href="https://github.com/TEJAS-MK2/Calculator/packages">GitHub Packages</a>
+  <a href="https://github.com/TEJAS-MK2/Calculator/packages">Packages</a>
 </p>
 
 ---
 
 ## Overview
 
-Modern Calculator is a responsive Progressive Web App backed by reusable calculation libraries. It provides everyday arithmetic, scientific operations, history, memory, keyboard input, themes, responsive controls, and package integrations across multiple ecosystems.
+Modern Calculator is a responsive Progressive Web App built around a clean four-operation calculator interface. The current UI intentionally keeps the main calculator focused: **History, Clear, and Theme are available from the sidebar instead of taking space on the keypad.**
 
-The calculator avoids `eval()` and `Function()` for expression execution and respects `prefers-reduced-motion` for accessible animations.
+The interface uses a dark, compact visual system with rounded surfaces, subtle depth, responsive sizing, and reduced visual clutter.
 
-## Highlights
+## Features
 
-- Modern mobile-first calculator UI
-- Dark, light, and system themes
-- History, memory, clear, and keyboard controls
-- Operator precedence, nested parentheses, implicit multiplication, percentages, modulo, powers, and scientific notation
-- Scientific functions, constants, variables, and DEG/RAD/GRAD angle modes
-- Exact rational arithmetic where supported
-- Typed calculation errors and explicit division-by-zero handling
-- Anime.js interactions with reduced-motion support
-- PWA and service-worker support
-- Reusable packages with automated CI and publishing workflows
+- Addition, subtraction, multiplication, and division
+- Decimal input and a clear `AC` control
+- Calculation history in the sidebar
+- Clear control in the sidebar
+- Theme control in the sidebar
+- Compact responsive layout
+- Keyboard-friendly controls
+- PWA/service-worker support
+- No `eval()` or `Function()` based expression execution
+- Modern dark visual design with subtle interaction feedback
+
+## Interface
+
+The main calculator contains only the calculation display and keypad. A compact menu opens the sidebar, which contains:
+
+- **History** — view and reuse previous calculations
+- **Clear** — clear calculator state
+- **Theme** — change the calculator appearance
+
+This separation keeps the keypad clean and makes the calculator easier to use on small screens.
 
 ## Package ecosystem
 
-| Ecosystem | Package | Registry / distribution |
+| Ecosystem | Package | Distribution |
 |---|---|---|
-| JavaScript | `@tejas-mk2/calculator-core` | [npm](https://www.npmjs.com/package/@tejas-mk2/calculator-core) / [GitHub Packages](https://github.com/TEJAS-MK2/Calculator/packages) |
-| Ruby | `pijush-calculator` | [RubyGems](https://rubygems.org/gems/pijush-calculator) / GitHub Packages RubyGems |
-| Python | `pijush-calculator` | [PyPI](https://pypi.org/project/pijush-calculator/) |
-| Java / Maven | `io.github.tejas-mk2:pijush-calculator` | [GitHub Packages](https://github.com/TEJAS-MK2/Calculator/packages) |
-| Java / Gradle | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | [GitHub Packages](https://github.com/TEJAS-MK2/Calculator/packages) |
-| .NET / NuGet | `Pijush.Calculator` | [GitHub Packages](https://github.com/TEJAS-MK2/Calculator/packages) |
-| Container | `ghcr.io/tejas-mk2/calculator` | [GitHub Container Registry](https://github.com/TEJAS-MK2/Calculator/packages) |
+| JavaScript | `@tejas-mk2/calculator-core` | npm / GitHub Packages |
+| Ruby | `pijush-calculator` | RubyGems / GitHub Packages |
+| Python | `pijush-calculator` | PyPI |
+| Java / Maven | `io.github.tejas-mk2:pijush-calculator` | GitHub Packages |
+| Java / Gradle | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | GitHub Packages |
+| .NET / NuGet | `Pijush.Calculator` | GitHub Packages |
+| Container | `ghcr.io/tejas-mk2/calculator` | GitHub Container Registry |
 
-GitHub Packages supports npm, RubyGems, Maven, Gradle, NuGet, and container images. Maven and Gradle packages use the Maven-compatible GitHub Packages registry.
+The package libraries provide reusable arithmetic APIs independently of the browser UI.
 
 ## Installation
 
@@ -55,16 +65,10 @@ GitHub Packages supports npm, RubyGems, Maven, Gradle, NuGet, and container imag
 npm install @tejas-mk2/calculator-core
 ```
 
-For GitHub Packages:
-
-```text
-@tejas-mk2:registry=https://npm.pkg.github.com
-```
-
 ### Ruby
 
 ```bash
-gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
+gem install pijush-calculator
 ```
 
 ### Python
@@ -81,12 +85,6 @@ pip install pijush-calculator
   <artifactId>pijush-calculator</artifactId>
   <version>0.1.0</version>
 </dependency>
-```
-
-Repository:
-
-```text
-https://maven.pkg.github.com/TEJAS-MK2/Calculator
 ```
 
 ### Gradle
@@ -109,30 +107,6 @@ dotnet add package Pijush.Calculator --version 0.1.0
 docker pull ghcr.io/tejas-mk2/calculator:latest
 ```
 
-## Calculator controls
-
-| Category | Operations |
-|---|---|
-| Arithmetic | `+` `−` `×` `÷` `%` |
-| Input | `0–9` `.` |
-| Controls | `AC` `C` `Backspace` `=` |
-| Scientific | Functions, powers, constants, angle modes |
-| Memory | `MC` `MR` `M+` `M−` `MS` |
-| History | Open, reuse, and clear calculations |
-| Theme | Dark, Light, System |
-
-## Keyboard shortcuts
-
-| Key | Action |
-|---|---|
-| `0–9` | Enter number |
-| `+` `-` `*` `/` `%` | Operators |
-| `.` | Decimal point |
-| `Enter` / `=` | Calculate |
-| `Backspace` | Delete last input |
-| `Escape` | Clear all |
-| `C` | Clear current input |
-
 ## Development
 
 ```bash
@@ -142,7 +116,7 @@ cd Calculator
 
 Use a local HTTP server when testing ES modules, PWA behavior, or service workers.
 
-### JavaScript
+### JavaScript package
 
 ```bash
 cd packages/calculator-core
@@ -190,22 +164,16 @@ dotnet test tests/Calculator.Tests.csproj
 dotnet pack Pijush.Calculator.csproj -c Release
 ```
 
-## Documentation and policies
+## Project policies
 
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 - [`SECURITY.md`](./SECURITY.md)
 - [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md)
-- [`packages/calculator-core/README.md`](./packages/calculator-core/README.md)
-- [`ruby-gem/README.md`](./ruby-gem/README.md)
-- [`python-package/README.md`](./python-package/README.md)
-- [`java-package/README.md`](./java-package/README.md)
-- [`gradle-package/README.md`](./gradle-package/README.md)
-- [`nuget-package/README.md`](./nuget-package/README.md)
 
 ## License
 
-The main calculator is licensed under Apache-2.0. Each package directory documents its applicable package license.
+The main calculator is licensed under Apache-2.0. Package directories document their applicable package licenses.
 
 ---
 
-<p align="center"><strong>Calculate with style.</strong></p>
+<p align="center"><strong>Simple calculations. Clean interface.</strong></p>
