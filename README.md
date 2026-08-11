@@ -15,28 +15,28 @@
 
 ## Overview
 
-Modern Calculator combines a clean, responsive interface with reusable calculation engines. The web UI uses **`@tejas-mk2/calculator-core`** for expression parsing and mathematical evaluation, while the repository also includes **`pijush-calculator`**, a lightweight Ruby calculation gem.
+Modern Calculator combines a clean responsive interface with reusable calculation engines. The web UI uses **`@tejas-mk2/calculator-core`** for expression parsing and mathematical evaluation, while the repository also includes **`pijush-calculator`**, a lightweight Ruby calculation gem.
 
-## Features
+## Highlights
 
-- **Modern responsive UI** — glass-inspired surfaces, refined spacing, depth, and responsive sizing.
-- **Powerful expression engine** — precedence-aware expressions, parentheses, implicit multiplication, variables, scientific functions, powers, percentages, and exact fractions.
-- **History** — locally stores calculations and supports reuse.
-- **Memory** — calculator memory operations.
-- **Themes** — dark, light, and system modes with consistent sidebar styling.
-- **Keyboard support** — numbers, operators, Enter, Backspace, Escape, and C.
-- **Error handling** — clear handling of invalid expressions and division by zero.
-- **Anime.js animations** — smooth interaction and transition effects with reduced-motion support.
-- **PWA support** — service-worker caching for an app-like experience.
-- **Mobile-friendly** — designed for desktop, tablet, and small screens.
+- Modern glass-inspired responsive interface
+- Precedence-aware expression evaluation
+- Parentheses and implicit multiplication
+- Scientific functions, variables, powers, percentages, and exact fractions
+- Calculation history and memory
+- Dark, light, and system themes
+- Keyboard input and robust error handling
+- Anime.js animations with reduced-motion support
+- PWA/service-worker support
+- JavaScript npm package and Ruby gem published through GitHub Packages
 
-> The sidebar intentionally focuses on **History**, **Clear**, and **Change Theme**. These controls match the calculator's visual system and interact with the main calculator.
+> The sidebar intentionally focuses on **History**, **Clear**, and **Change Theme**. These controls use the same visual system as the main calculator and open their functionality in the calculator interface.
 
 ## Calculation Engine
 
 The main UI is powered by **`@tejas-mk2/calculator-core`**.
 
-Phase 1 includes:
+Phase 1 provides:
 
 - Operator precedence and nested parentheses
 - Implicit multiplication such as `2(5 + 3)`
@@ -61,21 +61,23 @@ x^2 + 1
 
 ## Packages
 
-### JavaScript / npm
+### JavaScript
 
-```text
-@tejas-mk2/calculator-core
+`@tejas-mk2/calculator-core` is a framework-free, DOM-independent JavaScript calculation engine published through GitHub Packages.
+
+```bash
+npm install @tejas-mk2/calculator-core
 ```
 
-A framework-free, DOM-independent JavaScript calculation engine published through GitHub Packages.
+### Ruby
 
-### RubyGems
+`pijush-calculator` is a lightweight Ruby arithmetic engine published through the GitHub RubyGems registry.
 
-```text
-pijush-calculator
+```bash
+gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```
 
-A lightweight Ruby calculation engine with arithmetic operations and explicit division-by-zero handling. It is published through the GitHub RubyGems registry.
+See the package READMEs for installation, authentication, API, and development details.
 
 ## Calculator Controls
 
@@ -102,9 +104,7 @@ A lightweight Ruby calculation engine with arithmetic operations and explicit di
 
 ## Design
 
-The interface uses a unified visual system with layered surfaces, subtle depth, consistent borders, rounded controls, clear display hierarchy, responsive button sizing, and matched sidebar controls.
-
-Themes are shared across the calculator and feature controls so History, Clear, and Change Theme do not appear visually disconnected from the main calculator.
+The interface uses a unified visual system with layered surfaces, subtle depth, consistent borders, rounded controls, clear display hierarchy, responsive button sizing, and matched sidebar controls. Themes are shared across the calculator and feature controls so History, Clear, and Change Theme remain visually consistent.
 
 ## Tech Stack
 
@@ -149,15 +149,11 @@ gem build pijush-calculator.gemspec
 
 ## Contributing
 
-Bug reports, feature requests, and pull requests are welcome. Test calculator interactions and check the UI on both desktop and mobile-sized screens before submitting changes.
+Bug reports, feature requests, and pull requests are welcome. Test calculator interactions and check the UI on desktop and mobile-sized screens before submitting changes.
 
 ## License
 
 The main calculator is licensed under the Apache License 2.0. The reusable packages retain their own package licenses as documented in their directories.
-
-## About
-
-Built by **Pijush Chakraborty** as a modern calculator project focused on usability, performance, clean design, reusable calculation logic, and cross-language packaging.
 
 ---
 
