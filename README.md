@@ -15,7 +15,7 @@
 
 ## Overview
 
-Modern Calculator combines a clean responsive interface with reusable calculation engines. The web UI uses **`@tejas-mk2/calculator-core`** for expression parsing and mathematical evaluation, while the repository also includes **`pijush-calculator`**, a lightweight Ruby calculation gem.
+Modern Calculator combines a clean, responsive interface with reusable calculation engines. The web UI uses **`@tejas-mk2/calculator-core`** for expression parsing and mathematical evaluation, while the repository also includes **`pijush-calculator`**, a lightweight Ruby calculation gem.
 
 ## Highlights
 
@@ -63,7 +63,7 @@ x^2 + 1
 
 ### JavaScript
 
-`@tejas-mk2/calculator-core` is a framework-free, DOM-independent JavaScript calculation engine published through GitHub Packages.
+**`@tejas-mk2/calculator-core` v0.2.1** is a framework-free, DOM-independent JavaScript calculation engine published through GitHub Packages.
 
 ```bash
 npm install @tejas-mk2/calculator-core
@@ -71,7 +71,7 @@ npm install @tejas-mk2/calculator-core
 
 ### Ruby
 
-`pijush-calculator` is a lightweight Ruby arithmetic engine published through the GitHub RubyGems registry.
+**`pijush-calculator` v0.1.0** is a lightweight Ruby arithmetic engine published through the GitHub RubyGems registry.
 
 ```bash
 gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
