@@ -1,4 +1,4 @@
-const CACHE_NAME = 'modern-calculator-v53';
+const CACHE_NAME = 'modern-calculator-v54';
 const APP_SHELL = [
   './',
   './index.html',
