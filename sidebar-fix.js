@@ -31,10 +31,19 @@
     );
     list.replaceWith(freshList);
 
+    const originalOpen = document.getElementById('sidebarOpen');
+    const originalClose = document.getElementById('sidebarClose');
+    const originalBackdrop = document.getElementById('sidebarBackdrop');
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+    for (const node of [originalOpen, originalClose, originalBackdrop]) {
+      if (!node) continue;
+      node.replaceWith(node.cloneNode(true));
+    }
+
     const openButton = document.getElementById('sidebarOpen');
     const closeButton = document.getElementById('sidebarClose');
     const backdrop = document.getElementById('sidebarBackdrop');
-    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
     const close = () => {
       sidebar.classList.remove('is-open');
@@ -57,25 +66,15 @@
       }
     };
 
-    // Replace handlers installed by the legacy controller with one stable set.
-    for (const node of [openButton, closeButton, backdrop]) {
-      if (!node) continue;
-      const clone = node.cloneNode(true);
-      node.replaceWith(clone);
-    }
-
-    const stableOpen = document.getElementById('sidebarOpen');
-    const stableClose = document.getElementById('sidebarClose');
-    const stableBackdrop = document.getElementById('sidebarBackdrop');
-    stableOpen?.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); open(); });
-    stableClose?.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); close(); });
-    stableBackdrop?.addEventListener('click', close);
+    openButton?.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); open(); });
+    closeButton?.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); close(); });
+    backdrop?.addEventListener('click', close);
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && sidebar.classList.contains('is-open')) close();
     });
     close();
   };
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
-  else init();
+  if (document.readyState === 'complete') init();
+  else window.addEventListener('load', init, { once: true });
 })();
