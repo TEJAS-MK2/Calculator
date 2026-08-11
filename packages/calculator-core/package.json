@@ -1,6 +1,6 @@
 {
   "name": "@tejas-mk2/calculator-core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A lightweight, dependency-free JavaScript calculation engine with a safe expression parser, scientific functions, DEG/RAD/GRAD angle modes, variables, scientific notation, advanced constants, exact fractions, and typed errors.",
   "type": "module",
   "main": "index.js",
