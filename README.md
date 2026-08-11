@@ -44,6 +44,12 @@ The UI is deliberately compact and simple:
 - No `eval()` or `Function()` based expression execution
 - No gradients in the current visual system
 
+### Calculator demo
+
+<p align="center">
+  <img src="./calculator-demo-fixed.gif" alt="Animated calculator demo" width="360">
+</p>
+
 The browser UI does **not** expose every advanced engine capability. That separation is intentional: the UI remains approachable while the underlying libraries can evolve into substantially more capable calculation engines.
 
 ## Serious calculation engines
