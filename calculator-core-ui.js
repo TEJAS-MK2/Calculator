@@ -33,7 +33,13 @@ import { mean, median, variance, standardDeviation, matrixInverse, determinant }
   function animateDisplay(kind = 'input') {
     if (!animeReady()) return;
     const target = primary(); if (!target) return;
-    const settings = kind === 'result' ? { scale: [0.96, 1.02, 1], opacity: [0.75, 1, 1], translateY: [4, -1, 0], duration: 300, easing: 'easeOutCubic' } : kind === 'error' ? { translateX: [-8, 8, -5, 5, 0], duration: 300, easing: 'easeInOutSine' } : { scale: [0.99, 1], translateY: [1, 0], duration: 120, easing: 'easeOutQuad' };
+    // Keep the result animation on the compositor without changing scale. Scaling
+    // the text while its content width changes causes a visible snap/jitter on mobile.
+    const settings = kind === 'result'
+      ? { opacity: [0.86, 1], translateY: [3, 0], duration: 180, easing: 'easeOutCubic' }
+      : kind === 'error'
+        ? { translateX: [-6, 6, -4, 4, 0], duration: 260, easing: 'easeInOutSine' }
+        : { opacity: [0.94, 1], translateY: [1, 0], duration: 100, easing: 'easeOutQuad' };
     animate(target, settings);
   }
   function ripple(button, event) {
@@ -77,7 +83,7 @@ import { mean, median, variance, standardDeviation, matrixInverse, determinant }
     justCalculated = false;
     if (token === '(') {
       const last = expression.at(-1);
-      if (last && (/[\d)]/.test(last) || last === 'π')) expression += '*';
+      if (last && (/[,\d)]/.test(last) || last === 'π')) expression += '*';
     }
     if (token === ')' && (!expression || expression.at(-1) === '(' || operators.has(expression.at(-1)) || expression.split('(').length <= expression.split(')').length)) return;
     if (token === ',' && (!expression || expression.at(-1) === '(' || operators.has(expression.at(-1)) || expression.at(-1) === ',')) return;
