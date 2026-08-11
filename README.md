@@ -1,7 +1,7 @@
 # Modern Calculator
 
 <p align="center">
-  <strong>A compact, modern calculator for fast everyday arithmetic.</strong><br>
+  <strong>A compact modern calculator UI with a powerful multi-language arithmetic engine family.</strong><br>
   HTML · CSS · JavaScript · PWA · Anime.js · npm · RubyGems · PyPI · Maven · Gradle · NuGet · Docker
 </p>
 
@@ -16,58 +16,107 @@
 
 ## Overview
 
-Modern Calculator is a responsive Progressive Web App built for simple, fast arithmetic. The interface deliberately keeps the keypad focused on calculation while placing secondary controls in a compact sidebar.
+Modern Calculator is a responsive Progressive Web App for fast everyday calculations, backed by reusable engines for JavaScript, Python, Ruby, Java, Gradle, and .NET.
 
-The current UI provides **addition, subtraction, multiplication, division, decimals, AC, History, Clear, and Theme**. It uses a modern dark-first visual system with responsive sizing, rounded surfaces, subtle depth, and lightweight motion.
+The browser UI intentionally stays compact: **AC** is on the keypad, while **History, Clear, and Theme** live in the sidebar. The interface uses solid surfaces, responsive spacing, Anime.js motion, persistent history, and reduced-motion support.
 
-## Features
+The package engines are more capable than the intentionally minimal browser keypad and can be used independently in applications, scripts, services, and build systems.
+
+## UI features
 
 - Addition, subtraction, multiplication, and division
 - Decimal input
-- **AC** button directly on the keypad
+- **AC** button on the main keypad
 - **History** in the sidebar
 - **Clear** in the sidebar
 - **Theme** in the sidebar
+- Dark, Light, and System themes
 - Compact responsive layout
 - Keyboard-friendly interaction
-- Anime.js-powered UI motion
+- Anime.js-powered motion
 - `prefers-reduced-motion` support
 - PWA and service-worker support
-- Persistent calculation history using local storage
+- Persistent calculation history
 - No `eval()` or `Function()` based expression execution
-
-## Interface
-
-The main calculator contains the display and keypad. The sidebar keeps secondary controls out of the keypad area:
-
-| Control | Location | Purpose |
-|---|---|---|
-| AC | Main keypad | Immediately reset the current calculation |
-| History | Sidebar | Open and reuse previous calculations |
-| Clear | Sidebar | Reset the calculator state |
-| Theme | Sidebar | Cycle through Dark, Light, and System themes |
-
-The sidebar is designed as an overlay on small screens and shifts the calculator safely on larger screens so the menu button does not collide with the calculator.
+- No gradients in the current calculator visual system
 
 ## Animation
 
-The interface uses [Anime.js](https://animejs.com/) for lightweight UI motion, including calculator entrance, keypad interactions, sidebar transitions, history presentation, and result feedback.
+The UI uses Anime.js for lightweight calculator entrance, keypad, sidebar, history, and result animations. Motion is reduced automatically when the user's `prefers-reduced-motion` setting is enabled.
 
-Animations respect the user's `prefers-reduced-motion` setting.
+## Engine family
+
+All package engines now expose a substantially broader arithmetic API. The **npm engine is the most advanced** and includes a real tokenizer/parser, operator precedence, implicit multiplication, variables, constants, angle modes, exact fractions, domain-aware functions, and variadic aggregate functions.
+
+### Common capabilities
+
+- Add / subtract / multiply / divide
+- Modulo
+- Powers
+- Percentages
+- Absolute value
+- Minimum / maximum
+- Average
+- Sum / product
+- Clamp
+- Reciprocal
+- Square / cube
+- Square root / cube root
+- Factorial
+- GCD / LCM
+- Trigonometric operations
+- Logarithms and natural logarithm
+- Exponential
+- Combinations / permutations
+
+### npm engine — advanced mode
+
+`@tejas-mk2/calculator-core` provides the deepest expression engine in the project:
+
+- Tokenizer with scientific notation
+- Recursive-descent parser
+- Operator precedence
+- Parentheses and unary operators
+- Implicit multiplication
+- Variables and custom scopes
+- `π`, `e`, `τ`, and `φ`
+- DEG / RAD / GRAD angle modes
+- `sin`, `cos`, `tan`
+- Inverse and hyperbolic trigonometry
+- `sqrt`, `cbrt`, `abs`, `floor`, `ceil`, `round`, `trunc`, `sign`
+- `log`, `log2`, `ln`, `exp`
+- Variadic `min`, `max`, `sum`, and `product`
+- Exact rational arithmetic through `Fraction`
+- `evaluateExact()` for exact numeric expressions
+- Typed `EvaluationError` error codes
+- Division/modulo/domain/range protection
+- Reusable utility APIs for factorial, conversions, GCD/LCM, combinations, and permutations
+
+Example expressions supported by the npm parser include:
+
+```text
+2 + 3 * 4
+2(3 + 4)
+sin(90)
+sqrt(144) + 5^2
+sum(1,2,3,4,5)
+max(4,9,2,7)
+(1/3) + (2/3)
+```
+
+The browser UI does not expose every engine feature directly; the advanced engine is available to package consumers.
 
 ## Package ecosystem
 
-| Ecosystem | Package | Distribution |
-|---|---|---|
-| JavaScript | `@tejas-mk2/calculator-core` | npm / GitHub Packages |
-| Ruby | `pijush-calculator` | RubyGems / GitHub Packages |
-| Python | `pijush-calculator` | PyPI |
-| Java / Maven | `io.github.tejas-mk2:pijush-calculator` | GitHub Packages |
-| Java / Gradle | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | GitHub Packages |
-| .NET / NuGet | `Pijush.Calculator` | GitHub Packages |
-| Container | `ghcr.io/tejas-mk2/calculator` | GitHub Container Registry |
-
-The package libraries provide reusable arithmetic APIs independently of the browser UI.
+| Ecosystem | Package | Distribution | Engine focus |
+|---|---|---|---|
+| JavaScript | `@tejas-mk2/calculator-core` | npm / GitHub Packages | Full expression parser + advanced math |
+| Ruby | `pijush-calculator` | RubyGems / GitHub Packages | Extended arithmetic + trig + statistics |
+| Python | `pijush-calculator` | PyPI | Extended arithmetic + math utilities |
+| Java / Maven | `io.github.tejas-mk2:pijush-calculator` | GitHub Packages | BigDecimal arithmetic + math helpers |
+| Java / Gradle | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | GitHub Packages | BigDecimal arithmetic + math helpers |
+| .NET / NuGet | `Pijush.Calculator` | GitHub Packages | Decimal arithmetic + math helpers |
+| Container | `ghcr.io/tejas-mk2/calculator` | GitHub Container Registry | Application/container distribution |
 
 ## Installation
 
@@ -181,10 +230,10 @@ dotnet pack Pijush.Calculator.csproj -c Release
 ```text
 Calculator/
 ├── index.html                 # Calculator UI
-├── styles.css                 # Current visual system
+├── styles.css                 # Current solid-surface visual system
 ├── script.js                  # Sidebar and theme controls
 ├── calculator-core-ui.js      # Calculator UI state and history
-├── packages/                  # JavaScript calculator core
+├── packages/calculator-core/  # Advanced JavaScript engine
 ├── ruby-gem/                  # Ruby package
 ├── python-package/            # Python package
 ├── java-package/              # Maven package
@@ -206,4 +255,4 @@ The main calculator is licensed under Apache-2.0. Package directories document t
 
 ---
 
-<p align="center"><strong>Simple calculations. Clean interface.</strong></p>
+<p align="center"><strong>Simple interface. Serious calculation engine.</strong></p>
