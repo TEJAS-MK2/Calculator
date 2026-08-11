@@ -4,9 +4,9 @@ A **lightweight, dependency-free Python arithmetic engine** for reliable calcula
 
 ## Current release
 
-**v0.1.1 — Python arithmetic engine**
+**v0.1.2 — Python arithmetic engine**
 
-The package is independent of the web calculator and exposes a small function-based API.
+The package is independent of the web calculator and exposes a small function-based API designed for straightforward reuse in Python applications and scripts.
 
 ## Features
 
@@ -75,14 +75,14 @@ python -m build
 
 The package is published to PyPI through GitHub Actions using **PyPI Trusted Publishing (OIDC)**. No long-lived PyPI API token is stored in the repository.
 
-The workflow tests the package, builds source and wheel distributions, and publishes them only after the build succeeds. PyPI release versions are immutable, so future releases must use a new version number.
+The workflow tests the package, builds source and wheel distributions, and publishes them only after the build succeeds. PyPI release versions are immutable, so every future release must use a new version number.
 
 ## Package information
 
 | Property | Value |
 |---|---|
 | Package | `pijush-calculator` |
-| Version | `0.1.1` |
+| Version | `0.1.2` |
 | Registry | PyPI |
 | Runtime dependencies | None |
 | Supported Python | 3.9+ |
