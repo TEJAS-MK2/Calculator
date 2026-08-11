@@ -38,8 +38,6 @@ The package is also configured for GitHub Packages:
 @tejas-mk2:registry=https://npm.pkg.github.com
 ```
 
-GitHub Packages npm packages must use a scoped package name. citeturn0search4
-
 ## Usage
 
 ```js
