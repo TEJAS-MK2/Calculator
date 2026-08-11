@@ -1,7 +1,8 @@
 (() => {
   const boot = () => {
-    if (!window.Calculator) return;
-    const C = window.Calculator.prototype;
+    // Calculator is a classic-script global lexical binding, not necessarily a window property.
+    if (typeof Calculator === 'undefined') return;
+    const C = Calculator.prototype;
     C.canAnimate = function () {
       return typeof anime === 'function' && !this.reduceMotion && document.visibilityState !== 'hidden';
     };
