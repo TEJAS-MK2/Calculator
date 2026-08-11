@@ -8,7 +8,7 @@
     const buttonGrid = calculator?.querySelector('.button-grid');
     if (!oldSidebar || !oldOpen || !oldClose || !calculator || !buttonGrid) return;
 
-    // Remove the legacy sidebar listeners by replacing only the sidebar DOM.
+    // Replace the legacy sidebar DOM so the old script.js sidebar listeners cannot fire twice.
     const replace = node => node?.parentNode?.replaceChild(node.cloneNode(true), node);
     replace(oldOpen); replace(oldClose); replace(oldBackdrop); replace(oldSidebar);
 
@@ -19,18 +19,18 @@
     const list = sidebar?.querySelector('.feature-list');
     if (!sidebar || !open || !close || !list) return;
 
-    const memoryPanel = calculator.querySelector('.memory-panel');
+    const get = id => document.getElementById(id);
     const featureNodes = {
-      history: ['historyToggle', 'clearHistory', 'historyPanel'],
-      memory: ['memory-panel'],
-      scientific: ['scientificToggle', 'scientificPanel'],
-      graph: ['graphToggle', 'graphPanel'],
-      statistics: ['statisticsToggle', 'statisticsPanel']
+      history: [calculator.querySelector('.calculator-tools'), get('historyPanel')],
+      memory: [calculator.querySelector('.memory-panel')],
+      scientific: [get('scientificPanel')],
+      graph: [get('graphPanel')],
+      statistics: [get('statisticsPanel')]
     };
-    const getNode = id => id === 'memory-panel' ? memoryPanel : document.getElementById(id);
-    const allNodes = Object.values(featureNodes).flat().map(getNode).filter(Boolean);
 
-    // Restore every feature to the main calculator. Nothing is owned by the sidebar.
+    // script.js temporarily moved these elements into the sidebar. Put every real
+    // feature panel back into the calculator before wiring the navigation.
+    const allNodes = Object.values(featureNodes).flat().filter(Boolean);
     allNodes.forEach(node => {
       if (node.parentElement !== calculator) calculator.insertBefore(node, buttonGrid);
     });
@@ -38,123 +38,142 @@
     const style = document.getElementById('sidebar-main-layout-style') || document.createElement('style');
     style.id = 'sidebar-main-layout-style';
     style.textContent = `
-      .calculator .sidebar-main-feature-hidden{display:none!important}
-      .calculator .sidebar-main-feature-visible{display:block!important}
-      .calculator .sidebar-main-feature-visible.scientific-panel{display:grid!important}
-      .calculator .sidebar-main-feature-visible.graph-panel,.calculator .sidebar-main-feature-visible.statistics-panel{display:block!important}
-      .calculator .sidebar-main-feature-visible.memory-panel{display:block!important}
-      .calculator .sidebar-main-feature-visible.calculator-tools{display:flex!important}
-      .feature-sidebar .feature-item{background:var(--surface);color:var(--text-primary);border-color:var(--border);box-shadow:none}
+      .calculator .sidebar-feature-hidden{display:none!important}
+      .calculator .sidebar-feature-visible{display:block!important}
+      .calculator .sidebar-feature-visible.calculator-tools{display:grid!important}
+      .calculator .sidebar-feature-visible.scientific-panel{display:grid!important}
+      .calculator .sidebar-feature-visible.graph-panel,
+      .calculator .sidebar-feature-visible.statistics-panel{display:block!important}
+      .feature-sidebar{background:var(--bg-secondary);color:var(--text-primary);border-color:var(--border)}
+      .feature-sidebar .feature-item{background:var(--surface);color:var(--text-primary);border-color:var(--border)}
       .feature-sidebar .feature-item:hover,.feature-sidebar .feature-item.active{background:var(--surface-2);border-color:var(--border-strong);color:var(--text-primary)}
       .feature-sidebar .feature-item i{color:var(--text-secondary)}
-      .feature-sidebar .sidebar-open,.feature-sidebar .sidebar-close{background:var(--surface);color:var(--text-primary);border-color:var(--border-strong)}
-      .feature-sidebar .sidebar-open:hover,.feature-sidebar .sidebar-close:hover{background:var(--surface-2)}
     `;
     if (!style.parentNode) document.head.appendChild(style);
 
     const canAnimate = () => typeof window.anime === 'function' && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const resetFeatureState = () => {
+
+    const resetPanels = () => {
       allNodes.forEach(node => {
-        node.classList.remove('sidebar-main-feature-visible','sidebar-main-feature-hidden');
-        node.classList.remove('is-open');
-        node.setAttribute('aria-hidden','true');
+        node.classList.remove('sidebar-feature-visible','sidebar-feature-hidden','is-open');
+        node.setAttribute('aria-hidden', 'true');
       });
       ['historyToggle','scientificToggle','graphToggle','statisticsToggle'].forEach(id => {
-        const control = document.getElementById(id);
-        control?.setAttribute('aria-expanded','false');
-        if (id === 'scientificToggle' && control) control.innerHTML='<i class="fas fa-flask"></i> Scientific Mode';
+        get(id)?.setAttribute('aria-expanded', 'false');
       });
-    };
-    const showNodes = feature => {
-      resetFeatureState();
-      const nodes = (featureNodes[feature] || []).map(getNode).filter(Boolean);
-      nodes.forEach(node => {
-        node.classList.remove('sidebar-main-feature-hidden');
-        node.classList.add('sidebar-main-feature-visible');
-        node.setAttribute('aria-hidden','false');
-      });
-      return nodes;
+      const scientificToggle = get('scientificToggle');
+      if (scientificToggle) scientificToggle.innerHTML = '<i class="fas fa-flask"></i> Scientific Mode';
     };
 
     const closeSidebar = () => {
       if (canAnimate()) {
         anime.remove(sidebar);
-        anime({targets:sidebar,translateX:['0%','-105%'],duration:240,easing:'easeInCubic',complete:()=>sidebar.style.removeProperty('transform')});
+        anime({
+          targets: sidebar,
+          translateX: ['0%', '-105%'],
+          duration: 240,
+          easing: 'easeInCubic',
+          complete: () => sidebar.style.removeProperty('transform')
+        });
       }
       sidebar.classList.remove('is-open');
-      sidebar.style.removeProperty('transform');
       backdrop?.classList.remove('is-open');
-      sidebar.setAttribute('aria-hidden','true');
-      open.setAttribute('aria-expanded','false');
+      sidebar.setAttribute('aria-hidden', 'true');
+      open.setAttribute('aria-expanded', 'false');
     };
+
     const openSidebar = () => {
       sidebar.classList.add('is-open');
       backdrop?.classList.add('is-open');
-      sidebar.setAttribute('aria-hidden','false');
-      open.setAttribute('aria-expanded','true');
+      sidebar.setAttribute('aria-hidden', 'false');
+      open.setAttribute('aria-expanded', 'true');
       if (canAnimate()) {
         anime.remove(sidebar);
-        sidebar.style.transform='translateX(-105%)';
-        anime({targets:sidebar,translateX:['-105%','0%'],duration:300,easing:'easeOutCubic',complete:()=>sidebar.style.removeProperty('transform')});
+        anime({
+          targets: sidebar,
+          translateX: ['-105%', '0%'],
+          duration: 300,
+          easing: 'easeOutCubic',
+          complete: () => sidebar.style.removeProperty('transform')
+        });
       }
     };
 
     const activateFeature = feature => {
-      sidebar.querySelectorAll('.feature-item').forEach(item => item.classList.toggle('active', item.dataset.feature === feature));
-      if (feature === 'theme') {
-        document.getElementById('themeToggle')?.click();
-        closeSidebar();
-        return;
-      }
-      if (feature === 'basic') {
-        resetFeatureState();
-        closeSidebar();
-        return;
-      }
-      if (!featureNodes[feature]) return;
+      sidebar.querySelectorAll('.feature-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.feature === feature);
+      });
 
-      const nodes = showNodes(feature);
-      // Trigger each module's own initialization logic after it becomes measurable.
+      resetPanels();
+
+      if (feature === 'theme') {
+        get('themeToggle')?.click();
+        closeSidebar();
+        return;
+      }
+
+      if (feature === 'basic') {
+        closeSidebar();
+        return;
+      }
+
+      const nodes = (featureNodes[feature] || []).filter(Boolean);
+      if (!nodes.length) return;
+
+      nodes.forEach(node => {
+        node.classList.remove('sidebar-feature-hidden');
+        node.classList.add('sidebar-feature-visible');
+        node.setAttribute('aria-hidden', 'false');
+      });
+
+      // Panels that use .is-open need it for their own module CSS.
+      nodes.filter(node => /Panel$/.test(node.id)).forEach(node => node.classList.add('is-open'));
+      if (feature === 'history') get('historyToggle')?.setAttribute('aria-expanded', 'true');
+
+      closeSidebar();
+
+      // Graph canvas sizing must happen after the panel has a real width.
       requestAnimationFrame(() => {
-        const toggleId = {history:'historyToggle',scientific:'scientificToggle',graph:'graphToggle',statistics:'statisticsToggle'}[feature];
-        const toggle = toggleId ? document.getElementById(toggleId) : null;
-        if (toggle && !toggle.classList.contains('sidebar-activation-clicked')) {
-          toggle.classList.add('sidebar-activation-clicked');
-          toggle.click();
-          toggle.classList.remove('sidebar-activation-clicked');
+        if (feature === 'graph') {
+          window.dispatchEvent(new Event('resize'));
+          get('graphPlot')?.click();
         }
-        if (feature === 'memory') document.getElementById('memoryValue')?.closest('.memory-panel')?.classList.add('is-open');
-        nodes.forEach(node => node.setAttribute('aria-hidden','false'));
         if (canAnimate()) {
           anime.remove(nodes);
-          anime({targets:nodes,opacity:[0,1],translateY:[10,0],duration:280,delay:anime.stagger(25),easing:'easeOutCubic'});
+          anime({
+            targets: nodes,
+            opacity: [0, 1],
+            translateY: [10, 0],
+            duration: 280,
+            delay: anime.stagger(25),
+            easing: 'easeOutCubic'
+          });
         }
       });
-      closeSidebar();
     };
 
-    open.addEventListener('click',openSidebar);
-    close.addEventListener('click',closeSidebar);
-    backdrop?.addEventListener('click',closeSidebar);
-    sidebar.querySelectorAll('.feature-item').forEach(item => item.addEventListener('click',()=>activateFeature(item.dataset.feature)));
-    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&sidebar.classList.contains('is-open'))closeSidebar();});
+    open.setAttribute('aria-expanded', 'false');
+    close.addEventListener('click', closeSidebar);
+    open.addEventListener('click', openSidebar);
+    backdrop?.addEventListener('click', closeSidebar);
+    sidebar.querySelectorAll('.feature-item').forEach(item => {
+      item.addEventListener('click', () => activateFeature(item.dataset.feature));
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && sidebar.classList.contains('is-open')) closeSidebar();
+    });
 
-    // Keep feature controls and panels synchronized when the header theme changes.
-    const syncTheme = () => {
-      document.querySelectorAll('.feature-sidebar,.calculator,.graph-panel,.statistics-panel,.memory-panel,.history-panel,.scientific-panel').forEach(el=>el.style.removeProperty('color-scheme'));
-      const theme = document.documentElement.dataset.theme || 'dark';
-      document.documentElement.setAttribute('data-calculator-theme',theme);
-    };
-    document.getElementById('themeToggle')?.addEventListener('click',()=>requestAnimationFrame(syncTheme));
-    syncTheme();
+    // Keep sidebar and feature surfaces tied to the same theme variables.
+    get('themeToggle')?.addEventListener('click', () => requestAnimationFrame(() => {
+      sidebar.dataset.theme = document.documentElement.dataset.theme || 'dark';
+    }));
 
-    resetFeatureState();
+    resetPanels();
     sidebar.classList.remove('is-open');
     sidebar.style.removeProperty('transform');
-    sidebar.setAttribute('aria-hidden','true');
-    open.setAttribute('aria-expanded','false');
+    sidebar.setAttribute('aria-hidden', 'true');
   };
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init,{once:true});
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
 })();
