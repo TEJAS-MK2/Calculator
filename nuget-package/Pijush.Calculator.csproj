@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>Pijush.Calculator</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Pijush Chakraborty</Authors>
+    <Description>Lightweight, dependency-free C# calculator library for arithmetic operations.</Description>
+    <PackageTags>calculator;math;arithmetic;pijush</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/TEJAS-MK2/Calculator</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+</Project>
