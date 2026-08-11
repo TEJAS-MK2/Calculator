@@ -5,9 +5,6 @@ on:
   push:
     paths:
       - "python-package/**"
-      - ".github/workflows/publish-python.yml"
-    tags:
-      - "python-v*"
 
 permissions:
   contents: read
