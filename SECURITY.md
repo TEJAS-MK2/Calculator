@@ -2,19 +2,19 @@
 
 ## Scope
 
-The **TEJAS-MK2 Calculator** project includes a client-side web application, calculation engines, JavaScript, Ruby, Python, Maven, Gradle, and NuGet packages, GitHub Actions workflows, GitHub Pages, service workers, and GitHub/PyPI package publishing infrastructure.
+The **TEJAS-MK2 Calculator** project includes the client-side calculator, calculation libraries, package registries, GitHub Actions workflows, GitHub Pages deployment, service worker, and container image.
 
-Security reports may concern application code, expression parsing, dependencies, package supply chain, CI/CD, registries, container images, workflow permissions, or repository configuration.
+Security reports may concern application code, calculation logic, dependencies, package supply chain, CI/CD, registry configuration, container images, workflow permissions, or repository configuration.
 
 ## Supported Versions
 
-The latest version on `main` is the primary supported development version. Published package releases are immutable; security fixes to published artifacts should use a new package version.
+The latest version on `main` is the primary supported development version. Published package versions are immutable; security fixes for published artifacts should use a new package version.
 
 ## Reporting a Vulnerability
 
 **Do not disclose an undisclosed security vulnerability publicly.** Do not put sensitive vulnerability details in a public issue, pull request, discussion, or social-media post.
 
-If **GitHub Private Vulnerability Reporting** is enabled, use it. Otherwise, contact the project maintainer privately through the security/contact channel available from the repository.
+If GitHub Private Vulnerability Reporting is enabled, use it. Otherwise, contact the project maintainer privately through the security/contact channel available from the repository.
 
 If you are unsure whether a report is security-sensitive, report it privately first.
 
@@ -25,11 +25,10 @@ When safe to provide, include:
 - Concise vulnerability description.
 - Affected component, file, package, workflow, dependency, or configuration.
 - Affected version or commit.
-- Reproduction steps or minimal proof of concept.
+- Reproduction steps or a minimal proof of concept.
 - Expected and actual behavior.
 - Security impact and realistic attack scenarios.
-- Relevant logs or screenshots with sensitive values removed.
-- Suggested mitigation, if known.
+- Relevant logs or screenshots with secrets removed.
 
 Never include passwords, API keys, access tokens, private keys, session credentials, or other sensitive personal information. Redact secrets from evidence.
 
@@ -38,11 +37,10 @@ Never include passwords, API keys, access tokens, private keys, session credenti
 Examples include:
 
 - XSS, HTML injection, unsafe DOM operations, or unsafe URL handling.
-- Unsafe expression parsing or dynamic code execution.
+- Unsafe calculation/expression parsing or dynamic code execution.
 - `eval()`, `Function()`, or similar dangerous execution mechanisms.
 - Dependency vulnerabilities or compromised dependencies.
-- npm, RubyGems, PyPI, Maven, Gradle, NuGet, or GitHub Packages publishing configuration.
-- PyPI Trusted Publishing/OIDC configuration.
+- npm, RubyGems, PyPI, Maven, Gradle, NuGet, or GitHub Packages configuration.
 - GitHub Actions workflow injection or excessive permissions.
 - Container/Docker image supply-chain issues.
 - Accidental credential or secret exposure.
@@ -54,7 +52,7 @@ Examples include:
 Unless there is a security impact, these are normally ordinary issues:
 
 - Cosmetic or visual bugs.
-- Calculation mistakes.
+- Calculation mistakes without a security consequence.
 - Feature requests.
 - General performance problems.
 - Documentation errors.
@@ -74,9 +72,9 @@ Never commit registry tokens, PyPI tokens, GitHub tokens, private keys, password
 
 ## Package and Release Security
 
-Publishing should be automated and least-privilege wherever practical. GitHub Packages supports the project's npm, RubyGems, Maven/Gradle, NuGet, and container distribution workflows; Python releases use PyPI Trusted Publishing where configured.
+Publishing should be automated and least-privilege wherever practical. Review package and workflow changes carefully, keep versions synchronized with source changes, and use short-lived credentials or OIDC where supported.
 
-Keep workflow permissions minimal, review publishing workflow changes carefully, and prefer short-lived workflow credentials or OIDC over long-lived secrets where the registry supports them.
+Package releases are immutable. Security fixes should be released under a new version rather than attempting to replace an existing artifact.
 
 ## Response Process
 
@@ -92,14 +90,6 @@ When reasonably possible, maintainers will:
 8. Credit the reporter when requested and safe.
 
 Response times depend on severity, complexity, evidence, and maintainer availability.
-
-## Coordinated Disclosure
-
-Please allow reasonable time for investigation and remediation before public disclosure.
-
-When a vulnerability involves a dependency, registry, hosting provider, or another project, maintainers may coordinate disclosure with the affected party.
-
-Do not publish credentials, working exploits, or sensitive reproduction details while the issue remains unresolved.
 
 ## Responsible Research
 
