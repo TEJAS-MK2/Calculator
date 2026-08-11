@@ -3,6 +3,11 @@ name: Publish Gradle Package
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
+    paths:
+      - 'gradle-package/**'
+      - '.github/workflows/publish-gradle.yml'
     tags:
       - "gradle-v*"
 
@@ -26,6 +31,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          cache: gradle
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
