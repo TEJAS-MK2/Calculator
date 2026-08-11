@@ -4,48 +4,266 @@
   const writeStorage = (key, value) => { try { localStorage.setItem(key, value); } catch {} };
   let theme = readStorage('calculatorTheme', 'dark');
   if (!['dark', 'light', 'system'].includes(theme)) theme = 'dark';
+
   const reduceMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  const animate = (targets, options) => { if (reduceMotion() || typeof window.anime !== 'function') return; window.anime.remove(targets); window.anime({ targets, ...options }); };
-  const resolvedTheme = () => theme === 'system' ? (window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : theme;
-  function applyTheme() { const resolved = resolvedTheme(); document.documentElement.dataset.theme = resolved; $('themeColor')?.setAttribute('content', resolved === 'light' ? '#f4f4f4' : '#090b10'); }
-  function toggleTheme() { theme = { dark: 'light', light: 'system', system: 'dark' }[theme]; writeStorage('calculatorTheme', theme); applyTheme(); animate('.calculator', { opacity: [0.82, 1], scale: [0.985, 1], duration: 260, easing: 'easeOutQuad' }); }
-  function toggleHistory() { const panel = $('historyPanel'); if (!panel) return; const open = !panel.classList.contains('is-open'); panel.classList.toggle('is-open', open); panel.setAttribute('aria-hidden', String(!open)); if (open) { window.renderCalculatorHistory?.(); animate(panel, { opacity: [0, 1], translateY: [-8, 0], duration: 240, easing: 'easeOutCubic' }); } }
-  function clearCalculator() { window.clearCalculator?.(); animate(['.display-container', '.btn-function'], { scale: [0.97, 1], duration: 220, easing: 'easeOutQuad' }); }
-  function toggleAbout() { const panel = $('aboutPanel'), button = document.querySelector('.feature-item[data-feature="about"]'); if (!panel || !button) return; const open = panel.hidden; panel.hidden = !open; button.classList.toggle('active', open); button.setAttribute('aria-expanded', String(open)); if (open) animate(panel, { opacity: [0, 1], translateY: [-8, 0], duration: 240, easing: 'easeOutCubic' }); }
+  const animate = (targets, options) => {
+    if (reduceMotion() || typeof window.anime !== 'function') return;
+    window.anime.remove(targets);
+    window.anime({ targets, ...options });
+  };
+  const resolvedTheme = () => theme === 'system'
+    ? (window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+    : theme;
+
+  function installThemeOverrides() {
+    let style = $('calculatorThemeOverrides');
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'calculatorThemeOverrides';
+      document.head.appendChild(style);
+    }
+    style.textContent = `
+      html[data-theme="dark"] .calculator-feature-panel,
+      html[data-theme="dark"] .about-panel { color-scheme: dark; }
+      html[data-theme="light"] .calculator-feature-panel,
+      html[data-theme="light"] .about-panel { color-scheme: light; }
+      html[data-theme="dark"] .calculator-feature-panel,
+      html[data-theme="dark"] .about-panel { background: #242424; border-color: rgba(255,255,255,.14); color: #f5f5f5; }
+      html[data-theme="light"] .calculator-feature-panel,
+      html[data-theme="light"] .about-panel { background: #f7f7f7; border-color: rgba(0,0,0,.14); color: #111; }
+      html[data-theme="dark"] .calculator-feature-panel .engine-status,
+      html[data-theme="dark"] .calculator-feature-panel .engine-output,
+      html[data-theme="dark"] .calculator-feature-panel textarea,
+      html[data-theme="dark"] .calculator-feature-panel input,
+      html[data-theme="dark"] .calculator-feature-panel .engine-chips button,
+      html[data-theme="dark"] .calculator-feature-panel .engine-actions button,
+      html[data-theme="dark"] .calculator-feature-panel .segmented button,
+      html[data-theme="dark"] .calculator-feature-panel .engine-panel-head button { background: #202020; color: #f5f5f5; border-color: rgba(255,255,255,.14); }
+      html[data-theme="light"] .calculator-feature-panel .engine-status,
+      html[data-theme="light"] .calculator-feature-panel .engine-output,
+      html[data-theme="light"] .calculator-feature-panel textarea,
+      html[data-theme="light"] .calculator-feature-panel input,
+      html[data-theme="light"] .calculator-feature-panel .engine-chips button,
+      html[data-theme="light"] .calculator-feature-panel .engine-actions button,
+      html[data-theme="light"] .calculator-feature-panel .segmented button,
+      html[data-theme="light"] .calculator-feature-panel .engine-panel-head button { background: #fff; color: #111; border-color: rgba(0,0,0,.14); }
+      html[data-theme="dark"] .calculator-feature-panel .segmented button.active,
+      html[data-theme="dark"] .calculator-feature-panel .engine-primary,
+      html[data-theme="dark"] .calculator-feature-panel .engine-chips button:hover,
+      html[data-theme="dark"] .calculator-feature-panel .engine-actions button:hover { background: #f7f7f7; color: #111; }
+      html[data-theme="light"] .calculator-feature-panel .segmented button.active,
+      html[data-theme="light"] .calculator-feature-panel .engine-primary,
+      html[data-theme="light"] .calculator-feature-panel .engine-chips button:hover,
+      html[data-theme="light"] .calculator-feature-panel .engine-actions button:hover { background: #111; color: #fff; }
+      html[data-theme="dark"] .calculator-feature-panel .engine-help,
+      html[data-theme="dark"] .calculator-feature-panel .engine-about p { color: #b9b9b9; }
+      html[data-theme="light"] .calculator-feature-panel .engine-help,
+      html[data-theme="light"] .calculator-feature-panel .engine-about p { color: #555; }
+      html[data-theme="dark"] .btn-equals { background: #000; color: #fff; border-color: #000; }
+      html[data-theme="light"] .btn-equals { background: #111; color: #fff; border-color: #111; }
+      html[data-theme="dark"] .sidebar-open,
+      html[data-theme="dark"] .sidebar-close { background: #202020; color: #f5f5f5; }
+      html[data-theme="light"] .sidebar-open,
+      html[data-theme="light"] .sidebar-close { background: #fff; color: #111; }
+    `;
+  }
+
+  function applyTheme() {
+    const resolved = resolvedTheme();
+    document.documentElement.dataset.theme = resolved;
+    document.documentElement.dataset.themePreference = theme;
+    $('themeColor')?.setAttribute('content', resolved === 'light' ? '#f4f4f4' : '#171717');
+    installThemeOverrides();
+  }
+
+  function toggleTheme() {
+    theme = { dark: 'light', light: 'system', system: 'dark' }[theme];
+    writeStorage('calculatorTheme', theme);
+    applyTheme();
+    animate('.calculator', { opacity: [0.82, 1], scale: [0.985, 1], duration: 260, easing: 'easeOutQuad' });
+  }
+
+  function mountFeaturePanel(panel) {
+    const calculator = document.querySelector('.calculator');
+    if (!panel || !calculator) return false;
+    if (panel.parentElement !== calculator) calculator.appendChild(panel);
+    panel.classList.add('calculator-feature-panel');
+    return true;
+  }
+
+  function closeSidebarAfterFeature() {
+    const sidebar = $('featureSidebar');
+    if (sidebar?.classList.contains('is-open')) {
+      closeSidebar();
+    }
+  }
+
+  function toggleHistory() {
+    const panel = $('historyPanel');
+    if (!panel) return;
+    const open = !panel.classList.contains('is-open');
+    panel.classList.toggle('is-open', open);
+    panel.setAttribute('aria-hidden', String(!open));
+    if (open) {
+      window.renderCalculatorHistory?.();
+      animate(panel, { opacity: [0, 1], translateY: [-8, 0], duration: 240, easing: 'easeOutCubic' });
+    }
+  }
+
+  function clearCalculator() {
+    window.clearCalculator?.();
+    animate(['.display-container', '.btn-function'], { scale: [0.97, 1], duration: 220, easing: 'easeOutQuad' });
+  }
+
+  function toggleAbout() {
+    const panel = $('aboutPanel');
+    const button = document.querySelector('.feature-item[data-feature="about"]');
+    if (!panel || !button) return;
+    mountFeaturePanel(panel);
+    const open = panel.hidden;
+    panel.hidden = !open;
+    button.classList.toggle('active', open);
+    button.setAttribute('aria-expanded', String(open));
+    closeSidebarAfterFeature();
+    if (open) {
+      animate(panel, { opacity: [0, 1], translateY: [8, 0], duration: 240, easing: 'easeOutCubic' });
+    }
+  }
+
   function toggleEngine(feature = 'advanced') {
-    const panel = $('enginePanel'); if (!panel) return;
+    const panel = $('enginePanel');
+    if (!panel) return;
+    mountFeaturePanel(panel);
     panel.hidden = false;
-    const title = { advanced: 'Advanced Engine', scientific: 'Scientific', statistics: 'Statistics', matrix: 'Matrix', exact: 'Exact Arithmetic' }[feature] || 'Advanced Engine';
+    const title = {
+      advanced: 'Advanced Engine',
+      scientific: 'Scientific',
+      statistics: 'Statistics',
+      matrix: 'Matrix',
+      exact: 'Exact Arithmetic'
+    }[feature] || 'Advanced Engine';
     $('engineTitle').textContent = title;
-    panel.querySelectorAll('[data-engine-section]').forEach(section => { section.hidden = !(['advanced'].includes(feature) ? section.dataset.engineSection === 'advanced' : section.dataset.engineSection === feature || section.dataset.engineSection === 'advanced'); });
+    panel.querySelectorAll('[data-engine-section]').forEach(section => {
+      section.hidden = !(['advanced'].includes(feature)
+        ? section.dataset.engineSection === 'advanced'
+        : section.dataset.engineSection === feature || section.dataset.engineSection === 'advanced');
+    });
     const exact = feature === 'exact';
     window.CalculatorCoreUI?.setExactMode(exact);
     document.querySelectorAll('.feature-item').forEach(item => item.classList.toggle('active', item.dataset.feature === feature));
-    animate(panel, { opacity: [0, 1], translateY: [8, 0], duration: 220, easing: 'easeOutCubic' });
+    closeSidebarAfterFeature();
+    animate(panel, { opacity: [0, 1], translateY: [12, 0], scale: [0.985, 1], duration: 260, easing: 'easeOutCubic' });
   }
-  function closeEngine() { const panel = $('enginePanel'); if (!panel) return; panel.hidden = true; document.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active')); }
+
+  function closeEngine() {
+    const panel = $('enginePanel');
+    if (!panel) return;
+    panel.hidden = true;
+    document.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
+  }
+
+  function closeAbout() {
+    const panel = $('aboutPanel');
+    const button = document.querySelector('.feature-item[data-feature="about"]');
+    if (!panel) return;
+    panel.hidden = true;
+    button?.classList.remove('active');
+    button?.setAttribute('aria-expanded', 'false');
+  }
+
+  function closeSidebar() {
+    const sidebar = $('featureSidebar');
+    const backdrop = $('sidebarBackdrop');
+    const openButton = $('sidebarOpen');
+    if (!sidebar?.classList.contains('is-open')) return;
+    animate(sidebar, {
+      translateX: ['0%', '-105%'],
+      duration: 190,
+      easing: 'easeInCubic',
+      complete: () => {
+        sidebar.classList.remove('is-open');
+        backdrop?.classList.remove('is-open');
+        document.body.classList.remove('sidebar-visible');
+        sidebar.setAttribute('aria-hidden', 'true');
+        openButton?.setAttribute('aria-expanded', 'false');
+        sidebar.style.removeProperty('transform');
+      }
+    });
+    if (reduceMotion() || typeof window.anime !== 'function') {
+      sidebar.classList.remove('is-open');
+      backdrop?.classList.remove('is-open');
+      document.body.classList.remove('sidebar-visible');
+      sidebar.setAttribute('aria-hidden', 'true');
+      openButton?.setAttribute('aria-expanded', 'false');
+    }
+  }
+
   function setupSidebar() {
-    const sidebar = $('featureSidebar'), openButton = $('sidebarOpen'), closeButton = $('sidebarClose'), backdrop = $('sidebarBackdrop'), list = sidebar?.querySelector('.feature-list');
+    const sidebar = $('featureSidebar');
+    const openButton = $('sidebarOpen');
+    const closeButton = $('sidebarClose');
+    const backdrop = $('sidebarBackdrop');
+    const list = sidebar?.querySelector('.feature-list');
     if (!sidebar || !openButton || !closeButton || !list) return;
-    const setOpen = open => { sidebar.classList.toggle('is-open', open); backdrop?.classList.toggle('is-open', open); document.body.classList.toggle('sidebar-visible', open); sidebar.setAttribute('aria-hidden', String(!open)); openButton.setAttribute('aria-expanded', String(open)); if (open) { animate(sidebar, { translateX: ['-105%', '0%'], duration: 280, easing: 'easeOutCubic' }); animate(list.querySelectorAll('.feature-item'), { opacity: [0, 1], translateX: [-14, 0], delay: window.anime?.stagger(35), duration: 220, easing: 'easeOutCubic' }); } };
-    const close = () => { if (!sidebar.classList.contains('is-open')) return; animate(sidebar, { translateX: ['0%', '-105%'], duration: 190, easing: 'easeInCubic', complete: () => { sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); sidebar.style.removeProperty('transform'); } }); if (reduceMotion() || typeof window.anime !== 'function') { sidebar.classList.remove('is-open'); backdrop?.classList.remove('is-open'); document.body.classList.remove('sidebar-visible'); sidebar.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); } };
+
+    const setOpen = open => {
+      sidebar.classList.toggle('is-open', open);
+      backdrop?.classList.toggle('is-open', open);
+      document.body.classList.toggle('sidebar-visible', open);
+      sidebar.setAttribute('aria-hidden', String(!open));
+      openButton.setAttribute('aria-expanded', String(open));
+      if (open) {
+        animate(sidebar, { translateX: ['-105%', '0%'], duration: 280, easing: 'easeOutCubic' });
+        animate(list.querySelectorAll('.feature-item'), {
+          opacity: [0, 1],
+          translateX: [-14, 0],
+          delay: window.anime?.stagger(35),
+          duration: 220,
+          easing: 'easeOutCubic'
+        });
+      }
+    };
+
     const activate = feature => {
-      if (['advanced','scientific','statistics','matrix','exact'].includes(feature)) { toggleEngine(feature); return; }
+      if (['advanced', 'scientific', 'statistics', 'matrix', 'exact'].includes(feature)) {
+        toggleEngine(feature);
+        return;
+      }
       if (feature !== 'about') list.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
-      if (feature === 'theme') { toggleTheme(); close(); return; }
-      if (feature === 'clear') { clearCalculator(); close(); return; }
-      if (feature === 'history') { toggleHistory(); close(); return; }
+      if (feature === 'theme') { toggleTheme(); closeSidebar(); return; }
+      if (feature === 'clear') { clearCalculator(); closeSidebar(); return; }
+      if (feature === 'history') { toggleHistory(); closeSidebar(); return; }
       if (feature === 'about') { toggleAbout(); return; }
     };
+
     openButton.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); setOpen(true); });
-    closeButton.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); close(); });
+    closeButton.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); closeSidebar(); });
     $('engineClose')?.addEventListener('click', closeEngine);
-    backdrop?.addEventListener('click', close);
-    list.addEventListener('click', event => { const item = event.target.closest('.feature-item'); if (!item || !list.contains(item)) return; event.preventDefault(); event.stopPropagation(); activate(item.dataset.feature); });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') { if (sidebar.classList.contains('is-open')) { event.preventDefault(); close(); } else if (!$('enginePanel')?.hidden) closeEngine(); } });
+    backdrop?.addEventListener('click', closeSidebar);
+    list.addEventListener('click', event => {
+      const item = event.target.closest('.feature-item');
+      if (!item || !list.contains(item)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      activate(item.dataset.feature);
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') return;
+      if (sidebar.classList.contains('is-open')) { event.preventDefault(); closeSidebar(); return; }
+      if (!$('enginePanel')?.hidden) { closeEngine(); return; }
+      if (!$('aboutPanel')?.hidden) closeAbout();
+    });
     setOpen(false);
   }
-  applyTheme(); setupSidebar();
-  window.matchMedia?.('(prefers-color-scheme: light)').addEventListener?.('change', () => { if (theme === 'system') applyTheme(); });
-  window.addEventListener('load', () => { animate('.calculator', { opacity: [0, 1], translateY: [14, 0], scale: [0.98, 1], duration: 420, easing: 'easeOutCubic' }); animate('.btn', { opacity: [0, 1], translateY: [8, 0], delay: window.anime?.stagger(28, { start: 80 }), duration: 260, easing: 'easeOutCubic' }); animate('.sidebar-open', { opacity: [0, 1], scale: [0.7, 1], duration: 300, easing: 'easeOutBack' }); }, { once: true });
+
+  applyTheme();
+  setupSidebar();
+  window.matchMedia?.('(prefers-color-scheme: light)').addEventListener?.('change', () => {
+    if (theme === 'system') applyTheme();
+  });
+  window.addEventListener('load', () => {
+    animate('.calculator', { opacity: [0, 1], translateY: [14, 0], scale: [0.98, 1], duration: 420, easing: 'easeOutCubic' });
+    animate('.btn', { opacity: [0, 1], translateY: [8, 0], delay: window.anime?.stagger(28, { start: 80 }), duration: 260, easing: 'easeOutCubic' });
+    animate('.sidebar-open', { opacity: [0, 1], scale: [0.7, 1], duration: 300, easing: 'easeOutBack' });
+  }, { once: true });
 })();
