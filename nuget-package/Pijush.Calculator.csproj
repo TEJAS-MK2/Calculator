@@ -4,10 +4,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>Pijush.Calculator</PackageId>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Authors>Pijush Chakraborty</Authors>
-    <Description>Lightweight, dependency-free C# calculator library for reliable arithmetic operations with explicit division-by-zero handling.</Description>
-    <PackageTags>calculator;math;arithmetic;dotnet;pijush</PackageTags>
+    <Description>Advanced, dependency-free C# numerical engine with decimal arithmetic, scientific functions, statistics, combinatorics, and explicit error handling.</Description>
+    <PackageTags>calculator;math;arithmetic;scientific;statistics;dotnet;pijush</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/TEJAS-MK2/Calculator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/TEJAS-MK2/Calculator</RepositoryUrl>
