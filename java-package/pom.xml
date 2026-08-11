@@ -10,7 +10,7 @@
   <packaging>jar</packaging>
 
   <name>pijush-calculator</name>
-  <description>A lightweight, dependency-free Java arithmetic engine.</description>
+  <description>Lightweight, dependency-free Java arithmetic engine with BigDecimal DECIMAL128 precision and explicit error handling.</description>
   <url>https://github.com/TEJAS-MK2/Calculator</url>
 
   <licenses>
