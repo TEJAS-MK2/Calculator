@@ -12,5 +12,11 @@
     <RepositoryUrl>https://github.com/TEJAS-MK2/Calculator</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests/**/*.cs" />
+    <None Remove="tests/**/*.cs" />
+  </ItemGroup>
 </Project>
