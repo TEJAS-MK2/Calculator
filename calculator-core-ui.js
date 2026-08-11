@@ -1,21 +1,15 @@
-import {
-  evaluate,
-  evaluateExact,
-  factorial,
-  percentage
-} from './packages/calculator-core/index.js';
+import { evaluate, evaluateExact, factorial, percentage } from './packages/calculator-core/index.js';
 
 (() => {
-  const primary = () => document.getElementById('displayPrimary');
-  const secondary = () => document.getElementById('displaySecondary');
-  const preview = () => document.getElementById('expressionPreview');
-  const historyList = () => document.getElementById('historyList');
-  const historyCount = () => document.getElementById('historyCount');
-  const memoryValue = () => document.getElementById('memoryValue');
+  const $ = id => document.getElementById(id);
+  const primary = () => $('displayPrimary');
+  const secondary = () => $('displaySecondary');
+  const preview = () => $('expressionPreview');
+  const historyList = () => $('historyList');
+  const historyCount = () => $('historyCount');
 
   let expression = '';
   let justCalculated = false;
-  let memory = Number(localStorage.getItem('calculatorMemory') || 0);
 
   const operators = new Set(['+', '-', '*', '/', '%', '^']);
   const actionOperators = { add: '+', subtract: '-', multiply: '*', divide: '/' };
@@ -30,14 +24,15 @@ import {
   function display(text = expression || '0', sub = '') {
     if (primary()) primary().textContent = text;
     if (secondary()) secondary().textContent = sub;
-    if (preview()) {
-      preview().textContent = expression;
-      preview().classList.toggle('active', Boolean(expression));
+    const node = preview();
+    if (node) {
+      node.textContent = expression;
+      node.classList.toggle('active', Boolean(expression));
     }
   }
 
   function animate(target) {
-    if (typeof anime !== 'function') return;
+    if (typeof anime !== 'function' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     const node = typeof target === 'string' ? document.querySelector(target) : target;
     if (!node) return;
     anime.remove(node);
@@ -48,13 +43,11 @@ import {
     try {
       const value = JSON.parse(localStorage.getItem('calculatorHistory') || '[]');
       return Array.isArray(value) ? value.slice(0, 50) : [];
-    } catch {
-      return [];
-    }
+    } catch { return []; }
   }
 
   function saveHistory(items) {
-    localStorage.setItem('calculatorHistory', JSON.stringify(items.slice(0, 50)));
+    try { localStorage.setItem('calculatorHistory', JSON.stringify(items.slice(0, 50))); } catch {}
   }
 
   function addHistory(expr, result) {
@@ -70,11 +63,14 @@ import {
     const items = readHistory();
     if (count) count.textContent = String(items.length);
     if (!list) return;
+    list.replaceChildren();
     if (!items.length) {
-      list.innerHTML = '<div class="history-empty">No calculations yet</div>';
+      const empty = document.createElement('div');
+      empty.className = 'history-empty';
+      empty.textContent = 'No calculations yet';
+      list.appendChild(empty);
       return;
     }
-    list.innerHTML = '';
     for (const item of items) {
       const button = document.createElement('button');
       button.type = 'button';
@@ -112,17 +108,42 @@ import {
   function appendDecimal() {
     if (justCalculated) expression = '';
     justCalculated = false;
+    const last = expression.at(-1);
+    if (last === ')') return;
     const tail = expression.split(/[+\-*/%^()]/).pop() || '';
     if (tail.includes('.')) return;
     expression += tail ? '.' : '0.';
     display(expression);
   }
 
-  function appendOperator(operator) {
-    if (!expression) return;
+  function appendParenthesis(value) {
+    if (justCalculated) expression = '';
     justCalculated = false;
-    if (operators.has(expression.at(-1))) expression = expression.slice(0, -1) + operator;
-    else expression += operator;
+    const last = expression.at(-1);
+    if (value === '(') {
+      if (last && /[0-9.)]/.test(last)) expression += '*';
+      expression += '(';
+    } else {
+      const opens = (expression.match(/\(/g) || []).length;
+      const closes = (expression.match(/\)/g) || []).length;
+      if (opens <= closes || !last || operators.has(last) || last === '(') return;
+      expression += ')';
+    }
+    display(expression);
+  }
+
+  function appendOperator(operator) {
+    if (!expression) {
+      if (operator === '-') expression = '-';
+      else return;
+    } else if (operators.has(expression.at(-1))) {
+      expression = expression.slice(0, -1) + operator;
+    } else if (expression.at(-1) === '(' && operator !== '-') {
+      return;
+    } else {
+      expression += operator;
+    }
+    justCalculated = false;
     display(expression);
   }
 
@@ -138,23 +159,35 @@ import {
       animate(primary());
     } catch (error) {
       display('Error', error?.message || 'Invalid expression');
-      setTimeout(() => { if (!expression || primary()?.textContent === 'Error') clear(); }, 1800);
+      setTimeout(() => { if (primary()?.textContent === 'Error') clear(); }, 1800);
     }
   }
 
   function scientific(action) {
-    if (!expression) return;
+    const source = expression;
+    if (!source && !['pi', 'e'].includes(action)) return;
     try {
-      const value = evaluate(expression);
       let result;
+      let label;
+      if (action === 'pi' || action === 'e') {
+        const value = action === 'pi' ? Math.PI : Math.E;
+        if (expression && !justCalculated) {
+          expression += `*${action}`;
+        } else {
+          expression = action;
+        }
+        justCalculated = false;
+        display(expression);
+        return;
+      }
+      const value = evaluate(source);
       switch (action) {
         case 'sin': result = Math.sin(value * Math.PI / 180); break;
         case 'cos': result = Math.cos(value * Math.PI / 180); break;
         case 'tan': {
           const radians = value * Math.PI / 180;
           if (Math.abs(Math.cos(radians)) < 1e-12) throw new Error('Undefined tan');
-          result = Math.tan(radians);
-          break;
+          result = Math.tan(radians); break;
         }
         case 'log': if (value <= 0) throw new Error('log requires > 0'); result = Math.log10(value); break;
         case 'ln': if (value <= 0) throw new Error('ln requires > 0'); result = Math.log(value); break;
@@ -163,22 +196,24 @@ import {
         case 'reciprocal': if (value === 0) throw new Error('Cannot divide by zero'); result = 1 / value; break;
         case 'percent': result = percentage(value, 1); break;
         case 'factorial': result = factorial(value); break;
-        case 'pi': result = Math.PI; break;
-        case 'e': result = Math.E; break;
         default: return;
       }
       if (!Number.isFinite(result)) throw new Error('Result is not finite');
-      addHistory(`${action}(${expression})`, result);
+      label = `${action}(${source})`;
+      addHistory(label, result);
       expression = String(result);
       justCalculated = true;
-      display(format(result), `${action}(${format(value)})`);
+      display(format(result), label);
       animate(primary());
     } catch (error) {
       display('Error', error?.message || 'Invalid calculation');
+      setTimeout(() => { if (primary()?.textContent === 'Error') clear(); }, 1800);
     }
   }
 
   function memoryAction(action) {
+    let memory = 0;
+    try { memory = Number(localStorage.getItem('calculatorMemory') || 0); } catch {}
     try {
       if (action === 'memory-clear') memory = 0;
       else if (action === 'memory-recall') {
@@ -191,10 +226,11 @@ import {
         if (action === 'memory-subtract') memory -= value;
         if (action === 'memory-store') memory = value;
       }
+      if (!Number.isFinite(memory)) throw new Error('Memory value is not finite');
       localStorage.setItem('calculatorMemory', String(memory));
-      if (memoryValue()) memoryValue().textContent = format(memory);
     } catch (error) {
       display('Error', error?.message || 'Invalid memory value');
+      return;
     }
   }
 
@@ -213,6 +249,8 @@ import {
       display(expression || '0');
       return;
     }
+    if (action === 'open-paren') return appendParenthesis('(');
+    if (action === 'close-paren') return appendParenthesis(')');
     if (['sin', 'cos', 'tan', 'log', 'ln', 'sqrt', 'square', 'reciprocal', 'percent', 'factorial', 'pi', 'e'].includes(action)) return scientific(action);
   }
 
@@ -221,9 +259,10 @@ import {
     const key = event.key;
     if (/^[0-9]$/.test(key)) { event.preventDefault(); event.stopImmediatePropagation(); appendNumber(key); return; }
     if (key === '.') { event.preventDefault(); event.stopImmediatePropagation(); appendDecimal(); return; }
-    if ('+-*/%^()'.includes(key)) { event.preventDefault(); event.stopImmediatePropagation(); appendOperator(key); return; }
+    if (key === '(' || key === ')') { event.preventDefault(); event.stopImmediatePropagation(); appendParenthesis(key); return; }
+    if ('+-*/%^'.includes(key)) { event.preventDefault(); event.stopImmediatePropagation(); appendOperator(key); return; }
     if (key === 'Enter' || key === '=') { event.preventDefault(); event.stopImmediatePropagation(); calculate(); return; }
-    if (key === 'Backspace') { event.preventDefault(); event.stopImmediatePropagation(); expression = expression.slice(0, -1); display(expression || '0'); return; }
+    if (key === 'Backspace') { event.preventDefault(); event.stopImmediatePropagation(); if (!justCalculated) expression = expression.slice(0, -1); display(expression || '0'); return; }
     if (key === 'Escape' || key.toLowerCase() === 'c') { event.preventDefault(); event.stopImmediatePropagation(); clear(); }
   }
 
@@ -239,6 +278,6 @@ import {
   document.addEventListener('keydown', handleKeyboard, true);
 
   window.CalculatorCoreUI = Object.freeze({ evaluate, evaluateExact });
+  window.__calculatorCoreUIReady = true;
   renderHistory();
-  if (memoryValue()) memoryValue().textContent = format(memory);
 })();
