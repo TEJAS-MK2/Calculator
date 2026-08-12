@@ -19,9 +19,10 @@ test('exact exponentiation is resource-bounded', () => {
 });
 
 test('exact parser rejects invalid characters instead of silently dropping them', () => {
-  assert.throws(() => evaluateExact('1a'), /Unknown identifier/);
+  assert.throws(() => evaluateExact('1a'), /Invalid exact expression/);
   assert.throws(() => evaluateExact('1$2'), /Invalid character/);
   assert.throws(() => evaluateExact('2^^3'), /Expected exact number/);
+  assert.throws(() => evaluateExact('unknown'), /Unknown identifier/);
 });
 
 test('exact parser consumes the complete expression', () => {
