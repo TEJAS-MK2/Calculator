@@ -7,13 +7,14 @@ name = "pijush-calculator"
 version = "0.6.0"
 description = "Advanced, dependency-free Python numerical engine with scientific functions, statistics, combinatorics, and reusable math utilities."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.14"
 license = { text = "MIT" }
 authors = [{ name = "Pijush Chakraborty" }]
 keywords = ["calculator", "math", "arithmetic", "python", "pijush", "calculation-engine", "scientific", "statistics"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.14",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering :: Mathematics"
