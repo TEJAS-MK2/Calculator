@@ -17,3 +17,18 @@ test('exact exponentiation is resource-bounded', () => {
   assert.throws(() => evaluateExact('2^100001'), /Exact exponent must be between/);
   assert.equal(new ExactFraction(1n, 2n).toNumber(), 0.5);
 });
+
+test('exact parser rejects invalid characters instead of silently dropping them', () => {
+  assert.throws(() => evaluateExact('1a'), /Unknown identifier/);
+  assert.throws(() => evaluateExact('1$2'), /Invalid character/);
+  assert.throws(() => evaluateExact('2^^3'), /Expected exact number/);
+});
+
+test('exact parser consumes the complete expression', () => {
+  assert.throws(() => evaluateExact('(1 + 2'), /Missing closing parenthesis/);
+  assert.throws(() => evaluateExact('1 + 2)'), /Invalid exact expression/);
+});
+
+test('exact variables use the exact decimal representation', () => {
+  assert.equal(evaluateExact('value + 1', { scope: { value: '9007199254740993' } }).toString(), '9007199254740994');
+});
