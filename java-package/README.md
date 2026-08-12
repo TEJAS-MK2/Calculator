@@ -1,32 +1,31 @@
 # pijush-calculator — Apache Maven
 
-Advanced, dependency-free Java decimal/scientific engine published to GitHub Packages through Apache Maven.
+Advanced, dependency-free Java numerical engine using `BigDecimal` with `MathContext.DECIMAL128` for core decimal arithmetic and `Math` for scientific operations.
 
-## Engine capabilities
+## Requirements
 
-Uses `BigDecimal` with `MathContext.DECIMAL128` for core decimal operations and `Math` for scientific functions.
-
-- Arithmetic: add, subtract, multiply, divide, modulo, power, percentage
-- Utilities: absolute, minimum, maximum, average/mean, sum, product, clamp, reciprocal, square, cube
-- Roots: square root and cube root
-- Number theory: factorial, GCD, LCM, combinations, permutations
-- Trigonometry: sine, cosine, tangent, secant, cosecant, cotangent
-- Inverse trigonometry and `atan2`
-- Hyperbolic sine, cosine, tangent
-- Logarithms, natural logarithm, exponentials
-- Multi-value hypotenuse
-- Statistics: median, population variance, standard deviation, range
-- Explicit null, domain, and zero-division validation
-- Java 25+
+- Java **25+**
+- Maven 3.9+
 - Zero runtime dependencies
+
+## Features
+
+- Arithmetic, percentages, powers, roots, and numeric utilities
+- Factorial, GCD, LCM, combinations, and permutations
+- Trigonometric, inverse, and hyperbolic functions
+- Logarithms, exponentials, and `atan2`
+- Median, variance, standard deviation, and range
+- Explicit null, domain, and zero-division validation
 
 ## Coordinates
 
 ```text
-io.github.tejas-mk2:pijush-calculator
+io.github.tejas-mk2:pijush-calculator:0.6.0
 ```
 
-## Installation from GitHub Packages
+## GitHub Packages
+
+Repository:
 
 ```xml
 <repositories>
@@ -37,11 +36,13 @@ io.github.tejas-mk2:pijush-calculator
 </repositories>
 ```
 
+Dependency:
+
 ```xml
 <dependency>
   <groupId>io.github.tejas-mk2</groupId>
   <artifactId>pijush-calculator</artifactId>
-  <version>YOUR_VERSION</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 
@@ -51,25 +52,26 @@ io.github.tejas-mk2:pijush-calculator
 BigDecimal sum = Calculator.add(new BigDecimal("2"), new BigDecimal("3"));
 BigDecimal power = Calculator.power(new BigDecimal("2"), 10);
 double angle = Calculator.sine(90, true);
-BigDecimal median = Calculator.median(new BigDecimal("9"), new BigDecimal("2"), new BigDecimal("7"));
 ```
 
 ## Development
 
 ```bash
+cd java-package
 mvn test
 mvn package
 ```
 
+GitHub Actions runs the Maven tests on Java 25 before publication.
+
 ## Publishing
 
-GitHub Actions publishes the package to GitHub Packages using the workflow-provided `GITHUB_TOKEN`. Published versions are immutable and credentials are never committed.
+GitHub Actions publishes to GitHub Packages with the workflow-provided `GITHUB_TOKEN`. Credentials are never stored in source code. Published versions are immutable.
 
 ## Links
 
-- Repository: `https://github.com/TEJAS-MK2/Calculator`
-- Packages: `https://github.com/TEJAS-MK2/Calculator/packages`
-- Live calculator: `https://tejas-mk2.github.io/Calculator/`
+- Repository: https://github.com/TEJAS-MK2/Calculator
+- Packages: https://github.com/TEJAS-MK2/Calculator/packages
 
 ## License
 
