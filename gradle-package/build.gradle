@@ -10,7 +10,7 @@ description = 'Advanced, dependency-free Java numerical engine published with Gr
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(25)
     }
     withSourcesJar()
     withJavadocJar()
