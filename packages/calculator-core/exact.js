@@ -24,26 +24,89 @@ export class ExactFraction {
   toNumber() { return Number(this.numerator) / Number(this.denominator); }
 }
 
+function tokenize(expression) {
+  const source = String(expression ?? '').trim().replace(/\s+/g, '');
+  if (!source) throw new SyntaxError('Expression is empty');
+  const tokens = [];
+  let i = 0;
+  while (i < source.length) {
+    const rest = source.slice(i);
+    const number = rest.match(/^\d+(?:\.\d+)?/);
+    if (number) {
+      tokens.push(number[0]);
+      i += number[0].length;
+      continue;
+    }
+    const identifier = rest.match(/^[A-Za-z_][A-Za-z0-9_]*/);
+    if (identifier) {
+      tokens.push(identifier[0]);
+      i += identifier[0].length;
+      continue;
+    }
+    if ('()+-*/%^'.includes(source[i])) {
+      tokens.push(source[i]);
+      i++;
+      continue;
+    }
+    throw new SyntaxError(`Invalid character "${source[i]}"`);
+  }
+  return tokens;
+}
+
+export function evaluateExact(expression, options = {}) {
+  const scope = options.scope && typeof options.scope === 'object' && !Array.isArray(options.scope) ? options.scope : {};
+  const tokens = tokenize(expression);
+  let i = 0;
+  const primary = () => {
+    if (tokens[i] === '(') {
+      i++;
+      const value = add();
+      if (tokens[i++] !== ')') throw new SyntaxError('Missing closing parenthesis');
+      return value;
+    }
+    if (tokens[i] && /^\d/.test(tokens[i])) return decimal(tokens[i++]);
+    if (tokens[i] && /^[A-Za-z_]/.test(tokens[i])) {
+      const name = tokens[i++];
+      if (!Object.hasOwn(scope, name)) throw new SyntaxError(`Unknown identifier "${name}"`);
+      return decimal(String(scope[name]));
+    }
+    throw new SyntaxError('Expected exact number');
+  };
+  const unary = () => tokens[i] === '-' ? (i++, new ExactFraction(0n).subtract(unary())) : tokens[i] === '+' ? (i++, unary()) : primary();
+  const power = () => {
+    let v = unary();
+    if (tokens[i] === '^') {
+      i++;
+      const e = power();
+      if (e.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer');
+      v = v.pow(e.numerator, options);
+    }
+    return v;
+  };
+  const mul = () => {
+    let v = power();
+    while ('*/%'.includes(tokens[i])) {
+      const op = tokens[i++], r = power();
+      v = op === '*' ? v.multiply(r) : op === '/' ? v.divide(r) : v.modulo(r);
+    }
+    return v;
+  };
+  const add = () => {
+    let v = mul();
+    while ('+-'.includes(tokens[i])) {
+      const op = tokens[i++], r = mul();
+      v = op === '+' ? v.add(r) : v.subtract(r);
+    }
+    return v;
+  };
+  const result = add();
+  if (i !== tokens.length) throw new SyntaxError('Invalid exact expression');
+  return result;
+}
+
 function decimal(text) {
   const m = String(text).match(/^(-?)(\d+)(?:\.(\d+))?$/);
   if (!m) throw new SyntaxError(`Invalid exact number: ${text}`);
   const digits = BigInt(`${m[1] === '-' ? '-' : ''}${m[2]}${m[3] || ''}`);
   return new ExactFraction(digits, 10n ** BigInt((m[3] || '').length));
-}
-
-export function evaluateExact(expression, options = {}) {
-  const tokens = String(expression).replace(/\s+/g, '').match(/\d+(?:\.\d+)?|[()+\-*/%^]/g) || [];
-  let i = 0;
-  const primary = () => {
-    if (tokens[i] === '(') { i++; const value = add(); if (tokens[i++] !== ')') throw new SyntaxError('Missing closing parenthesis'); return value; }
-    if (!tokens[i]) throw new SyntaxError('Expected exact number');
-    return decimal(tokens[i++]);
-  };
-  const unary = () => tokens[i] === '-' ? (i++, new ExactFraction(0).subtract(unary())) : primary();
-  const power = () => { let v = unary(); if (tokens[i] === '^') { i++; const e = power(); if (e.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer'); v = v.pow(e.numerator, options); } return v; };
-  const mul = () => { let v = power(); while ('*/%'.includes(tokens[i])) { const op = tokens[i++], r = power(); v = op === '*' ? v.multiply(r) : op === '/' ? v.divide(r) : v.modulo(r); } return v; };
-  const add = () => { let v = mul(); while ('+-'.includes(tokens[i])) { const op = tokens[i++], r = mul(); v = op === '+' ? v.add(r) : v.subtract(r); } return v; };
-  const result = add();
-  if (i !== tokens.length) throw new SyntaxError('Invalid exact expression');
-  return result;
 }
