@@ -4,6 +4,11 @@ import { evaluate, evaluateExact, Fraction, factorial, percentage, convertTemper
 
 test('respects arithmetic precedence', () => assert.equal(evaluate('2 + 3 * 4'), 14));
 test('respects right-associative powers', () => assert.equal(evaluate('2^3^2'), 512));
+test('respects conventional unary and power precedence', () => {
+  assert.equal(evaluate('-2^2'), -4);
+  assert.equal(evaluate('(-2)^2'), 4);
+  assert.equal(evaluate('2^-3'), 0.125);
+});
 test('supports nested parentheses', () => assert.equal(evaluate('(2 + 3) * (4 - 1)'), 15));
 test('supports implicit multiplication', () => assert.equal(evaluate('2(5 + 3) + 4^2'), 32));
 test('supports implicit multiplication with functions', () => assert.ok(Math.abs(evaluate('2sin(pi / 2)') - 2) < 1e-12));
@@ -19,14 +24,22 @@ test('supports unary operators and percentages', () => assert.equal(evaluate('-5
 test('supports postfix percentages', () => assert.equal(evaluate('50%'), 0.5));
 test('supports modulo', () => assert.equal(evaluate('10 % 3'), 1));
 test('supports modulo with parentheses', () => assert.equal(evaluate('10 % (3 + 1)'), 2));
+test('supports modulo with a negative operand', () => assert.equal(evaluate('10 % (-3)'), 1));
 test('supports modulo after a percentage value', () => assert.equal(evaluate('50% % 3'), 0.5));
 test('calculates factorial', () => assert.equal(factorial(5), 120));
 test('calculates percentage', () => assert.equal(percentage(250, 20), 50));
 test('converts temperature', () => assert.equal(convertTemperature(100, 'C', 'F'), 212));
 test('returns exact fractions', () => assert.equal(evaluateExact('1 / 3 + 1 / 6').toString(), '1/2'));
 test('supports exact powers', () => assert.equal(evaluateExact('(2 / 3)^2').toString(), '4/9'));
+test('supports exact right-associative powers', () => assert.equal(evaluateExact('2^3^2').toString(), '512'));
+test('supports exact unary and power precedence', () => {
+  assert.equal(evaluateExact('-2^2').toString(), '-4');
+  assert.equal(evaluateExact('(-2)^2').toString(), '4');
+  assert.equal(evaluateExact('2^-3').toString(), '1/8');
+});
 test('supports exact negative values', () => assert.equal(evaluateExact('-(2 / 3)').toString(), '-2/3'));
 test('supports exact modulo', () => assert.equal(evaluateExact('10 % 3').toString(), '1'));
+test('supports exact negative modulo', () => assert.equal(evaluateExact('10 % (-3)').toString(), '1'));
 test('supports exact postfix percentages', () => assert.equal(evaluateExact('50%').toString(), '1/2'));
 test('normalizes fractions', () => assert.deepEqual(new Fraction(2, 4), new Fraction(1, 2)));
 test('rejects division by zero', () => assert.throws(() => evaluate('10 / (5 - 5)'), /Division by zero/));
