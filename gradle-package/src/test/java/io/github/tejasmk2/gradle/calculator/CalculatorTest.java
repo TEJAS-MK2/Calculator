@@ -32,4 +32,14 @@ class CalculatorTest {
         assertThrows(ArithmeticException.class,
                 () -> Calculator.divide(new BigDecimal("10"), BigDecimal.ZERO));
     }
+
+    @Test
+    void sharedConformanceVectors() {
+        assertEquals(new BigDecimal("20.0"), Calculator.add(new BigDecimal("12.5"), new BigDecimal("7.5")));
+        assertEquals(new BigDecimal("5.0"), Calculator.subtract(new BigDecimal("12.5"), new BigDecimal("7.5")));
+        assertEquals(new BigDecimal("100.0"), Calculator.multiply(new BigDecimal("12.5"), new BigDecimal("8.0")));
+        assertEquals(new BigDecimal("5.0"), Calculator.divide(new BigDecimal("12.5"), new BigDecimal("2.5")));
+        assertEquals(new BigDecimal("-5.0"), Calculator.add(new BigDecimal("-7.0"), new BigDecimal("2.0")));
+        assertEquals(new BigDecimal("12.0"), Calculator.multiply(new BigDecimal("-3.0"), new BigDecimal("-4.0")));
+    }
 }
