@@ -5,10 +5,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Deploy directly through GitHub Pages instead of committing generated files
-# to gh-pages. This keeps deployment commits out of repository history and
-# prevents github-actions[bot] from appearing as a repository contributor.
-
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -38,7 +34,7 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           set -e
-          for file in script.js calculator-core-ui.js sw.js packages/calculator-core/index.js packages/calculator-core/test.js; do
+          for file in script.js calculator-core-ui.js anime-fallback.js sw.js packages/calculator-core/index.js packages/calculator-core/test.js; do
             echo "Checking $file"
             node --check "$file"
           done
@@ -53,16 +49,13 @@ jobs:
       - name: Validate required application assets
         run: |
           set -e
-          test -f index.html
-          test -f styles.css
-          test -f script.js
-          test -f calculator-core-ui.js
-          test -f sw.js
-          test -f manifest.json
-          test -f packages/calculator-core/index.js
+          for file in index.html styles.css script.js calculator-core-ui.js anime-fallback.js sw.js manifest.json packages/calculator-core/index.js; do
+            test -f "$file"
+          done
 
       - name: Validate HTML references
         run: |
+          set -e
           python - <<'PY'
           from pathlib import Path
           import re
@@ -79,7 +72,6 @@ jobs:
 
           if missing:
               raise SystemExit('Missing local assets: ' + ', '.join(sorted(set(missing))))
-
           print('All local HTML assets exist.')
           PY
 
@@ -87,8 +79,9 @@ jobs:
         run: |
           set -e
           rm -rf _site
-          mkdir _site
-          rsync -a --exclude='.git' --exclude='.github' --exclude='_site' ./ _site/
+          mkdir -p _site/packages/calculator-core
+          cp index.html styles.css script.js calculator-core-ui.js anime-fallback.js sw.js manifest.json _site/
+          cp packages/calculator-core/index.js _site/packages/calculator-core/index.js
           touch _site/.nojekyll
 
       - name: Configure GitHub Pages
