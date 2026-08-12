@@ -14,9 +14,14 @@ export class ExactFraction {
   multiply(x) { return new ExactFraction(this.numerator * x.numerator, this.denominator * x.denominator); }
   divide(x) { if (x.numerator === 0n) throw new RangeError('Division by zero'); return new ExactFraction(this.numerator * x.denominator, this.denominator * x.numerator); }
   modulo(x) { if (x.numerator === 0n) throw new RangeError('Modulo by zero'); return new ExactFraction((this.numerator * x.denominator) % (x.numerator * this.denominator), this.denominator * x.denominator); }
-  pow(e) { e = BigInt(e); if (e < 0n && this.numerator === 0n) throw new RangeError('Division by zero'); return e < 0n ? new ExactFraction(this.denominator ** -e, this.numerator ** -e) : new ExactFraction(this.numerator ** e, this.denominator ** e); }
+  pow(e, { maxExponent = 100000n } = {}) {
+    e = BigInt(e);
+    if (e < 0n && this.numerator === 0n) throw new RangeError('Division by zero');
+    if (e < -maxExponent || e > maxExponent) throw new RangeError(`Exact exponent must be between ${-maxExponent} and ${maxExponent}`);
+    return e < 0n ? new ExactFraction(this.denominator ** -e, this.numerator ** -e) : new ExactFraction(this.numerator ** e, this.denominator ** e);
+  }
   toString() { return this.denominator === 1n ? String(this.numerator) : `${this.numerator}/${this.denominator}`; }
-  valueOf() { return Number(this.numerator) / Number(this.denominator); }
+  toNumber() { return Number(this.numerator) / Number(this.denominator); }
 }
 
 function decimal(text) {
@@ -26,7 +31,7 @@ function decimal(text) {
   return new ExactFraction(digits, 10n ** BigInt((m[3] || '').length));
 }
 
-export function evaluateExact(expression) {
+export function evaluateExact(expression, options = {}) {
   const tokens = String(expression).replace(/\s+/g, '').match(/\d+(?:\.\d+)?|[()+\-*/%^]/g) || [];
   let i = 0;
   const primary = () => {
@@ -35,7 +40,7 @@ export function evaluateExact(expression) {
     return decimal(tokens[i++]);
   };
   const unary = () => tokens[i] === '-' ? (i++, new ExactFraction(0).subtract(unary())) : primary();
-  const power = () => { let v = unary(); if (tokens[i] === '^') { i++; const e = power(); if (e.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer'); v = v.pow(e.numerator); } return v; };
+  const power = () => { let v = unary(); if (tokens[i] === '^') { i++; const e = power(); if (e.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer'); v = v.pow(e.numerator, options); } return v; };
   const mul = () => { let v = power(); while ('*/%'.includes(tokens[i])) { const op = tokens[i++], r = power(); v = op === '*' ? v.multiply(r) : op === '/' ? v.divide(r) : v.modulo(r); } return v; };
   const add = () => { let v = mul(); while ('+-'.includes(tokens[i])) { const op = tokens[i++], r = mul(); v = op === '+' ? v.add(r) : v.subtract(r); } return v; };
   const result = add();
