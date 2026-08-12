@@ -4,14 +4,9 @@
   "description": "Advanced, dependency-free JavaScript calculation engine with recursive expression parsing, exact arithmetic, scientific functions, statistics, numerical methods, combinatorics, and matrix utilities.",
   "type": "module",
   "main": "index.js",
-  "exports": {
-    ".": "./index.js",
-    "./advanced": "./advanced.js"
-  },
-  "files": ["index.js", "advanced.js", "README.md", "LICENSE"],
-  "engines": {
-    "node": ">=24"
-  },
+  "exports": { ".": "./index.js", "./advanced": "./advanced.js", "./exact": "./exact.js" },
+  "files": ["index.js", "advanced.js", "exact.js", "README.md", "LICENSE"],
+  "engines": { "node": ">=24" },
   "scripts": { "test": "node --test" },
   "license": "MIT",
   "publishConfig": { "registry": "https://npm.pkg.github.com" },
