@@ -7,60 +7,79 @@
   if (typeof window.anime === 'function') return;
 
   const active = new WeakMap();
+  const isElement = value => value && typeof value === 'object' && value.nodeType === 1 && typeof value.style === 'object';
   const targets = value => {
     if (typeof value === 'string') return [...document.querySelectorAll(value)];
-    if (value instanceof Element) return [value];
-    if (value && typeof value.length === 'number') return [...value].filter(Boolean);
+    if (isElement(value)) return [value];
+    if (value && typeof value.length === 'number') return [...value].filter(isElement);
     return [];
   };
   const valueAt = (value, end = false) => Array.isArray(value) ? value[end ? value.length - 1 : 0] : value;
   const cssValue = (property, value) => {
     if (property === 'scale') return `scale(${value})`;
-    if (property === 'translateX' || property === 'translateY') return value;
     return value;
   };
   const apply = (element, options, end = false) => {
+    if (!isElement(element)) return;
     const transforms = [];
     for (const property of ['translateX', 'translateY', 'scale']) {
       if (property in options) {
         let value = valueAt(options[property], end);
         if (property === 'translateX' || property === 'translateY') value = typeof value === 'number' ? `${value}px` : value;
-        if (property === 'scale') transforms.push(cssValue(property, value));
-        else transforms.push(`${property}(${value})`);
+        transforms.push(property === 'scale' ? cssValue(property, value) : `${property}(${value})`);
       }
     }
     if (transforms.length) element.style.transform = transforms.join(' ');
-    for (const property of ['opacity']) if (property in options) element.style[property] = String(valueAt(options[property], end));
+    if ('opacity' in options) element.style.opacity = String(valueAt(options.opacity, end));
   };
 
   function anime(options = {}) {
     const list = targets(options.targets);
     const duration = Math.max(0, Number(options.duration) || 0);
     const baseDelay = options.delay;
-    const animation = { cancel: () => {} };
+    const animations = [];
+
     list.forEach((element, index) => {
+      if (!isElement(element)) return;
       active.get(element)?.cancel?.();
-      const delay = typeof baseDelay === 'function' ? Number(baseDelay(index, list.length)) || 0 : Number(baseDelay) || 0;
+      const delay = typeof baseDelay === 'function'
+        ? Number(baseDelay(index, list.length)) || 0
+        : Number(baseDelay) || 0;
       let cancelled = false;
+      const animation = {
+        cancel: () => {
+          cancelled = true;
+          clearTimeout(timer);
+          if (isElement(element)) element.style.removeProperty('transition');
+          active.delete(element);
+        }
+      };
       const timer = setTimeout(() => {
-        if (cancelled) return;
+        if (cancelled || !isElement(element)) return;
         apply(element, options, false);
-        element.style.transition = ['opacity', 'transform'].filter(property => property in options || (property === 'transform' && ['translateX', 'translateY', 'scale'].some(key => key in options))).map(property => `${property} ${duration}ms cubic-bezier(.22,1,.36,1)`).join(', ');
+        const properties = [];
+        if ('opacity' in options) properties.push('opacity');
+        if (['translateX', 'translateY', 'scale'].some(key => key in options)) properties.push('transform');
+        element.style.transition = properties
+          .map(property => `${property} ${duration}ms cubic-bezier(.22,1,.36,1)`)
+          .join(', ');
         requestAnimationFrame(() => {
-          if (cancelled) return;
-          apply(element, options, true);
+          if (!cancelled && isElement(element)) apply(element, options, true);
         });
         setTimeout(() => {
-          if (cancelled) return;
+          if (cancelled || !isElement(element)) return;
           element.style.removeProperty('transition');
-          if (options.complete) options.complete();
+          if (typeof options.complete === 'function') options.complete();
           active.delete(element);
         }, duration + 20);
       }, delay);
-      animation.cancel = () => { cancelled = true; clearTimeout(timer); element.style.removeProperty('transition'); };
       active.set(element, animation);
+      animations.push(animation);
     });
-    return animation;
+
+    return {
+      cancel: () => animations.forEach(animation => animation.cancel())
+    };
   }
 
   anime.remove = value => targets(value).forEach(element => {
