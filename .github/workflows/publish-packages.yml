@@ -2,6 +2,12 @@ name: Test and Publish Packages
 
 on:
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish packages (otherwise test only)
+        required: false
+        default: false
+        type: boolean
   push:
     branches: [main]
     tags:
@@ -12,6 +18,9 @@ on:
 concurrency:
   group: packages-${{ github.ref }}
   cancel-in-progress: false
+
+env:
+  RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.publish == true) }}
 
 jobs:
   test-engines:
@@ -42,12 +51,13 @@ jobs:
             path: nuget-package
             command: dotnet test tests/Calculator.Tests.csproj
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Setup Node.js
         if: matrix.name == 'JavaScript'
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
+          package-manager-cache: false
       - name: Setup Python
         if: matrix.name == 'Python'
         uses: actions/setup-python@v6
@@ -91,9 +101,9 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
           cache: npm
@@ -107,15 +117,15 @@ jobs:
 
   publish-npm:
     name: Publish npm package
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    if: env.RELEASE == 'true'
     needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '24'
           registry-url: https://npm.pkg.github.com
@@ -128,13 +138,7 @@ jobs:
           set +e
           version=$(node -p "require('./package.json').version")
           existing=$(npm view "@tejas-mk2/calculator-core@${version}" version --registry=https://npm.pkg.github.com 2>/dev/null)
-          if [ "$existing" = "$version" ]; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "@tejas-mk2/calculator-core@${version} already exists; skipping publish."
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "@tejas-mk2/calculator-core@${version} is not present; publishing."
-          fi
+          if [ "$existing" = "$version" ]; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
       - name: Publish @tejas-mk2/calculator-core
         if: steps.npm-version.outputs.exists != 'true'
         working-directory: packages/calculator-core
@@ -144,14 +148,14 @@ jobs:
 
   publish-nuget:
     name: Publish NuGet package
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    if: env.RELEASE == 'true'
     needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.x'
@@ -169,14 +173,14 @@ jobs:
 
   publish-maven:
     name: Publish Maven package
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    if: env.RELEASE == 'true'
     needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -185,16 +189,8 @@ jobs:
         run: |
           mkdir -p "$HOME/.m2"
           cat > "$HOME/.m2/settings.xml" <<'EOF'
-          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
-            <servers>
-              <server>
-                <id>github</id>
-                <username>${env.GITHUB_ACTOR}</username>
-                <password>${env.GITHUB_TOKEN}</password>
-              </server>
-            </servers>
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers><server><id>github</id><username>${env.GITHUB_ACTOR}</username><password>${env.GITHUB_TOKEN}</password></server></servers>
           </settings>
           EOF
         env:
@@ -205,27 +201,18 @@ jobs:
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set +e
-          output=$(mvn -B deploy -DskipTests 2>&1)
-          status=$?
-          echo "$output"
-          if [ $status -ne 0 ] && echo "$output" | grep -q '409'; then
-            echo 'Maven version already exists in GitHub Packages; treating duplicate as successful.'
-            exit 0
-          fi
-          exit $status
+        run: mvn -B deploy -DskipTests
 
   publish-gradle:
     name: Publish Gradle package
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    if: env.RELEASE == 'true'
     needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -239,27 +226,18 @@ jobs:
         env:
           USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set +e
-          output=$(gradle publishGprPublicationToGitHubPackagesRepository 2>&1)
-          status=$?
-          echo "$output"
-          if [ $status -ne 0 ] && echo "$output" | grep -q '409'; then
-            echo 'Gradle version already exists in GitHub Packages; treating duplicate as successful.'
-            exit 0
-          fi
-          exit $status
+        run: gradle publishGprPublicationToGitHubPackagesRepository
 
   publish-container:
     name: Publish container
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    if: env.RELEASE == 'true'
     needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -277,14 +255,14 @@ jobs:
 
   publish-python:
     name: Publish Python package with PyPI Trusted Publishing
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    if: env.RELEASE == 'true'
     needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
         with:
           python-version: '3.14'
@@ -293,21 +271,7 @@ jobs:
       - name: Build package
         working-directory: python-package
         run: python -m build
-      - name: Check whether PyPI version already exists
-        id: pypi-version
-        working-directory: python-package
-        run: |
-          version=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
-          status=$(curl -sS -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/pijush-calculator/${version}/json")
-          if [ "$status" = "200" ]; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "pijush-calculator ${version} already exists on PyPI; skipping upload."
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "pijush-calculator ${version} is not present on PyPI; Trusted Publishing will be used."
-          fi
       - name: Publish to PyPI using Trusted Publishing
-        if: steps.pypi-version.outputs.exists != 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: python-package/dist/
@@ -315,7 +279,7 @@ jobs:
 
   publish-ruby:
     name: Publish Ruby gem
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    if: env.RELEASE == 'true'
     needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
     permissions:
@@ -323,28 +287,17 @@ jobs:
     env:
       RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '4.0'
+      - name: Require RubyGems credential
+        run: test -n "$RUBYGEMS_API_KEY"
       - name: Build gem
         working-directory: ruby-gem
         run: gem build pijush-calculator.gemspec
       - name: Publish to RubyGems
-        if: env.RUBYGEMS_API_KEY != ''
         working-directory: ruby-gem
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
-        run: |
-          set +e
-          output=$(gem push *.gem 2>&1)
-          status=$?
-          echo "$output"
-          if [ $status -ne 0 ] && echo "$output" | grep -Eq 'Repushing of gem versions is not allowed|already exists|already been pushed'; then
-            echo 'RubyGems version already exists; treating duplicate as successful.'
-            exit 0
-          fi
-          exit $status
-      - name: Skip RubyGems publish when key is unavailable
-        if: env.RUBYGEMS_API_KEY == ''
-        run: echo "RUBYGEMS_API_KEY is not configured; gem was built but not uploaded."
+        run: gem push *.gem
