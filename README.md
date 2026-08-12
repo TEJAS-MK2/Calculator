@@ -292,26 +292,3 @@ The main goal of the project is different:
 The browser calculator is the practical demonstration and testing surface. The deeper objective is to develop calculation engines with strong expression parsing, numerical utilities, scientific functions, statistics, combinatorics, matrices, numerical methods, exact arithmetic, explicit error handling, and language-specific APIs.
 
 The long-term direction is to make these engines increasingly capable, reliable, reusable, and useful to developers building their own applications.
-
-## Development
-
-Run the browser application locally with any static HTTP server. For example:
-
-```bash
-python -m http.server 4173
-```
-
-Then open `http://127.0.0.1:4173/`.
-
-Browser tests:
-
-```bash
-npm install
-npm run test:browser
-```
-
-The repository also contains GitHub Actions for engine testing, browser testing, cross-language conformance, deployment, and package publishing.
-
-## License
-
-MIT
