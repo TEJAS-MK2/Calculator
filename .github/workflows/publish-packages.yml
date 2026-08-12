@@ -12,6 +12,7 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 jobs:
   test-engines:
@@ -97,7 +98,7 @@ jobs:
         working-directory: packages/calculator-core
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish
+        run: npm publish --provenance
 
   publish-nuget:
     name: Publish NuGet package
@@ -203,32 +204,24 @@ jobs:
             ghcr.io/tejas-mk2/calculator:${{ github.ref_name }}
 
   publish-python:
-    name: Publish Python package
+    name: Publish Python package with PyPI Trusted Publishing
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
     needs: test-engines
     runs-on: ubuntu-latest
-    env:
-      PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Install build tools
-        run: python -m pip install --upgrade build twine
+        run: python -m pip install --upgrade build
       - name: Build package
         working-directory: python-package
         run: python -m build
-      - name: Publish to PyPI
-        if: env.PYPI_API_TOKEN != ''
-        working-directory: python-package
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: twine upload dist/*
-      - name: Skip PyPI publish when token is unavailable
-        if: env.PYPI_API_TOKEN == ''
-        run: echo "PYPI_API_TOKEN is not configured; package was built but not uploaded."
+      - name: Publish to PyPI using Trusted Publishing
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python-package/dist/
 
   publish-ruby:
     name: Publish Ruby gem
