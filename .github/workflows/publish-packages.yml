@@ -230,15 +230,50 @@ jobs:
         with:
           distribution: temurin
           java-version: '25'
-      - uses: gradle/actions/setup-gradle@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.6.1'
       - name: Publish Gradle package
         working-directory: gradle-package
         env:
-          GITHUB_ACTOR: ${{ github.actor }}
+          USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gradle publish
+        run: |
+          set +e
+          output=$(gradle publishGprPublicationToGitHubPackagesRepository 2>&1)
+          status=$?
+          echo "$output"
+          if [ $status -ne 0 ] && echo "$output" | grep -q '409'; then
+            echo 'Gradle version already exists in GitHub Packages; treating duplicate as successful.'
+            exit 0
+          fi
+          exit $status
+
+  publish-container:
+    name: Publish container
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    needs: [test-engines, browser-smoke]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push calculator image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/tejas-mk2/calculator:latest
+            ghcr.io/tejas-mk2/calculator:${{ github.ref_name }}
 
   publish-python:
     name: Publish Python package with PyPI Trusted Publishing
@@ -253,13 +288,30 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.14'
-      - name: Install build tooling
-        run: python -m pip install --upgrade pip build
+      - name: Install build tools
+        run: python -m pip install --upgrade build
       - name: Build package
         working-directory: python-package
         run: python -m build
-      - name: Publish to PyPI
+      - name: Check whether PyPI version already exists
+        id: pypi-version
+        working-directory: python-package
+        run: |
+          version=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          status=$(curl -sS -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/pijush-calculator/${version}/json")
+          if [ "$status" = "200" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "pijush-calculator ${version} already exists on PyPI; skipping upload."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "pijush-calculator ${version} is not present on PyPI; Trusted Publishing will be used."
+          fi
+      - name: Publish to PyPI using Trusted Publishing
+        if: steps.pypi-version.outputs.exists != 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python-package/dist/
+          skip-existing: true
 
   publish-ruby:
     name: Publish Ruby gem
@@ -268,7 +320,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+    env:
+      RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
     steps:
       - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
@@ -276,9 +329,22 @@ jobs:
           ruby-version: '4.0'
       - name: Build gem
         working-directory: ruby-gem
-        run: gem build pijush_calculator.gemspec
-      - name: Publish Ruby gem to GitHub Packages
+        run: gem build pijush-calculator.gemspec
+      - name: Publish to RubyGems
+        if: env.RUBYGEMS_API_KEY != ''
         working-directory: ruby-gem
         env:
-          GEM_HOST_API_KEY: ${{ secrets.GITHUB_TOKEN }}
-        run: gem push --host https://rubygems.pkg.github.com/TEJAS-MK2 pijush_calculator-*.gem
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        run: |
+          set +e
+          output=$(gem push *.gem 2>&1)
+          status=$?
+          echo "$output"
+          if [ $status -ne 0 ] && echo "$output" | grep -Eq 'Repushing of gem versions is not allowed|already exists|already been pushed'; then
+            echo 'RubyGems version already exists; treating duplicate as successful.'
+            exit 0
+          fi
+          exit $status
+      - name: Skip RubyGems publish when key is unavailable
+        if: env.RUBYGEMS_API_KEY == ''
+        run: echo "RUBYGEMS_API_KEY is not configured; gem was built but not uploaded."
