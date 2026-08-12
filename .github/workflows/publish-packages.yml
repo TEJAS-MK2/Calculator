@@ -94,11 +94,28 @@ jobs:
         with:
           node-version: 22
           registry-url: https://npm.pkg.github.com
-      - name: Publish @tejas-mk2/calculator-core
+      - name: Check whether npm version already exists
+        id: npm-version
         working-directory: packages/calculator-core
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --provenance
+        run: |
+          set +e
+          version=$(node -p "require('./package.json').version")
+          existing=$(npm view "@tejas-mk2/calculator-core@${version}" version --registry=https://npm.pkg.github.com 2>/dev/null)
+          if [ "$existing" = "$version" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "@tejas-mk2/calculator-core@${version} already exists; skipping publish."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "@tejas-mk2/calculator-core@${version} is not present; publishing."
+          fi
+      - name: Publish @tejas-mk2/calculator-core
+        if: steps.npm-version.outputs.exists != 'true'
+        working-directory: packages/calculator-core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm publish
 
   publish-nuget:
     name: Publish NuGet package
@@ -157,7 +174,16 @@ jobs:
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn -B deploy -DskipTests
+        run: |
+          set +e
+          output=$(mvn -B deploy -DskipTests 2>&1)
+          status=$?
+          echo "$output"
+          if [ $status -ne 0 ] && echo "$output" | grep -q '409'; then
+            echo 'Maven version already exists in GitHub Packages; treating duplicate as successful.'
+            exit 0
+          fi
+          exit $status
 
   publish-gradle:
     name: Publish Gradle package
@@ -179,7 +205,16 @@ jobs:
         env:
           USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gradle publishGprPublicationToGitHubPackagesRepository
+        run: |
+          set +e
+          output=$(gradle publishGprPublicationToGitHubPackagesRepository 2>&1)
+          status=$?
+          echo "$output"
+          if [ $status -ne 0 ] && echo "$output" | grep -q '409'; then
+            echo 'Gradle version already exists in GitHub Packages; treating duplicate as successful.'
+            exit 0
+          fi
+          exit $status
 
   publish-container:
     name: Publish container
@@ -218,10 +253,25 @@ jobs:
       - name: Build package
         working-directory: python-package
         run: python -m build
+      - name: Check whether PyPI version already exists
+        id: pypi-version
+        working-directory: python-package
+        run: |
+          version=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          status=$(curl -sS -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/pijush-calculator/${version}/json")
+          if [ "$status" = "200" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "pijush-calculator ${version} already exists on PyPI; skipping upload."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "pijush-calculator ${version} is not present on PyPI; Trusted Publishing will be used."
+          fi
       - name: Publish to PyPI using Trusted Publishing
+        if: steps.pypi-version.outputs.exists != 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: python-package/dist/
+          skip-existing: true
 
   publish-ruby:
     name: Publish Ruby gem
@@ -243,7 +293,16 @@ jobs:
         working-directory: ruby-gem
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
-        run: gem push *.gem
+        run: |
+          set +e
+          output=$(gem push *.gem 2>&1)
+          status=$?
+          echo "$output"
+          if [ $status -ne 0 ] && echo "$output" | grep -Eq 'Repushing of gem versions is not allowed|already exists|already been pushed'; then
+            echo 'RubyGems version already exists; treating duplicate as successful.'
+            exit 0
+          fi
+          exit $status
       - name: Skip RubyGems publish when key is unavailable
         if: env.RUBYGEMS_API_KEY == ''
         run: echo "RUBYGEMS_API_KEY is not configured; gem was built but not uploaded."
