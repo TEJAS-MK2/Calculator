@@ -1,28 +1,29 @@
 # pijush-calculator
 
-Advanced, dependency-free Python numerical engine for calculator, scientific-math, statistics, and reusable application tooling.
+Advanced, dependency-free Python numerical engine for calculator, scientific mathematics, statistics, combinatorics, and reusable applications.
 
-## Engine capabilities
+## Requirements
 
-- Basic arithmetic: add, subtract, multiply, divide, modulo, power, percentage
-- Numeric utilities: absolute, minimum, maximum, average/mean, sum, product, clamp, reciprocal, square, cube
+- Python **3.14+**
+- Zero runtime dependencies
+
+## Features
+
+- Arithmetic: add, subtract, multiply, divide, modulo, power, percentage
+- Utilities: absolute, minimum, maximum, average/mean, sum, product, clamp, reciprocal, square, cube
 - Roots: square root and cube root
 - Number theory: factorial, GCD, LCM, combinations, permutations
-- Trigonometry: sine, cosine, tangent, secant, cosecant, cotangent
-- Inverse trigonometry: arcsine, arccosine, arctangent
-- Hyperbolic sine, cosine, tangent
+- Trigonometry and inverse/hyperbolic trigonometry
 - Logarithms and exponentials
-- Multi-value hypotenenuse calculation
+- Multi-value hypotenuse calculation
 - Statistics: median, population variance, standard deviation, range
 - Floating-point comparison with configurable tolerance
 - Explicit domain, finite-result, and zero-division validation
-- Python 3.14+
-- Zero runtime dependencies
 
 ## Installation
 
 ```bash
-pip install pijush-calculator
+pip install pijush-calculator==0.6.0
 ```
 
 ## Usage
@@ -36,21 +37,6 @@ print(factorial(6))
 print(median(9, 2, 7, 4, 5))
 ```
 
-## API groups
-
-| Group | Functions |
-|---|---|
-| Arithmetic | `add`, `subtract`, `multiply`, `divide`, `modulo`, `power`, `percentage` |
-| Utilities | `absolute`, `minimum`, `maximum`, `average`, `mean`, `sum_values`, `product`, `clamp`, `reciprocal` |
-| Roots | `square_root`, `cube_root`, `square`, `cube` |
-| Number theory | `factorial`, `gcd`, `lcm`, `combinations`, `permutations` |
-| Trigonometry | `sine`, `cosine`, `tangent`, `secant`, `cosecant`, `cotangent` |
-| Inverse trig | `arcsine`, `arccosine`, `arctangent` |
-| Scientific | `logarithm`, `natural_log`, `exponential`, `hypot` |
-| Statistics | `median`, `variance`, `standard_deviation`, `range_values` |
-
-Division and modulo by zero raise `ZeroDivisionError`; invalid mathematical domains raise `ValueError`.
-
 ## Development
 
 ```bash
@@ -59,19 +45,22 @@ python -m pytest
 python -m build
 ```
 
-## Publishing
+## CI and publishing
 
-The package is published to PyPI through GitHub Actions using Trusted Publishing (OIDC) where configured. Published versions are immutable and require a new version for each release.
+GitHub Actions runs the Python test suite on Python 3.14 and validates all six calculation engines before publishing. PyPI releases use **Trusted Publishing (OIDC)**; no PyPI API token is required.
+
+Published versions are immutable. Release a new version instead of attempting to overwrite an existing release.
 
 ## Package information
 
 | Property | Value |
 |---|---|
 | Package | `pijush-calculator` |
-| PyPI | `https://pypi.org/project/pijush-calculator/` |
-| Repository | `https://github.com/TEJAS-MK2/Calculator` |
+| Version | `0.6.0` |
+| Engine | Python 3.14+ |
 | Runtime dependencies | None |
-| Supported Python | 3.14+ |
+| PyPI | https://pypi.org/project/pijush-calculator/ |
+| Repository | https://github.com/TEJAS-MK2/Calculator |
 | License | MIT |
 
 ## License
