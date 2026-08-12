@@ -8,10 +8,6 @@ on:
 # Deploy directly through GitHub Pages instead of committing generated files
 # to gh-pages. This keeps deployment commits out of repository history and
 # prevents github-actions[bot] from appearing as a repository contributor.
-permissions:
-  contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -25,7 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v7
