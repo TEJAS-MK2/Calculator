@@ -320,9 +320,7 @@ jobs:
         working-directory: ruby-gem
         run: |
           version=$(ruby -e 'spec = Gem::Specification.load("pijush-calculator.gemspec"); puts spec.version')
-          if curl -fsSL "https://rubygems.org/api/v1/versions/pijush-calculator.json" | ruby -rjson -e 'v=ENV["VERSION"]; data=JSON.parse(STDIN.read); exit(data.any? { |x| x["number"] == v } ? 0 : 1)' -- "$version"; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
-        env:
-          VERSION: ''
+          if VERSION="$version" curl -fsSL "https://rubygems.org/api/v1/versions/pijush-calculator.json" | ruby -rjson -e 'v=ENV["VERSION"]; data=JSON.parse(STDIN.read); exit(data.any? { |x| x["number"] == v } ? 0 : 1)'; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
       - name: Publish to RubyGems
         if: steps.ruby-version.outputs.exists != 'true'
         working-directory: ruby-gem
