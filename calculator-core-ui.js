@@ -1,4 +1,5 @@
-import { evaluate, evaluateExact } from './packages/calculator-core/index.js';
+import { evaluate } from './packages/calculator-core/index.js';
+import { evaluateExact } from './packages/calculator-core/exact.js';
 import { mean, median, variance, standardDeviation, matrixInverse, determinant } from './packages/calculator-core/advanced.js';
 
 (() => {
@@ -33,8 +34,6 @@ import { mean, median, variance, standardDeviation, matrixInverse, determinant }
   function animateDisplay(kind = 'input') {
     if (!animeReady()) return;
     const target = primary(); if (!target) return;
-    // Keep the result animation on the compositor without changing scale. Scaling
-    // the text while its content width changes causes a visible snap/jitter on mobile.
     const settings = kind === 'result'
       ? { opacity: [0.86, 1], translateY: [3, 0], duration: 180, easing: 'easeOutCubic' }
       : kind === 'error'
@@ -81,10 +80,7 @@ import { mean, median, variance, standardDeviation, matrixInverse, determinant }
   function insertToken(token) {
     if (justCalculated) expression = '';
     justCalculated = false;
-    if (token === '(') {
-      const last = expression.at(-1);
-      if (last && (/[,\d)]/.test(last) || last === 'π')) expression += '*';
-    }
+    if (token === '(') { const last = expression.at(-1); if (last && (/[\d)]/.test(last) || last === 'π')) expression += '*'; }
     if (token === ')' && (!expression || expression.at(-1) === '(' || operators.has(expression.at(-1)) || expression.split('(').length <= expression.split(')').length)) return;
     if (token === ',' && (!expression || expression.at(-1) === '(' || operators.has(expression.at(-1)) || expression.at(-1) === ',')) return;
     expression += token;
@@ -103,7 +99,7 @@ import { mean, median, variance, standardDeviation, matrixInverse, determinant }
     document.querySelectorAll('[data-matrix]').forEach(button => button.addEventListener('click', () => {
       try { const A = [['m00','m01'],['m10','m11']].map(row => row.map(id => Number($(id)?.value))); if (A.flat().some(v => !Number.isFinite(v))) throw new Error('Matrix values must be numbers'); const op = button.dataset.matrix; let result; if (op === 'det') result = determinant(A); else if (op === 'inverse') result = matrixInverse(A); else result = [[A[0][0], A[1][0]], [A[0][1], A[1][1]]]; $('matrixOutput').textContent = JSON.stringify(result); } catch (error) { $('matrixOutput').textContent = `Error: ${error.message}`; }
     }));
-    $('exactEvaluate')?.addEventListener('click', () => { try { $('exactOutput').textContent = `${expression || '1 / 3 + 1 / 6'} → ${evaluateExact(expression || '1 / 3 + 1 / 6').toString()}`; } catch (error) { $('exactOutput').textContent = `Error: ${error.message}`; } });
+    $('exactEvaluate')?.addEventListener('click', () => { try { const source = expression || '1 / 3 + 1 / 6'; $('exactOutput').textContent = `${source} → ${evaluateExact(source).toString()}`; } catch (error) { $('exactOutput').textContent = `Error: ${error.message}`; } });
   }
   function updateModeLabel() { const label = $('engineModeLabel'); if (label) label.textContent = exactMode ? 'Exact' : angleMode; }
 
