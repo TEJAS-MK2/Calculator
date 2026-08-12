@@ -1,34 +1,26 @@
 # pijush-calculator
 
-Advanced, dependency-free Ruby numerical engine for calculator, scientific-math, statistics, and reusable application tooling.
+Advanced, dependency-free Ruby numerical engine for arithmetic, scientific mathematics, statistics, combinatorics, and reusable applications.
 
-## Engine capabilities
+## Requirements
 
-- Basic arithmetic: add, subtract, multiply, divide, modulo, power, percentage
-- Utilities: absolute, min/max, average/mean, sum, product, clamp, reciprocal, square, cube
-- Roots: square root and cube root
-- Number theory: factorial, GCD, LCM, combinations, permutations
-- Trigonometry: sine, cosine, tangent, secant, cosecant, cotangent
-- Inverse trigonometry with optional degree output
-- Hyperbolic sine, cosine, tangent
-- Logarithms and exponentials
-- Multi-value hypotenuse calculation
-- Statistics: median, population variance, standard deviation, range
-- Approximate equality helper with configurable tolerance
-- Explicit domain and zero-division validation
-- Ruby 4.0+
+- Ruby **4.0+**
 - Zero runtime dependencies
+
+## Features
+
+- Arithmetic, modulo, powers, percentages, and numeric utilities
+- Square/cube roots and rounding helpers
+- Factorial, GCD, LCM, combinations, permutations
+- Trigonometric, inverse, and hyperbolic functions
+- Logarithms, exponentials, and hypotenuse calculation
+- Median, variance, standard deviation, range, and approximate equality
+- Explicit domain and zero-division validation
 
 ## Installation
 
 ```bash
-gem install pijush-calculator
-```
-
-GitHub Packages:
-
-```bash
-gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
+gem install pijush-calculator -v 0.6.0
 ```
 
 ## Usage
@@ -36,46 +28,36 @@ gem install pijush-calculator --source https://rubygems.pkg.github.com/TEJAS-MK2
 ```ruby
 require "pijush_calculator"
 
-PijushCalculator.add(2, 3)              # 5
-PijushCalculator.square_root(144)       # 12.0
-PijushCalculator.factorial(6)           # 720
-PijushCalculator.median(9, 2, 7, 4, 5) # 5
-PijushCalculator.sine(90, true)         # 1.0
+puts PijushCalculator.add(2, 3)
+puts PijushCalculator.square_root(144)
+puts PijushCalculator.factorial(6)
+puts PijushCalculator.median(9, 2, 7, 4, 5)
+puts PijushCalculator.sine(90, true)
 ```
-
-## API
-
-| Group | Methods |
-|---|---|
-| Arithmetic | `add`, `subtract`, `multiply`, `divide`, `modulo`, `power`, `percentage` |
-| Utilities | `absolute`, `minimum`, `maximum`, `average`, `mean`, `sum`, `product`, `clamp`, `reciprocal` |
-| Roots | `square_root`, `cube_root`, `square`, `cube` |
-| Number theory | `factorial`, `gcd`, `lcm`, `combinations`, `permutations` |
-| Trigonometry | `sine`, `cosine`, `tangent`, `secant`, `cosecant`, `cotangent` |
-| Inverse trig | `arcsine`, `arccosine`, `arctangent` |
-| Scientific | `logarithm`, `natural_log`, `exponential`, `hypot` |
-| Statistics | `median`, `variance`, `standard_deviation`, `range` |
 
 ## Development
 
 ```bash
 gem build pijush-calculator.gemspec
-gem test
+ruby -Ilib -Itest test/test_pijush_calculator.rb
 ```
 
-## Publishing
+## CI and publishing
 
-Releases are handled through GitHub Actions. Published versions are immutable; every release requires a new version. Credentials must never be committed.
+GitHub Actions tests the gem on Ruby 4.0 as part of the six-engine test matrix. RubyGems authentication is supplied through a GitHub Actions secret and is never committed to the repository.
+
+Published gem versions are immutable. Release a new version instead of republishing an existing version.
 
 ## Package information
 
 | Property | Value |
 |---|---|
 | Gem | `pijush-calculator` |
-| RubyGems | `https://rubygems.org/gems/pijush-calculator` |
-| GitHub Packages | `https://github.com/TEJAS-MK2/Calculator/packages` |
+| Version | `0.6.0` |
+| Engine | Ruby 4.0+ |
 | Runtime dependencies | None |
-| Supported Ruby | 4.0+ |
+| RubyGems | https://rubygems.org/gems/pijush-calculator |
+| Repository | https://github.com/TEJAS-MK2/Calculator |
 | License | MIT |
 
 ## License
