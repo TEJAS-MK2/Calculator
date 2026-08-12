@@ -4,7 +4,7 @@
 
 The **TEJAS-MK2 Calculator** project is committed to providing a welcoming, respectful, inclusive, and constructive environment for users, contributors, maintainers, package consumers, and community members.
 
-This project includes a web calculator, reusable calculation engines, tests, documentation, CI/CD workflows, and published packages. Technical discussions, bug reports, code reviews, UI feedback, package contributions, and release discussions should remain professional and focused on improving the project.
+The project includes a browser calculator, reusable calculation engines, tests, documentation, CI/CD workflows, and published packages. Technical discussions, bug reports, code reviews, UI feedback, package contributions, and release discussions should remain professional and focused on improving the project.
 
 ## Expected Behavior
 
@@ -18,7 +18,8 @@ Participants are expected to:
 - Take responsibility for mistakes and work toward constructive resolution.
 - Respect project boundaries, maintainer decisions, moderation actions, and repository rules.
 - Keep issues, pull requests, reviews, discussions, and package-related communication relevant and useful.
-- Avoid unnecessary disruption of repository, package, CI, release, or community spaces.
+- Respect the privacy and personal boundaries of other participants.
+- Follow the project's contribution and security procedures.
 
 ## Unacceptable Behavior
 
@@ -34,6 +35,8 @@ The following behavior is not acceptable:
 - Malicious behavior intended to harm the project, its users, packages, registry accounts, or infrastructure.
 - Deliberate abuse of package registries, CI systems, container infrastructure, GitHub Actions, or automation.
 - Introducing known malicious code, intentionally compromised dependencies, or destructive changes.
+- Attempting to obtain, expose, or misuse credentials, tokens, secrets, or private repository information.
+- Circumventing project security controls or intentionally weakening security checks to bypass safeguards.
 - Any other conduct reasonably considered inappropriate in a professional open-source community.
 
 ## Project Spaces
@@ -91,6 +94,8 @@ Maintainers should:
 ## Scope and Good-Faith Participation
 
 This Code of Conduct does not prohibit legitimate technical criticism, security research, bug reporting, or disagreement with a design or maintainer decision. Good-faith participation is welcome when it remains respectful and follows the project's security and contribution procedures.
+
+Security research must not involve unauthorized access, credential theft, privacy violations, destructive activity, or disruption of project infrastructure. Follow [`SECURITY.md`](./SECURITY.md) for responsible vulnerability reporting.
 
 ## Attribution
 
