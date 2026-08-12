@@ -46,33 +46,33 @@ jobs:
         if: matrix.name == 'JavaScript'
         uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: '24'
       - name: Setup Python
         if: matrix.name == 'Python'
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: '3.14'
       - name: Setup Ruby
         if: matrix.name == 'Ruby'
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
+          ruby-version: '4.0'
       - name: Setup Java
         if: matrix.name == 'Java Maven' || matrix.name == 'Java Gradle'
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '25'
       - name: Setup Gradle
         if: matrix.name == 'Java Gradle'
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.10.2'
+          gradle-version: '9.6.1'
       - name: Setup .NET
         if: matrix.name == '.NET'
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '10.x'
       - name: Install Python test dependencies
         if: matrix.name == 'Python'
         working-directory: python-package
@@ -92,7 +92,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: '24'
           registry-url: https://npm.pkg.github.com
       - name: Check whether npm version already exists
         id: npm-version
@@ -126,7 +126,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '10.x'
       - name: Build
         working-directory: nuget-package
         run: dotnet build Pijush.Calculator.csproj -c Release
@@ -149,7 +149,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '25'
       - name: Configure Maven credentials
         run: |
           mkdir -p "$HOME/.m2"
@@ -195,11 +195,11 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '25'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.10.2'
+          gradle-version: '9.6.1'
       - name: Publish Gradle package
         working-directory: gradle-package
         env:
@@ -247,7 +247,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: '3.14'
       - name: Install build tools
         run: python -m pip install --upgrade build
       - name: Build package
@@ -284,7 +284,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
+          ruby-version: '4.0'
       - name: Build gem
         working-directory: ruby-gem
         run: gem build pijush-calculator.gemspec
