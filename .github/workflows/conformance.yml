@@ -23,11 +23,11 @@ jobs:
           - name: Python
             setup: python
             path: python-package
-            command: python -m pytest
+            command: python ../conformance/check-python.py
           - name: Ruby
             setup: ruby
             path: ruby-gem
-            command: ruby -Ilib -Itest test/test_pijush_calculator.rb
+            command: ruby ../conformance/check-ruby.rb
           - name: Java Maven
             setup: java
             path: java-package
