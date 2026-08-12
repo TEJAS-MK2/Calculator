@@ -82,9 +82,17 @@ export function evaluateExact(expression, options = {}) {
       return unary();
     }
     const value = primary();
-    // Consume one postfix percent. A second '%' remains available to the
-    // multiplicative parser as the modulo operator (for example 50% % 3).
-    return tokens[i] === '%' ? (i++, value.divide(new ExactFraction(100n))) : value;
+    // '%' is postfix when it does not have a value immediately following it.
+    // If another operand follows, '%' remains the modulo operator.
+    if (tokens[i] === '%') {
+      const next = tokens[i + 1];
+      const postfix = next === undefined || next === ')' || '+-*/^%'.includes(next);
+      if (postfix) {
+        i++;
+        return value.divide(new ExactFraction(100n));
+      }
+    }
+    return value;
   };
   const power = () => {
     let v = unary();
