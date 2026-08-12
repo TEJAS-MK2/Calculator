@@ -1,22 +1,22 @@
 # Pijush.Calculator — NuGet
 
-Advanced, dependency-free C# decimal/scientific engine for .NET applications.
+Advanced, dependency-free C# numerical engine for .NET applications.
 
-## Engine capabilities
+## Requirements
+
+- **.NET 10+**
+- Zero runtime dependencies
+
+## Features
 
 - Arithmetic: Add, Subtract, Multiply, Divide, Modulo, Power, Percentage
-- Utilities: Absolute, Minimum, Maximum, Average/Mean, Sum, Product, Clamp, Reciprocal, Square, Cube
+- Utilities: Absolute, Minimum, Maximum, Average, Sum, Product, Clamp, Reciprocal, Square, Cube
 - Roots: SquareRoot and CubeRoot
-- Number theory: Factorial, GreatestCommonDivisor, LeastCommonMultiple, Combinations, Permutations
-- Trigonometry: Sine, Cosine, Tangent, Secant, Cosecant, Cotangent
-- Inverse trigonometry and Atan2
-- Hyperbolic functions
-- Logarithms and exponentials
-- Multi-value Hypot
-- Statistics: Median, population Variance, StandardDeviation, Range
-- Explicit argument and divide-by-zero validation
-- .NET 10+
-- Zero runtime dependencies
+- Number theory: Factorial, GCD, LCM, Combinations, Permutations
+- Trigonometric, inverse, and hyperbolic functions
+- Logarithms, exponentials, and multi-value Hypot
+- Statistics: Median, Variance, StandardDeviation, Range
+- Explicit argument, domain, and divide-by-zero validation
 
 ## Installation from GitHub Packages
 
@@ -31,7 +31,7 @@ dotnet nuget add source https://nuget.pkg.github.com/TEJAS-MK2/index.json \
 Then:
 
 ```bash
-dotnet add package Pijush.Calculator --version YOUR_VERSION
+dotnet add package Pijush.Calculator --version 0.6.0
 ```
 
 ## Usage
@@ -53,20 +53,23 @@ dotnet test tests/Calculator.Tests.csproj
 dotnet pack Pijush.Calculator.csproj -c Release
 ```
 
+GitHub Actions validates the .NET 10 engine before publication.
+
 ## Publishing
 
-GitHub Actions publishes the package to GitHub Packages NuGet using the repository `GITHUB_TOKEN` with package write permission. Published versions are immutable and credentials are never committed.
+GitHub Actions publishes the package to GitHub Packages NuGet with the repository `GITHUB_TOKEN`. Credentials are never committed. Published versions are immutable and duplicate versions are safely skipped by the release workflow.
 
 ## Package information
 
 | Property | Value |
 |---|---|
 | Package | `Pijush.Calculator` |
-| Registry | GitHub Packages NuGet |
+| Version | `0.6.0` |
+| Engine | .NET 10+ |
 | Runtime dependencies | None |
-| Target framework | .NET 10+ |
-| Repository | `https://github.com/TEJAS-MK2/Calculator` |
-| Packages | `https://github.com/TEJAS-MK2/Calculator/packages` |
+| Registry | GitHub Packages NuGet |
+| Repository | https://github.com/TEJAS-MK2/Calculator |
+| Packages | https://github.com/TEJAS-MK2/Calculator/packages |
 | License | MIT |
 
 ## License
