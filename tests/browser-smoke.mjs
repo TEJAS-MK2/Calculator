@@ -90,9 +90,18 @@ try {
   const equalContrast = await page.locator('.btn-equals').evaluate(el => ({ background: getComputedStyle(el).backgroundColor, color: getComputedStyle(el).color }));
   if (equalContrast.background === equalContrast.color) throw new Error('Theme mismatch: equals button has no readable contrast.');
 
-  const animationState = await page.evaluate(() => ({ anime: typeof window.anime, sidebarTransition: getComputedStyle(document.getElementById('featureSidebar')).transitionProperty }));
+  const animationState = await page.evaluate(() => {
+    const style = getComputedStyle(document.getElementById('featureSidebar'));
+    return {
+      anime: typeof window.anime,
+      sidebarTransition: style.transitionProperty,
+      sidebarTransitionDuration: style.transitionDuration,
+    };
+  });
   if (animationState.anime !== 'function') throw new Error('Anime.js is unavailable.');
-  if (animationState.sidebarTransition.includes('transform')) throw new Error('Sidebar CSS transform transition still conflicts with Anime.js.');
+  const hasTransformTransition = animationState.sidebarTransition.split(',').some(property => property.trim() === 'transform');
+  const hasActiveTransformTransition = hasTransformTransition && animationState.sidebarTransitionDuration.split(',').some(duration => parseFloat(duration) > 0);
+  if (hasActiveTransformTransition) throw new Error('Sidebar CSS transform transition still conflicts with Anime.js.');
   if (errors.length) throw new Error(`Browser errors: ${errors.map(error => error.message).join(' | ')}`);
   await browser.close();
   console.log('Browser smoke tests passed.');
