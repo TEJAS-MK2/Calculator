@@ -80,23 +80,24 @@ The repository contains six calculation-engine implementations. Each package is 
 
 ### JavaScript — `@tejas-mk2/calculator-core`
 
-**Package:** https://www.npmjs.com/package/@tejas-mk2/calculator-core  
-**Source:** https://github.com/TEJAS-MK2/Calculator/tree/main/packages/calculator-core  
-**GitHub Packages:** https://github.com/TEJAS-MK2/Calculator/packages
+**Registry:** GitHub Packages — https://github.com/TEJAS-MK2/Calculator/packages  
+**Source:** https://github.com/TEJAS-MK2/Calculator/tree/main/packages/calculator-core
 
 Node.js **24+**.
 
-Install:
+Configure the `@tejas-mk2` npm scope:
+
+```ini
+@tejas-mk2:registry=https://npm.pkg.github.com
+```
+
+Then install:
 
 ```bash
 npm install @tejas-mk2/calculator-core
 ```
 
-For GitHub Packages, configure the npm registry for the `@tejas-mk2` scope:
-
-```ini
-@tejas-mk2:registry=https://npm.pkg.github.com
-```
+For GitHub Packages authentication, configure npm with a GitHub token that has package read access according to your GitHub Packages policy.
 
 Run the package tests:
 
