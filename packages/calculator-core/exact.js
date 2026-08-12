@@ -32,22 +32,10 @@ function tokenize(expression) {
   while (i < source.length) {
     const rest = source.slice(i);
     const number = rest.match(/^\d+(?:\.\d+)?/);
-    if (number) {
-      tokens.push(number[0]);
-      i += number[0].length;
-      continue;
-    }
+    if (number) { tokens.push(number[0]); i += number[0].length; continue; }
     const identifier = rest.match(/^[A-Za-z_][A-Za-z0-9_]*/);
-    if (identifier) {
-      tokens.push(identifier[0]);
-      i += identifier[0].length;
-      continue;
-    }
-    if ('()+-*/%^'.includes(source[i])) {
-      tokens.push(source[i]);
-      i++;
-      continue;
-    }
+    if (identifier) { tokens.push(identifier[0]); i += identifier[0].length; continue; }
+    if ('()+-*/%^'.includes(source[i])) { tokens.push(source[i]); i++; continue; }
     throw new SyntaxError(`Invalid character "${source[i]}"`);
   }
   return tokens;
@@ -77,44 +65,21 @@ export function evaluateExact(expression, options = {}) {
     if (tokens[i] === '%') {
       const next = tokens[i + 1];
       const postfixPercent = next === undefined || next === ')' || '+-*/^%'.includes(next);
-      if (postfixPercent) {
-        i++;
-        return value.divide(new ExactFraction(100n));
-      }
+      if (postfixPercent) { i++; return value.divide(new ExactFraction(100n)); }
     }
     return value;
   };
-  const unary = () => {
-    if (tokens[i] === '-') {
-      i++;
-      return new ExactFraction(0n).subtract(unary());
-    }
-    if (tokens[i] === '+') {
-      i++;
-      return unary();
-    }
-    return postfix();
-  };
-  const power = () => {
-    let v = postfix();
+  const signedPower = () => {
+    if (tokens[i] === '-') { i++; return new ExactFraction(0n).subtract(signedPower()); }
+    if (tokens[i] === '+') { i++; return signedPower(); }
+    let value = postfix();
     if (tokens[i] === '^') {
       i++;
-      const e = unary();
-      if (e.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer');
-      v = v.pow(e.numerator, options);
+      const exponent = signedPower();
+      if (exponent.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer');
+      value = value.pow(exponent.numerator, options);
     }
-    return v;
-  };
-  const signedPower = () => {
-    if (tokens[i] === '-') {
-      i++;
-      return new ExactFraction(0n).subtract(signedPower());
-    }
-    if (tokens[i] === '+') {
-      i++;
-      return signedPower();
-    }
-    return power();
+    return value;
   };
   const mul = () => {
     let v = signedPower();
