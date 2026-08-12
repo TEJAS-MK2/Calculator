@@ -1,69 +1,93 @@
-# Contributing to Calculator
+# Contributing to Modern Calculator
 
-Thank you for contributing to **TEJAS-MK2 Calculator**. Contributions are welcome across the web application, reusable calculation engines, tests, documentation, accessibility, performance, package tooling, and GitHub Actions.
+Thank you for contributing to **TEJAS-MK2 Calculator**.
 
-The project has two closely related goals: keep the browser calculator simple and reliable, and continue building serious, reusable calculation engines for JavaScript, Java, .NET, and related tooling.
+This project has two related goals:
+
+1. Keep the browser calculator clean, reliable, accessible, and enjoyable to use.
+2. Build **serious, powerful, reusable calculation engines** that developers can use in their own applications.
+
+Contributions are welcome to the calculation engines, web UI, tests, documentation, accessibility, performance, package tooling, and CI/CD infrastructure.
 
 ## Before You Start
 
-1. Search existing issues and pull requests before starting work.
-2. Read the relevant documentation and package README.
-3. Keep changes focused and explain significant design changes when practical.
-4. Never commit passwords, registry tokens, API keys, private keys, or other secrets.
+1. Check existing issues and pull requests before starting significant work.
+2. Read the relevant package and project documentation.
+3. Keep pull requests focused on one coherent change.
+4. Never commit passwords, API keys, registry tokens, private keys, or other secrets.
 5. Report security vulnerabilities privately according to [`SECURITY.md`](./SECURITY.md).
-6. For larger changes, open an issue first when discussion would help avoid duplicated work or incompatible designs.
+6. For large architectural changes, open an issue first when discussion would help establish the design.
 
-## Repository Areas
+## Repository Structure
 
 | Area | Purpose |
 |---|---|
-| `index.html` / `styles.css` | Web calculator structure and styling |
+| `index.html` / `styles.css` | Browser calculator structure and styling |
 | `script.js` | Sidebar, theme, and page-level interaction |
-| `calculator-core-ui.js` | Calculator behavior and UI integration |
+| `calculator-core-ui.js` | Calculator UI and engine integration |
 | `sw.js` / `manifest.json` | PWA and offline behavior |
-| `packages/calculator-core/` | JavaScript/ESM calculation engine |
+| `packages/calculator-core/` | JavaScript calculation engine and exact arithmetic |
+| `python-package/` | Python calculation package |
+| `ruby-gem/` | Ruby calculation package |
 | `java-package/` | Java/Maven calculation package |
 | `gradle-package/` | Java/Gradle calculation package |
 | `nuget-package/` | C#/.NET calculation package |
-| `tests/` | Browser and integration validation |
-| `.github/workflows/` | Automated testing and GitHub Pages deployment |
+| `tests/` | Browser and integration tests |
+| `conformance/` | Cross-language conformance tests |
+| `.github/workflows/` | CI, testing, deployment, and publishing automation |
 
 ## Web UI Guidelines
 
-- Keep the main calculator focused on everyday arithmetic input and output.
-- Keep advanced functionality accessible through the sidebar rather than overcrowding the main keypad.
-- Keep **History, Clear, and Theme in the sidebar** where the existing UI design places them.
-- Preserve the compact responsive layout and mobile usability.
+- Keep the main calculator focused on everyday calculations.
+- Keep advanced functionality accessible through the sidebar.
+- Preserve the existing responsive mobile and desktop layouts.
 - Preserve keyboard accessibility and visible focus states.
-- Keep Anime.js and other animations purposeful and lightweight.
-- Avoid unnecessary motion and respect `prefers-reduced-motion`.
-- Avoid expensive layout-triggering animations and unnecessary main-thread work.
-- Test both narrow mobile layouts and desktop layouts for UI changes.
+- Keep animations purposeful and lightweight.
+- Respect `prefers-reduced-motion`.
+- Avoid unnecessary layout-triggering animations and main-thread work.
+- Do not introduce browser console errors.
+- Test UI changes at both mobile and desktop viewport sizes.
 
 ## Calculation Engine Guidelines
 
+The calculation engines are the primary technical focus of the project.
+
 - Keep arithmetic behavior deterministic and well-defined.
-- Do not introduce `eval()` or `Function()`-based expression execution.
-- Preserve the existing parser and validation model unless a deliberate design change is being made.
-- Add tests for new public calculation behavior.
-- Define explicit invalid-input, domain-error, and division-by-zero behavior.
+- Do not use `eval()` or `Function()` for expression execution.
+- Preserve the parser and validation model unless a deliberate redesign is being made.
+- Add tests for every new public calculation behavior.
+- Define explicit behavior for invalid input, domain errors, and division by zero.
 - Validate finite numeric inputs where appropriate.
-- Preserve existing public APIs unless a breaking change is intentional and documented.
-- Keep package implementations dependency-free where the package currently promises zero runtime dependencies.
-- Keep numerical algorithms clear about precision, tolerance, convergence, and domain limitations.
+- Preserve public APIs unless a breaking change is intentional and documented.
+- Clearly distinguish exact arithmetic from floating-point numerical algorithms.
+- Document precision, tolerance, convergence, and domain limitations for numerical methods.
+- Avoid unnecessary runtime dependencies in packages that are intended to remain dependency-free.
+
+## Exact Arithmetic
+
+The JavaScript exact-arithmetic engine uses `BigInt`-backed rational values.
+
+When changing exact arithmetic:
+
+- Do not silently convert exact values to `Number`.
+- Add regression tests for large integers and rational values.
+- Test division, modulo, powers, normalization, and division-by-zero behavior.
+- Keep resource limits for potentially enormous exact calculations.
+- Use explicit conversion APIs when floating-point output is intended.
 
 ## Package Guidelines
 
-The repository contains reusable calculation packages for multiple ecosystems. When changing a package:
+When changing a package:
 
-- Update its package README when public APIs, installation, or behavior change.
-- Keep package metadata, versioning, coordinates, and documentation consistent.
-- Add or update tests for new or changed public APIs.
-- Do not commit generated credentials or registry authentication configuration.
+- Update package documentation when public APIs or behavior change.
+- Keep package metadata and installation instructions consistent with the implementation.
+- Add tests for new or modified public APIs.
 - Verify package contents before publishing.
-- Do not silently introduce runtime dependencies into packages documented as dependency-free.
+- Never commit registry credentials or authentication files.
+- Do not introduce runtime dependencies without documenting and testing them.
+- Keep versions and package coordinates consistent across source, CI, and documentation.
 
-### JavaScript package
+### JavaScript
 
 ```bash
 cd packages/calculator-core
@@ -71,15 +95,21 @@ npm test
 npm pack --dry-run
 ```
 
-### Java/Gradle package
+### Python
 
 ```bash
-cd gradle-package
-gradle test
-gradle build
+cd python-package
+python -m pytest
 ```
 
-### Java/Maven package
+### Ruby
+
+```bash
+cd ruby-gem
+ruby -Ilib -Itest test/test_pijush_calculator.rb
+```
+
+### Java/Maven
 
 ```bash
 cd java-package
@@ -87,7 +117,15 @@ mvn test
 mvn package
 ```
 
-### .NET/NuGet package
+### Java/Gradle
+
+```bash
+cd gradle-package
+gradle test
+gradle build
+```
+
+### .NET/NuGet
 
 ```bash
 cd nuget-package
@@ -97,46 +135,56 @@ dotnet pack Pijush.Calculator.csproj -c Release
 
 ## Testing Checklist
 
-### Web calculator
+### Web application
 
-- Basic arithmetic works correctly.
-- Decimal input works correctly.
+- Basic arithmetic works.
+- Decimal input works.
 - Parentheses and unary operators behave correctly.
-- Clear resets calculator state.
-- Backspace behaves correctly.
+- Clear and backspace work correctly.
 - History opens, displays, and reuses calculations correctly.
-- Theme control works from the sidebar.
 - Sidebar opens and closes correctly.
-- Advanced feature modes remain usable.
-- Layout works on mobile and desktop sizes.
+- Theme controls work correctly.
+- Advanced features remain usable.
 - Keyboard input remains accessible.
-- No browser console errors are introduced.
-- PWA/service-worker changes do not break normal navigation or offline behavior.
+- Mobile and desktop layouts work.
+- No unexpected browser console errors occur.
+- Local application assets load successfully.
+- PWA/service-worker changes do not break navigation or offline behavior.
 
-### Calculation engine
+### Calculation engines
 
 - New public functions have tests.
 - Invalid arguments are rejected consistently.
-- Domain errors are handled explicitly.
+- Domain errors are explicit.
 - Division by zero is handled explicitly.
-- Numerical results remain within the documented precision and tolerance expectations.
+- Exact arithmetic retains exactness where promised.
+- Numerical algorithms respect documented tolerance and precision expectations.
 - Existing tests continue to pass.
 
-## GitHub Actions and Deployment
+### Cross-language behavior
 
-**GitHub Pages is the website deployment target.** Do not add workflows that publish the website to unrelated external hosting services or create unnecessary deployment branches.
+When an operation is intended to behave consistently across languages:
 
-Package publication is separate from website deployment. Changes to package publishing workflows must preserve least-privilege permissions and must not expose registry credentials.
+- Add or update the shared conformance vectors.
+- Verify JavaScript, Python, Ruby, Java/Maven, Java/Gradle, and .NET implementations where applicable.
+- Document intentional language-specific differences instead of hiding them.
 
-Workflow changes should:
+## CI/CD and Deployment
+
+GitHub Actions is used for testing, cross-language validation, GitHub Pages deployment, and package publishing.
+
+Workflow changes must:
 
 - Use the minimum permissions required.
 - Treat pull-request and issue-controlled input as untrusted.
-- Avoid executing untrusted content with write-capable credentials.
-- Prefer GitHub-provided short-lived credentials where possible.
-- Keep deployment actions and package publishing actions clearly separated.
+- Never expose secrets in logs.
+- Keep deployment and package publishing permissions separated where practical.
+- Preserve browser tests against the actual deployment artifact.
+- Avoid weakening tests or suppressing errors merely to make CI pass.
 
-## Development Setup
+Do not add unrelated external deployment services without a clear project requirement.
+
+## Local Setup
 
 ```bash
 git clone https://github.com/TEJAS-MK2/Calculator.git
@@ -146,43 +194,60 @@ git checkout -b feature/your-feature-name
 
 Use a local HTTP server when testing ES modules, service workers, or PWA behavior.
 
-Do not commit generated build output, local credentials, editor-specific files, or unrelated artifacts unless the repository explicitly requires them.
+For example:
+
+```bash
+python -m http.server 4173
+```
+
+Then open `http://127.0.0.1:4173/`.
+
+Do not commit generated build output, local credentials, editor-specific files, or unrelated artifacts.
 
 ## Pull Requests
 
-Keep pull requests focused and easy to review. Include:
+A good pull request should include:
 
-- What changed and why.
-- Related issues when applicable.
+- What changed.
+- Why the change was needed.
 - Tests performed and their results.
 - Screenshots or recordings for UI changes.
 - Compatibility notes for breaking changes.
-- Package/versioning notes when public package behavior changes.
+- Package/version information when public package behavior changes.
 
-Before opening a pull request, review the diff for accidental secrets, debug code, unrelated formatting changes, and generated files.
+Before submitting, inspect the diff for:
+
+- Secrets or credentials.
+- Debugging code.
+- Unrelated formatting changes.
+- Generated files.
+- Accidental API changes.
 
 ## Commit Messages
 
-Clear, conventional-style commit messages are preferred. Examples:
+Clear conventional-style commit messages are preferred:
 
 ```text
 feat(ui): add calculator interaction
 fix(sidebar): align control actions
 fix(core): handle division by zero
 test(browser): cover sidebar behavior
-docs: refresh calculator documentation
+test(conformance): add shared arithmetic vectors
+docs: update package documentation
 ```
 
 ## Documentation
 
-When changing public behavior, update the relevant documentation. Keep the root README, package READMEs, examples, installation instructions, and API descriptions consistent with the actual implementation.
+If public behavior changes, update the relevant documentation and examples.
 
-Avoid documenting functionality that is not implemented or tested.
+Keep installation commands, package versions, API descriptions, and examples consistent with the actual implementation.
+
+Do not document functionality that is not implemented or tested.
 
 ## Licensing
 
-By contributing, you agree that your contributions are provided under the project's [`LICENSE`](./LICENSE) and applicable package-specific license terms. Do not submit code or documentation that you do not have the right to contribute.
+By contributing, you agree that your contributions are provided under the project's applicable license terms. Do not submit code, documentation, or assets that you do not have the right to contribute.
 
 ## Security
 
-Please do not report security vulnerabilities through a public pull request or issue. Follow [`SECURITY.md`](./SECURITY.md) for private reporting and responsible disclosure.
+Do not report undisclosed security vulnerabilities through a public issue or pull request. Follow [`SECURITY.md`](./SECURITY.md) for private reporting and responsible disclosure.
