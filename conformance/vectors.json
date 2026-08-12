@@ -4,5 +4,11 @@
   {"operation":"multiply","a":12.5,"b":8,"expected":100},
   {"operation":"divide","a":12.5,"b":2.5,"expected":5},
   {"operation":"add","a":-7,"b":2,"expected":-5},
-  {"operation":"multiply","a":-3,"b":-4,"expected":12}
+  {"operation":"multiply","a":-3,"b":-4,"expected":12},
+  {"operation":"divide","a":-7.5,"b":2.5,"expected":-3},
+  {"operation":"add","a":0.1,"b":0.2,"expected":0.3},
+  {"operation":"subtract","a":1000,"b":0.125,"expected":999.875},
+  {"operation":"multiply","a":-2.5,"b":4,"expected":-10},
+  {"operation":"divide","a":81,"b":9,"expected":9},
+  {"operation":"add","a":123456.75,"b":0.25,"expected":123457}
 ]
