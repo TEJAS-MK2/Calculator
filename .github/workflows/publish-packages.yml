@@ -3,21 +3,21 @@ name: Test and Publish Packages
 on:
   workflow_dispatch:
   push:
-    branches: [main]
     tags:
       - 'v*'
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
-  packages: write
-  id-token: write
+concurrency:
+  group: packages-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   test-engines:
     name: Test calculation engines (${{ matrix.name }})
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -83,11 +83,36 @@ jobs:
         working-directory: ${{ matrix.path }}
         run: ${{ matrix.command }}
 
+  browser-smoke:
+    name: Browser smoke tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Initialize test workspace
+        run: npm init -y
+      - name: Install Playwright
+        run: npm install --no-save playwright@1.61.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run browser smoke tests
+        run: node tests/browser-smoke.mjs
+
   publish-npm:
     name: Publish npm package
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
-    needs: test-engines
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -119,9 +144,12 @@ jobs:
 
   publish-nuget:
     name: Publish NuGet package
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
-    needs: test-engines
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-dotnet@v5
@@ -141,9 +169,12 @@ jobs:
 
   publish-maven:
     name: Publish Maven package
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
-    needs: test-engines
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
@@ -187,9 +218,12 @@ jobs:
 
   publish-gradle:
     name: Publish Gradle package
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
-    needs: test-engines
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
@@ -218,9 +252,12 @@ jobs:
 
   publish-container:
     name: Publish container
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
-    needs: test-engines
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v5
       - name: Log in to GHCR
@@ -240,9 +277,12 @@ jobs:
 
   publish-python:
     name: Publish Python package with PyPI Trusted Publishing
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
-    needs: test-engines
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -275,9 +315,11 @@ jobs:
 
   publish-ruby:
     name: Publish Ruby gem
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.event.head_commit.message == 'release-v0.6.0-packages')
-    needs: test-engines
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    needs: [test-engines, browser-smoke]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
     steps:
