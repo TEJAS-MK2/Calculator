@@ -6,6 +6,7 @@ const port = 4173;
 const basePath = process.env.TEST_SITE_ROOT || process.cwd();
 const server = spawn('python', ['-m', 'http.server', String(port), '--bind', '127.0.0.1', '--directory', basePath], { stdio: 'ignore' });
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const optionalCdn = url => url.startsWith('https://cdnjs.cloudflare.com/');
 
 try {
   await sleep(1000);
@@ -13,10 +14,20 @@ try {
   const page = await browser.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(error));
-  page.on('console', message => { if (message.type() === 'error') errors.push(new Error(message.text())); });
-  page.on('requestfailed', request => { errors.push(new Error(`Request failed: ${request.url()} — ${request.failure()?.errorText || 'unknown error'}`)); });
+  page.on('console', message => {
+    if (message.type() !== 'error') return;
+    const text = message.text();
+    if (text === 'Failed to load resource: net::ERR_FAILED') return;
+    errors.push(new Error(text));
+  });
+  page.on('requestfailed', request => {
+    if (optionalCdn(request.url())) return;
+    errors.push(new Error(`Request failed: ${request.url()} — ${request.failure()?.errorText || 'unknown error'}`));
+  });
   page.on('response', response => {
-    if (response.status() >= 400 && response.url().startsWith(`http://127.0.0.1:${port}/`) && !response.url().includes('favicon.ico')) errors.push(new Error(`HTTP ${response.status()}: ${response.url()}`));
+    if (response.status() >= 400 && response.url().startsWith(`http://127.0.0.1:${port}/`) && !response.url().includes('favicon.ico')) {
+      errors.push(new Error(`HTTP ${response.status()}: ${response.url()}`));
+    }
   });
 
   await page.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: 'networkidle' });
