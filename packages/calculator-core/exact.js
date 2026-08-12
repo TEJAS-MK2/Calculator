@@ -5,15 +5,16 @@ export class ExactFraction {
     if (d < 0n) { n = -n; d = -d; }
     let a = n < 0n ? -n : n, b = d;
     while (b) [a, b] = [b, a % b];
-    this.numerator = n / a;
-    this.denominator = d / a;
+    this.numerator = a === 0n ? 0n : n / a;
+    this.denominator = a === 0n ? 1n : d / a;
     Object.freeze(this);
   }
   add(x) { return new ExactFraction(this.numerator * x.denominator + x.numerator * this.denominator, this.denominator * x.denominator); }
   subtract(x) { return new ExactFraction(this.numerator * x.denominator - x.numerator * this.denominator, this.denominator * x.denominator); }
   multiply(x) { return new ExactFraction(this.numerator * x.numerator, this.denominator * x.denominator); }
   divide(x) { if (x.numerator === 0n) throw new RangeError('Division by zero'); return new ExactFraction(this.numerator * x.denominator, this.denominator * x.numerator); }
-  pow(e) { e = BigInt(e); if (e < 0n) return new ExactFraction(this.denominator ** -e, this.numerator ** -e); return new ExactFraction(this.numerator ** e, this.denominator ** e); }
+  modulo(x) { if (x.numerator === 0n) throw new RangeError('Modulo by zero'); return new ExactFraction((this.numerator * x.denominator) % (x.numerator * this.denominator), this.denominator * x.denominator); }
+  pow(e) { e = BigInt(e); if (e < 0n && this.numerator === 0n) throw new RangeError('Division by zero'); return e < 0n ? new ExactFraction(this.denominator ** -e, this.numerator ** -e) : new ExactFraction(this.numerator ** e, this.denominator ** e); }
   toString() { return this.denominator === 1n ? String(this.numerator) : `${this.numerator}/${this.denominator}`; }
   valueOf() { return Number(this.numerator) / Number(this.denominator); }
 }
@@ -26,12 +27,16 @@ function decimal(text) {
 }
 
 export function evaluateExact(expression) {
-  const tokens = String(expression).replace(/\s+/g, '').match(/\d+(?:\.\d+)?|[()+\-*/^]/g) || [];
+  const tokens = String(expression).replace(/\s+/g, '').match(/\d+(?:\.\d+)?|[()+\-*/%^]/g) || [];
   let i = 0;
-  const primary = () => tokens[i] === '(' ? (i++, add(), i++, undefined) : decimal(tokens[i++]);
+  const primary = () => {
+    if (tokens[i] === '(') { i++; const value = add(); if (tokens[i++] !== ')') throw new SyntaxError('Missing closing parenthesis'); return value; }
+    if (!tokens[i]) throw new SyntaxError('Expected exact number');
+    return decimal(tokens[i++]);
+  };
   const unary = () => tokens[i] === '-' ? (i++, new ExactFraction(0).subtract(unary())) : primary();
   const power = () => { let v = unary(); if (tokens[i] === '^') { i++; const e = power(); if (e.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer'); v = v.pow(e.numerator); } return v; };
-  const mul = () => { let v = power(); while ('*/'.includes(tokens[i])) { const op = tokens[i++], r = power(); v = op === '*' ? v.multiply(r) : v.divide(r); } return v; };
+  const mul = () => { let v = power(); while ('*/%'.includes(tokens[i])) { const op = tokens[i++], r = power(); v = op === '*' ? v.multiply(r) : op === '/' ? v.divide(r) : v.modulo(r); } return v; };
   const add = () => { let v = mul(); while ('+-'.includes(tokens[i])) { const op = tokens[i++], r = mul(); v = op === '+' ? v.add(r) : v.subtract(r); } return v; };
   const result = add();
   if (i !== tokens.length) throw new SyntaxError('Invalid exact expression');
