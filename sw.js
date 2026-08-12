@@ -1,4 +1,4 @@
-const CACHE_NAME = 'modern-calculator-v60';
+const CACHE_NAME = 'modern-calculator-v61';
 const APP_SHELL = [
   './',
   './index.html',
@@ -7,6 +7,8 @@ const APP_SHELL = [
   './calculator-core-ui.js',
   './anime-fallback.js',
   './packages/calculator-core/index.js',
+  './packages/calculator-core/advanced.js',
+  './packages/calculator-core/exact.js',
   './manifest.json',
 ];
 const EXTERNAL_ASSETS = [
@@ -44,7 +46,6 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-
   const url = new URL(event.request.url);
   const isExternalAsset = EXTERNAL_ASSETS.includes(url.href);
 
@@ -53,9 +54,7 @@ self.addEventListener('fetch', event => {
       caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
         if (response.type === 'opaque' || response.ok) {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(error => {
-            console.warn('[Calculator] CDN cache write failed:', error);
-          });
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(error => console.warn('[Calculator] CDN cache write failed:', error));
         }
         return response;
       }))
@@ -69,9 +68,7 @@ self.addEventListener('fetch', event => {
     caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
       if (response.ok) {
         const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(error => {
-          console.warn('[Calculator] Cache write failed:', error);
-        });
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(error => console.warn('[Calculator] Cache write failed:', error));
       }
       return response;
     }).catch(error => {
