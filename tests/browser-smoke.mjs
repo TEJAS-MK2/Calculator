@@ -42,6 +42,12 @@ try {
   const operator = value => page.locator(`.calculator .btn-operator[data-action="${value}"]`);
   const openSidebar = async () => { if (await sidebar.getAttribute('aria-hidden') !== 'false') await openControls.click(); };
   const waitForSidebarClosed = async () => page.waitForFunction(() => document.getElementById('featureSidebar')?.getAttribute('aria-hidden') === 'true');
+  const waitForSidebarAnimationIdle = async () => page.waitForFunction(() => {
+    const style = getComputedStyle(document.getElementById('featureSidebar'));
+    const properties = style.transitionProperty.split(',').map(property => property.trim());
+    const durations = style.transitionDuration.split(',').map(duration => parseFloat(duration) || 0);
+    return !properties.some((property, index) => property === 'transform' && (durations[index] ?? durations[durations.length - 1] ?? 0) > 0);
+  });
   const closeFeature = async () => { await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.querySelector('.calculator')?.classList.contains('has-feature')); };
 
   await number('2').click(); await operator('add').click(); await number('3').click(); await page.locator('.calculator .btn-equals').click();
@@ -87,6 +93,7 @@ try {
 
   const beforeTheme = await page.locator('html').getAttribute('data-theme'); await openSidebar(); await page.getByRole('button', { name: 'Theme', exact: true }).click(); await waitForSidebarClosed();
   if (beforeTheme === await page.locator('html').getAttribute('data-theme')) throw new Error('Theme control did not change the theme.');
+  await waitForSidebarAnimationIdle();
   const equalContrast = await page.locator('.btn-equals').evaluate(el => ({ background: getComputedStyle(el).backgroundColor, color: getComputedStyle(el).color }));
   if (equalContrast.background === equalContrast.color) throw new Error('Theme mismatch: equals button has no readable contrast.');
 
