@@ -72,7 +72,20 @@ export function evaluateExact(expression, options = {}) {
     }
     throw new SyntaxError('Expected exact number');
   };
-  const unary = () => tokens[i] === '-' ? (i++, new ExactFraction(0n).subtract(unary())) : tokens[i] === '+' ? (i++, unary()) : primary();
+  const unary = () => {
+    if (tokens[i] === '-') {
+      i++;
+      return new ExactFraction(0n).subtract(unary());
+    }
+    if (tokens[i] === '+') {
+      i++;
+      return unary();
+    }
+    const value = primary();
+    // Consume one postfix percent. A second '%' remains available to the
+    // multiplicative parser as the modulo operator (for example 50% % 3).
+    return tokens[i] === '%' ? (i++, value.divide(new ExactFraction(100n))) : value;
+  };
   const power = () => {
     let v = unary();
     if (tokens[i] === '^') {
