@@ -73,9 +73,6 @@
 
   function setCalculatorFeatureMode(open) { calculator()?.classList.toggle('has-feature', open); }
 
-  // Feature activation must close the sidebar deterministically. Do not rely on
-  // the visual .is-open class: ARIA state is the source of truth for tests and
-  // assistive technology and can otherwise become stale during animations.
   function closeSidebarAfterFeature() { closeSidebar(); }
 
   function resetFeaturePanels() {
@@ -153,15 +150,13 @@
     const openButton = $('sidebarOpen');
     if (!sidebar) return;
 
-    // Logical state is updated synchronously and unconditionally. The visual
-    // animation is deliberately decoupled so it can never block interaction.
     sidebar.classList.remove('is-open');
     backdrop?.classList.remove('is-open');
     document.body.classList.remove('sidebar-visible');
     sidebar.setAttribute('aria-hidden', 'true');
     openButton?.setAttribute('aria-expanded', 'false');
 
-    window.anime?.remove(sidebar);
+    if (typeof window.anime === 'function') window.anime.remove(sidebar);
     if (!animate(sidebar, {
       translateX: ['0%', '-105%'],
       duration: 190,
@@ -179,7 +174,7 @@
     if (!sidebar || !openButton || !closeButton || !list) return;
 
     const setOpen = open => {
-      window.anime?.remove(sidebar);
+      if (typeof window.anime === 'function') window.anime.remove(sidebar);
       if (!open) {
         sidebar.classList.remove('is-open');
         backdrop?.classList.remove('is-open');
@@ -214,11 +209,15 @@
     };
 
     const activate = feature => {
+      // Close the drawer before running feature code. This makes the logical
+      // sidebar state deterministic even if a feature renderer throws or takes
+      // time to initialize. The panel then opens independently inside the app.
+      closeSidebar();
       if (['advanced', 'scientific', 'statistics', 'matrix', 'exact'].includes(feature)) { toggleEngine(feature); return; }
       if (feature !== 'about') list.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
-      if (feature === 'theme') { toggleTheme(); closeSidebar(); return; }
-      if (feature === 'clear') { clearCalculator(); closeSidebar(); return; }
-      if (feature === 'history') { resetFeaturePanels(); toggleHistory(); closeSidebar(); return; }
+      if (feature === 'theme') { toggleTheme(); return; }
+      if (feature === 'clear') { clearCalculator(); return; }
+      if (feature === 'history') { resetFeaturePanels(); toggleHistory(); return; }
       if (feature === 'about') toggleAbout();
     };
 
