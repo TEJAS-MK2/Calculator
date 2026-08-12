@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:1.31.3-alpine3.24
 
 LABEL org.opencontainers.image.title="Modern Calculator"
 LABEL org.opencontainers.image.description="Modern responsive calculator web app with history, themes, and PWA support."
