@@ -1,4 +1,10 @@
 require 'json'
+
+# Run conformance against the checked-out Ruby engine rather than a
+# separately installed/published gem. This keeps CI deterministic and
+# ensures the vectors exercise the exact source under test.
+ruby_root = File.expand_path('../ruby-gem/lib', __dir__)
+$LOAD_PATH.unshift(ruby_root) unless $LOAD_PATH.include?(ruby_root)
 require 'pijush_calculator'
 
 vectors = JSON.parse(File.read(File.join(__dir__, 'vectors.json')))
