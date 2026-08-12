@@ -16,7 +16,7 @@ Advanced, dependency-free Python numerical engine for calculator, scientific-mat
 - Statistics: median, population variance, standard deviation, range
 - Floating-point comparison with configurable tolerance
 - Explicit domain, finite-result, and zero-division validation
-- Python 3.9+
+- Python 3.14+
 - Zero runtime dependencies
 
 ## Installation
@@ -71,7 +71,7 @@ The package is published to PyPI through GitHub Actions using Trusted Publishing
 | PyPI | `https://pypi.org/project/pijush-calculator/` |
 | Repository | `https://github.com/TEJAS-MK2/Calculator` |
 | Runtime dependencies | None |
-| Supported Python | 3.9+ |
+| Supported Python | 3.14+ |
 | License | MIT |
 
 ## License
