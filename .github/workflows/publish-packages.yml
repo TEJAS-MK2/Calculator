@@ -147,21 +147,25 @@ jobs:
           set -euo pipefail
           version=$(node -p "require('./package.json').version")
           registry=https://npm.pkg.github.com
-          if npm view "@tejas-mk2/calculator-core@${version}" version --registry="$registry" >/tmp/npm-version 2>/tmp/npm-error; then
-            existing=$(cat /tmp/npm-version)
-            if [ "$existing" != "$version" ]; then
-              echo "Registry returned an unexpected version: $existing" >&2
-              exit 1
-            fi
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            status=$(curl -sS -o /tmp/npm-head -w '%{http_code}' -u "x-access-token:${NODE_AUTH_TOKEN}" -H 'Accept: application/json' "$registry/@tejas-mk2%2fcalculator-core" || true)
-            case "$status" in
-              404) echo "exists=false" >> "$GITHUB_OUTPUT" ;;
-              200) echo "Registry lookup failed unexpectedly; npm did not resolve the requested version." >&2; cat /tmp/npm-error >&2; exit 1 ;;
-              *) echo "Unable to determine npm package state (HTTP $status)." >&2; cat /tmp/npm-error >&2; exit 1 ;;
-            esac
-          fi
+          metadata_url="$registry/@tejas-mk2%2fcalculator-core"
+          body=/tmp/npm-metadata.json
+          status=$(curl -sS -o "$body" -w '%{http_code}' -u "x-access-token:${NODE_AUTH_TOKEN}" -H 'Accept: application/json' "$metadata_url")
+          case "$status" in
+            200)
+              node - "$body" "$version" <<'NODE'
+          const fs = require('node:fs');
+          const [file, version] = process.argv.slice(2);
+          const metadata = JSON.parse(fs.readFileSync(file, 'utf8'));
+          if (metadata.versions && Object.prototype.hasOwnProperty.call(metadata.versions, version)) {
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'exists=true\n');
+          } else {
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'exists=false\n');
+          }
+          NODE
+              ;;
+            404) echo "exists=false" >> "$GITHUB_OUTPUT" ;;
+            *) echo "Unable to determine npm package state (HTTP $status)." >&2; cat "$body" >&2; exit 1 ;;
+          esac
       - name: Publish @tejas-mk2/calculator-core
         if: steps.npm-version.outputs.exists != 'true'
         working-directory: packages/calculator-core
@@ -362,7 +366,7 @@ jobs:
           status=$(curl -sS -o /tmp/rubygems-versions.json -w '%{http_code}' "https://rubygems.org/api/v1/versions/pijush-calculator.json")
           case "$status" in
             200)
-              VERSION="$version" ruby -rjson -e 'data=JSON.parse(File.read("/tmp/rubygems-versions.json")); v=ENV.fetch("VERSION"); exit(data.any? { |x| x["number"] == v } ? 0 : 1)' && echo "exists=true" >> "$GITHUB_OUTPUT" || echo "exists=false" >> "$GITHUB_OUTPUT"
+              VERSION="$version" ruby -rjson -e 'data=JSON.parse(File.read("/tmp/rubygems-versions.json")); v=ENV.fetch("VERSION"); puts(data.any? { |x| x["number"] == v } ? "exists=true" : "exists=false")' >> "$GITHUB_OUTPUT"
               ;;
             404) echo "exists=false" >> "$GITHUB_OUTPUT" ;;
             *) echo "Unable to determine RubyGems package state (HTTP $status)." >&2; exit 1 ;;
