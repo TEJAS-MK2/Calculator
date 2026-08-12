@@ -144,10 +144,24 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set +e
+          set -euo pipefail
           version=$(node -p "require('./package.json').version")
-          existing=$(npm view "@tejas-mk2/calculator-core@${version}" version --registry=https://npm.pkg.github.com 2>/dev/null)
-          if [ "$existing" = "$version" ]; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
+          registry=https://npm.pkg.github.com
+          if npm view "@tejas-mk2/calculator-core@${version}" version --registry="$registry" >/tmp/npm-version 2>/tmp/npm-error; then
+            existing=$(cat /tmp/npm-version)
+            if [ "$existing" != "$version" ]; then
+              echo "Registry returned an unexpected version: $existing" >&2
+              exit 1
+            fi
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            status=$(curl -sS -o /tmp/npm-head -w '%{http_code}' -u "x-access-token:${NODE_AUTH_TOKEN}" -H 'Accept: application/json' "$registry/@tejas-mk2%2fcalculator-core" || true)
+            case "$status" in
+              404) echo "exists=false" >> "$GITHUB_OUTPUT" ;;
+              200) echo "Registry lookup failed unexpectedly; npm did not resolve the requested version." >&2; cat /tmp/npm-error >&2; exit 1 ;;
+              *) echo "Unable to determine npm package state (HTTP $status)." >&2; cat /tmp/npm-error >&2; exit 1 ;;
+            esac
+          fi
       - name: Publish @tejas-mk2/calculator-core
         if: steps.npm-version.outputs.exists != 'true'
         working-directory: packages/calculator-core
@@ -212,9 +226,15 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           version=$(mvn -q -Dexpression=project.version -DforceStdout help:evaluate)
           url="https://maven.pkg.github.com/TEJAS-MK2/Calculator/io/github/tejas-mk2/pijush-calculator/${version}/pijush-calculator-${version}.pom"
-          if curl -fsSI -u "$GITHUB_ACTOR:$GITHUB_TOKEN" "$url" >/dev/null; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
+          status=$(curl -sS -o /dev/null -w '%{http_code}' -u "$GITHUB_ACTOR:$GITHUB_TOKEN" "$url")
+          case "$status" in
+            200) echo "exists=true" >> "$GITHUB_OUTPUT" ;;
+            404) echo "exists=false" >> "$GITHUB_OUTPUT" ;;
+            *) echo "Unable to determine Maven package state (HTTP $status)." >&2; exit 1 ;;
+          esac
       - name: Publish Java package
         if: steps.maven-version.outputs.exists != 'true'
         working-directory: java-package
@@ -248,9 +268,15 @@ jobs:
           USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           version=$(gradle -q properties | awk '/^version: / {print $2; exit}')
           url="https://maven.pkg.github.com/TEJAS-MK2/Calculator/io/github/tejasmk2/gradle/pijush-calculator-gradle/${version}/pijush-calculator-gradle-${version}.pom"
-          if curl -fsSI -u "$USERNAME:$GITHUB_TOKEN" "$url" >/dev/null; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
+          status=$(curl -sS -o /dev/null -w '%{http_code}' -u "$USERNAME:$GITHUB_TOKEN" "$url")
+          case "$status" in
+            200) echo "exists=true" >> "$GITHUB_OUTPUT" ;;
+            404) echo "exists=false" >> "$GITHUB_OUTPUT" ;;
+            *) echo "Unable to determine Gradle package state (HTTP $status)." >&2; exit 1 ;;
+          esac
       - name: Publish Gradle package
         if: steps.gradle-version.outputs.exists != 'true'
         working-directory: gradle-package
@@ -331,15 +357,16 @@ jobs:
         id: ruby-version
         working-directory: ruby-gem
         run: |
+          set -euo pipefail
           version=$(ruby -e 'spec = Gem::Specification.load("pijush-calculator.gemspec"); puts spec.version')
-          versions_json=$(curl -fsSL "https://rubygems.org/api/v1/versions/pijush-calculator.json")
-          if VERSION="$version" ruby -rjson -e 'data=JSON.parse(STDIN.read); v=ENV.fetch("VERSION"); exit(data.any? { |x| x["number"] == v } ? 0 : 1)' <<< "$versions_json"; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "RubyGems version $version already exists; skipping publish."
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "RubyGems version $version is not published; publishing."
-          fi
+          status=$(curl -sS -o /tmp/rubygems-versions.json -w '%{http_code}' "https://rubygems.org/api/v1/versions/pijush-calculator.json")
+          case "$status" in
+            200)
+              VERSION="$version" ruby -rjson -e 'data=JSON.parse(File.read("/tmp/rubygems-versions.json")); v=ENV.fetch("VERSION"); exit(data.any? { |x| x["number"] == v } ? 0 : 1)' && echo "exists=true" >> "$GITHUB_OUTPUT" || echo "exists=false" >> "$GITHUB_OUTPUT"
+              ;;
+            404) echo "exists=false" >> "$GITHUB_OUTPUT" ;;
+            *) echo "Unable to determine RubyGems package state (HTTP $status)." >&2; exit 1 ;;
+          esac
       - name: Publish to RubyGems
         if: steps.ruby-version.outputs.exists != 'true'
         working-directory: ruby-gem
