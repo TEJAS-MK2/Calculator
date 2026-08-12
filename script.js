@@ -152,22 +152,22 @@
     const openButton = $('sidebarOpen');
     if (!sidebar?.classList.contains('is-open')) return;
 
-    window.anime?.remove(sidebar);
-    const finish = () => {
-      sidebar.classList.remove('is-open');
-      backdrop?.classList.remove('is-open');
-      document.body.classList.remove('sidebar-visible');
-      sidebar.setAttribute('aria-hidden', 'true');
-      openButton?.setAttribute('aria-expanded', 'false');
-      sidebar.style.removeProperty('transform');
-    };
+    // Update the logical/accessibility state synchronously. Visual animation is
+    // optional and must never gate the state transition that browser tests and
+    // assistive technology depend on.
+    sidebar.classList.remove('is-open');
+    backdrop?.classList.remove('is-open');
+    document.body.classList.remove('sidebar-visible');
+    sidebar.setAttribute('aria-hidden', 'true');
+    openButton?.setAttribute('aria-expanded', 'false');
 
+    window.anime?.remove(sidebar);
     if (!animate(sidebar, {
       translateX: ['0%', '-105%'],
       duration: 190,
       easing: 'easeInCubic',
-      complete: finish
-    })) finish();
+      complete: () => sidebar.style.removeProperty('transform')
+    })) sidebar.style.removeProperty('transform');
   }
 
   function setupSidebar() {
@@ -196,8 +196,6 @@
       sidebar.setAttribute('aria-hidden', 'false');
       openButton.setAttribute('aria-expanded', 'true');
 
-      // Keep the sidebar off-screen while the open class is applied so the CSS
-      // rule cannot flash it at translateX(0) before Anime.js starts.
       sidebar.style.transform = 'translateX(-105%)';
       if (!animate(sidebar, {
         translateX: ['-105%', '0%'],
