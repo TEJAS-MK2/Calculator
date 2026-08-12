@@ -73,10 +73,10 @@
 
   function setCalculatorFeatureMode(open) { calculator()?.classList.toggle('has-feature', open); }
 
-  function closeSidebarAfterFeature() {
-    const sidebar = $('featureSidebar');
-    if (sidebar?.classList.contains('is-open')) closeSidebar();
-  }
+  // Feature activation must close the sidebar deterministically. Do not rely on
+  // the visual .is-open class: ARIA state is the source of truth for tests and
+  // assistive technology and can otherwise become stale during animations.
+  function closeSidebarAfterFeature() { closeSidebar(); }
 
   function resetFeaturePanels() {
     const engine = $('enginePanel');
@@ -130,7 +130,8 @@
     mountFeaturePanel(panel);
     panel.hidden = false;
     const title = { advanced: 'Advanced Engine', scientific: 'Scientific', statistics: 'Statistics', matrix: 'Matrix', exact: 'Exact Arithmetic' }[feature] || 'Advanced Engine';
-    $('engineTitle').textContent = title;
+    const titleNode = $('engineTitle');
+    if (titleNode) titleNode.textContent = title;
     panel.querySelectorAll('[data-engine-section]').forEach(section => {
       section.hidden = !(['advanced'].includes(feature)
         ? section.dataset.engineSection === 'advanced'
@@ -150,11 +151,10 @@
     const sidebar = $('featureSidebar');
     const backdrop = $('sidebarBackdrop');
     const openButton = $('sidebarOpen');
-    if (!sidebar?.classList.contains('is-open')) return;
+    if (!sidebar) return;
 
-    // Update the logical/accessibility state synchronously. Visual animation is
-    // optional and must never gate the state transition that browser tests and
-    // assistive technology depend on.
+    // Logical state is updated synchronously and unconditionally. The visual
+    // animation is deliberately decoupled so it can never block interaction.
     sidebar.classList.remove('is-open');
     backdrop?.classList.remove('is-open');
     document.body.classList.remove('sidebar-visible');
@@ -235,7 +235,7 @@
     });
     document.addEventListener('keydown', event => {
       if (event.key !== 'Escape') return;
-      if (sidebar.classList.contains('is-open')) { event.preventDefault(); closeSidebar(); return; }
+      if (sidebar.getAttribute('aria-hidden') === 'false') { event.preventDefault(); closeSidebar(); return; }
       if (!$('enginePanel')?.hidden || !$('aboutPanel')?.hidden) { closeEngine(); return; }
       if ($('historyPanel')?.classList.contains('is-open')) toggleHistory();
     });
