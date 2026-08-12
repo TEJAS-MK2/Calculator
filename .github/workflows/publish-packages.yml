@@ -193,7 +193,18 @@ jobs:
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check whether Maven version already exists
+        id: maven-version
+        working-directory: java-package
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(mvn -q -Dexpression=project.version -DforceStdout help:evaluate)
+          url="https://maven.pkg.github.com/TEJAS-MK2/Calculator/io/github/tejas-mk2/pijush-calculator/${version}/pijush-calculator-${version}.pom"
+          if curl -fsSI -u "$GITHUB_ACTOR:$GITHUB_TOKEN" "$url" >/dev/null; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
       - name: Publish Java package
+        if: steps.maven-version.outputs.exists != 'true'
         working-directory: java-package
         env:
           GITHUB_ACTOR: ${{ github.actor }}
@@ -218,7 +229,18 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.6.1'
+      - name: Check whether Gradle version already exists
+        id: gradle-version
+        working-directory: gradle-package
+        env:
+          USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(gradle -q properties | awk '/^version: / {print $2; exit}')
+          url="https://maven.pkg.github.com/TEJAS-MK2/Calculator/io/github/tejasmk2/gradle/pijush-calculator-gradle/${version}/pijush-calculator-gradle-${version}.pom"
+          if curl -fsSI -u "$USERNAME:$GITHUB_TOKEN" "$url" >/dev/null; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
       - name: Publish Gradle package
+        if: steps.gradle-version.outputs.exists != 'true'
         working-directory: gradle-package
         env:
           USERNAME: ${{ github.actor }}
@@ -293,7 +315,16 @@ jobs:
       - name: Build gem
         working-directory: ruby-gem
         run: gem build pijush-calculator.gemspec
+      - name: Check whether RubyGems version already exists
+        id: ruby-version
+        working-directory: ruby-gem
+        run: |
+          version=$(ruby -e 'spec = Gem::Specification.load("pijush-calculator.gemspec"); puts spec.version')
+          if curl -fsSL "https://rubygems.org/api/v1/versions/pijush-calculator.json" | ruby -rjson -e 'v=ENV["VERSION"]; data=JSON.parse(STDIN.read); exit(data.any? { |x| x["number"] == v } ? 0 : 1)' -- "$version"; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
+        env:
+          VERSION: ''
       - name: Publish to RubyGems
+        if: steps.ruby-version.outputs.exists != 'true'
         working-directory: ruby-gem
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
