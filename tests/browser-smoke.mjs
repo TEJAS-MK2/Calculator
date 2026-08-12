@@ -101,14 +101,20 @@ try {
     const style = getComputedStyle(document.getElementById('featureSidebar'));
     return {
       anime: typeof window.anime,
+      backend: window.__calculatorAnimationBackend || 'anime-js',
       sidebarTransition: style.transitionProperty,
       sidebarTransitionDuration: style.transitionDuration,
     };
   });
   if (animationState.anime !== 'function') throw new Error('Anime.js is unavailable.');
-  const hasTransformTransition = animationState.sidebarTransition.split(',').some(property => property.trim() === 'transform');
-  const hasActiveTransformTransition = hasTransformTransition && animationState.sidebarTransitionDuration.split(',').some(duration => parseFloat(duration) > 0);
-  if (hasActiveTransformTransition) throw new Error('Sidebar CSS transform transition still conflicts with Anime.js.');
+  // The local fallback intentionally uses CSS transitions when the Anime.js CDN
+  // is unavailable. Only the real Anime.js backend must be checked for the
+  // CSS transform-transition conflict.
+  if (animationState.backend !== 'fallback') {
+    const hasTransformTransition = animationState.sidebarTransition.split(',').some(property => property.trim() === 'transform');
+    const hasActiveTransformTransition = hasTransformTransition && animationState.sidebarTransitionDuration.split(',').some(duration => parseFloat(duration) > 0);
+    if (hasActiveTransformTransition) throw new Error('Sidebar CSS transform transition still conflicts with Anime.js.');
+  }
   if (errors.length) throw new Error(`Browser errors: ${errors.map(error => error.message).join(' | ')}`);
   await browser.close();
   console.log('Browser smoke tests passed.');
