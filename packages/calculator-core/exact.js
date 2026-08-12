@@ -72,6 +72,18 @@ export function evaluateExact(expression, options = {}) {
     }
     throw new SyntaxError('Expected exact number');
   };
+  const postfix = () => {
+    const value = primary();
+    if (tokens[i] === '%') {
+      const next = tokens[i + 1];
+      const postfixPercent = next === undefined || next === ')' || '+-*/^%'.includes(next);
+      if (postfixPercent) {
+        i++;
+        return value.divide(new ExactFraction(100n));
+      }
+    }
+    return value;
+  };
   const unary = () => {
     if (tokens[i] === '-') {
       i++;
@@ -81,33 +93,33 @@ export function evaluateExact(expression, options = {}) {
       i++;
       return unary();
     }
-    const value = primary();
-    // '%' is postfix when it does not have a value immediately following it.
-    // If another operand follows, '%' remains the modulo operator.
-    if (tokens[i] === '%') {
-      const next = tokens[i + 1];
-      const postfix = next === undefined || next === ')' || '+-*/^%'.includes(next);
-      if (postfix) {
-        i++;
-        return value.divide(new ExactFraction(100n));
-      }
-    }
-    return value;
+    return postfix();
   };
   const power = () => {
-    let v = unary();
+    let v = postfix();
     if (tokens[i] === '^') {
       i++;
-      const e = power();
+      const e = unary();
       if (e.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer');
       v = v.pow(e.numerator, options);
     }
     return v;
   };
+  const signedPower = () => {
+    if (tokens[i] === '-') {
+      i++;
+      return new ExactFraction(0n).subtract(signedPower());
+    }
+    if (tokens[i] === '+') {
+      i++;
+      return signedPower();
+    }
+    return power();
+  };
   const mul = () => {
-    let v = power();
+    let v = signedPower();
     while ('*/%'.includes(tokens[i])) {
-      const op = tokens[i++], r = power();
+      const op = tokens[i++], r = signedPower();
       v = op === '*' ? v.multiply(r) : op === '/' ? v.divide(r) : v.modulo(r);
     }
     return v;
