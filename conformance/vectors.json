@@ -1,8 +1,8 @@
 [
-  {"expression":"2+3","expected":"5"},
-  {"expression":"10-7","expected":"3"},
-  {"expression":"6*7","expected":"42"},
-  {"expression":"20/4","expected":"5"},
-  {"expression":"-8+3","expected":"-5"},
-  {"expression":"12/5","expected":"2.4"}
+  {"operation":"add","a":2,"b":3,"expected":5},
+  {"operation":"subtract","a":10,"b":7,"expected":3},
+  {"operation":"multiply","a":6,"b":7,"expected":42},
+  {"operation":"divide","a":20,"b":4,"expected":5},
+  {"operation":"add","a":-8,"b":3,"expected":-5},
+  {"operation":"divide","a":12,"b":5,"expected":2.4}
 ]
