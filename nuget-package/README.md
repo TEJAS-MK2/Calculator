@@ -15,7 +15,7 @@ Advanced, dependency-free C# decimal/scientific engine for .NET applications.
 - Multi-value Hypot
 - Statistics: Median, population Variance, StandardDeviation, Range
 - Explicit argument and divide-by-zero validation
-- .NET 8+
+- .NET 10+
 - Zero runtime dependencies
 
 ## Installation from GitHub Packages
@@ -64,7 +64,7 @@ GitHub Actions publishes the package to GitHub Packages NuGet using the reposito
 | Package | `Pijush.Calculator` |
 | Registry | GitHub Packages NuGet |
 | Runtime dependencies | None |
-| Target framework | .NET 8+ |
+| Target framework | .NET 10+ |
 | Repository | `https://github.com/TEJAS-MK2/Calculator` |
 | Packages | `https://github.com/TEJAS-MK2/Calculator/packages` |
 | License | MIT |

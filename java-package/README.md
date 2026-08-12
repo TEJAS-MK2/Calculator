@@ -17,7 +17,7 @@ Uses `BigDecimal` with `MathContext.DECIMAL128` for core decimal operations and 
 - Multi-value hypotenuse
 - Statistics: median, population variance, standard deviation, range
 - Explicit null, domain, and zero-division validation
-- Java 17+
+- Java 25+
 - Zero runtime dependencies
 
 ## Coordinates

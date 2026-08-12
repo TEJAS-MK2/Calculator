@@ -16,7 +16,7 @@ Advanced, dependency-free Ruby numerical engine for calculator, scientific-math,
 - Statistics: median, population variance, standard deviation, range
 - Approximate equality helper with configurable tolerance
 - Explicit domain and zero-division validation
-- Ruby 3.0+
+- Ruby 4.0+
 - Zero runtime dependencies
 
 ## Installation
@@ -75,7 +75,7 @@ Releases are handled through GitHub Actions. Published versions are immutable; e
 | RubyGems | `https://rubygems.org/gems/pijush-calculator` |
 | GitHub Packages | `https://github.com/TEJAS-MK2/Calculator/packages` |
 | Runtime dependencies | None |
-| Supported Ruby | 3.0+ |
+| Supported Ruby | 4.0+ |
 | License | MIT |
 
 ## License

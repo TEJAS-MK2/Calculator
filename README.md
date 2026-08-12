@@ -62,6 +62,22 @@ The repository currently publishes **7 package targets** through GitHub Actions:
 
 **Package hub:** https://github.com/TEJAS-MK2/Calculator/packages
 
+### Engine requirements
+
+The package engines have been upgraded to current stable production runtimes:
+
+| Package | Runtime engine |
+|---|---|
+| npm / JavaScript | Node.js 24+ |
+| NuGet / .NET | .NET 10+ |
+| Maven / Java | Java 25+ |
+| Gradle / Java | Java 25+ with Gradle 9.6.1 |
+| PyPI / Python | Python 3.14+ |
+| RubyGems / Ruby | Ruby 4.0+ |
+| Docker / OCI | Nginx Alpine container |
+
+Node.js 24 is the current LTS line; Python 3.14 is the current feature release; Ruby 4.0 is the current stable major line; Java 25 is the current LTS release; Gradle 9.6.1 is the current Gradle 9 release line; and .NET 10 is the active LTS line. citeturn0search15turn1search1turn0search14turn0search0turn1search16turn0search3
+
 ### 1. Docker / OCI — `calculator`
 
 Container image for the Modern Calculator web application, served by Nginx.
@@ -84,7 +100,8 @@ docker run --rm -p 8080:80 calculator
 
 Advanced dependency-free JavaScript/ESM calculation engine.
 
-**Version:** `0.6.0`
+**Version:** `0.6.0`  
+**Requirement:** Node.js 24+
 
 Install:
 
@@ -126,7 +143,7 @@ npm test
 Dependency-free C# decimal/scientific calculation engine.
 
 **Version:** `0.6.0`  
-**Requirement:** .NET 8+
+**Requirement:** .NET 10+
 
 GitHub Packages source:
 
@@ -163,7 +180,7 @@ dotnet pack Pijush.Calculator.csproj -c Release
 Advanced dependency-free Java engine using `BigDecimal` and `DECIMAL128` precision.
 
 **Version:** `0.6.0`  
-**Requirement:** Java 17+
+**Requirement:** Java 25+
 
 Repository:
 
@@ -194,7 +211,7 @@ mvn package
 Gradle-published Java calculation engine.
 
 **Version:** `0.6.0`  
-**Requirement:** Java 17+
+**Requirement:** Java 25+ / Gradle 9.6.1+
 
 Repository:
 
@@ -223,7 +240,7 @@ gradle build
 Advanced dependency-free Python numerical engine with scientific functions, statistics, combinatorics, and reusable mathematical utilities.
 
 **Version:** `0.6.0`  
-**Requirement:** Python 3.9+
+**Requirement:** Python 3.14+
 
 Install:
 
@@ -245,7 +262,7 @@ python -m build
 Dependency-free Ruby calculation engine with arithmetic, scientific functions, statistics, combinatorics, and explicit error handling.
 
 **Version:** `0.6.0`  
-**Requirement:** Ruby 3.0+
+**Requirement:** Ruby 4.0+
 
 Install:
 
@@ -263,15 +280,15 @@ ruby -Ilib -Itest test/test_pijush_calculator.rb
 
 ## Package summary
 
-| Target | Ecosystem | Package | Version | Build / install |
+| Target | Ecosystem | Package | Version | Engine |
 |---|---|---|---|---|
-| Calculator container | Docker / OCI | `ghcr.io/tejas-mk2/calculator` | `latest` / tagged | Docker |
-| Calculator core | npm | `@tejas-mk2/calculator-core` | `0.6.0` | npm |
-| C# engine | NuGet | `Pijush.Calculator` | `0.6.0` | .NET CLI |
-| Java engine | Maven | `io.github.tejas-mk2:pijush-calculator` | `0.6.0` | Maven |
-| Java engine | Gradle/Maven | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | `0.6.0` | Gradle |
-| Python engine | PyPI | `pijush-calculator` | `0.6.0` | pip |
-| Ruby engine | RubyGems | `pijush-calculator` | `0.6.0` | gem |
+| Calculator container | Docker / OCI | `ghcr.io/tejas-mk2/calculator` | `latest` / tagged | Nginx Alpine |
+| Calculator core | npm | `@tejas-mk2/calculator-core` | `0.6.0` | Node.js 24+ |
+| C# engine | NuGet | `Pijush.Calculator` | `0.6.0` | .NET 10+ |
+| Java engine | Maven | `io.github.tejas-mk2:pijush-calculator` | `0.6.0` | Java 25+ |
+| Java engine | Gradle/Maven | `io.github.tejasmk2.gradle:pijush-calculator-gradle` | `0.6.0` | Java 25+ / Gradle 9.6.1+ |
+| Python engine | PyPI | `pijush-calculator` | `0.6.0` | Python 3.14+ |
+| Ruby engine | RubyGems | `pijush-calculator` | `0.6.0` | Ruby 4.0+ |
 
 ## Development
 

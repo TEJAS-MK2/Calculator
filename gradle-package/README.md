@@ -16,7 +16,7 @@ Advanced, dependency-free Java decimal/scientific engine published to GitHub Pac
 - Statistics: median, variance, standard deviation, range
 - `BigDecimal` core arithmetic with `DECIMAL128`
 - Null and domain validation
-- Java 17 and JUnit 5
+- Java 25 and JUnit 5
 - No runtime dependencies
 
 ## Coordinates
