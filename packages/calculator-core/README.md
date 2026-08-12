@@ -16,17 +16,23 @@
 
 ## Installation
 
-```bash
-npm install @tejas-mk2/calculator-core
-```
+The package is published to **GitHub Packages**.
 
-**Engine requirement:** Node.js **24+**.
-
-GitHub Packages:
+Create or update an `.npmrc` file:
 
 ```ini
 @tejas-mk2:registry=https://npm.pkg.github.com
 ```
+
+Then install:
+
+```bash
+npm install @tejas-mk2/calculator-core
+```
+
+For a private GitHub Packages installation, authenticate npm with a GitHub token that has package read access according to your organization's GitHub Packages policy.
+
+**Engine requirement:** Node.js **24+**.
 
 ## Quick start
 
@@ -152,14 +158,14 @@ The package is tested in GitHub Actions on Node.js 24 before publication.
 | Engine | Node.js 24+ |
 | Format | ES module |
 | Runtime dependencies | None |
-| npm | https://www.npmjs.com/package/@tejas-mk2/calculator-core |
+| Registry | GitHub Packages |
 | GitHub Packages | https://github.com/TEJAS-MK2/Calculator/packages |
 | Repository | https://github.com/TEJAS-MK2/Calculator |
 | License | MIT |
 
 ## Publishing
 
-GitHub Actions validates all calculation engines before publishing. GitHub Packages authentication uses the workflow `GITHUB_TOKEN`. Published package versions are immutable; release a new version instead of overwriting an existing one.
+GitHub Actions validates all calculation engines before publishing. Package publishing is restricted to semantic-version Git tags, and the release gate requires every package version to match the tag. GitHub Packages authentication uses the workflow `GITHUB_TOKEN`. Published package versions are immutable; release a new version instead of overwriting an existing one.
 
 ## License
 
