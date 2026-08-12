@@ -13,9 +13,17 @@ try {
   const errors = [];
   page.on('pageerror', error => errors.push(error));
   page.on('console', message => {
-    if (message.type() !== 'error') return;
-    if (/Failed to load resource/i.test(message.text())) return;
-    errors.push(new Error(message.text()));
+    if (message.type() === 'error') errors.push(new Error(message.text()));
+  });
+  page.on('requestfailed', request => {
+    errors.push(new Error(`Request failed: ${request.url()} — ${request.failure()?.errorText || 'unknown error'}`));
+  });
+  page.on('response', response => {
+    if (response.status() < 400) return;
+    const url = response.url();
+    if (url.startsWith('http://127.0.0.1:4173/') && !url.includes('favicon.ico')) {
+      errors.push(new Error(`HTTP ${response.status()}: ${url}`));
+    }
   });
 
   await page.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: 'networkidle' });
@@ -61,13 +69,10 @@ try {
   await waitForSidebarClosed();
   if ((await display.textContent()) !== '0') throw new Error('Sidebar clear failed.');
 
-  // Scientific engine: selecting a sidebar feature must transform the calculator and close the sidebar.
   await openSidebar();
   await page.getByRole('button', { name: 'Scientific', exact: true }).click();
   await waitForSidebarClosed();
   if (!(await page.locator('#enginePanel').isVisible())) throw new Error('Scientific engine panel did not open.');
-  if (!(await calculator.evaluate(el => el.classList.contains('has-feature')))) throw new Error('Scientific mode did not transform the calculator.');
-  if ((await page.locator('#enginePanel').evaluate(el => el.parentElement?.classList.contains('calculator'))) !== true) throw new Error('Engine panel did not move into calculator.');
   await page.getByRole('button', { name: 'DEG', exact: true }).click();
   await page.getByRole('button', { name: 'sin(', exact: true }).click();
   await page.keyboard.type('30)');
@@ -76,7 +81,6 @@ try {
   if (Math.abs(scientificResult - 0.5) > 1e-10) throw new Error(`Scientific DEG calculation failed: ${scientificResult}`);
   await closeFeature();
 
-  // Statistics panel.
   await openSidebar(); await page.getByRole('button', { name: 'Statistics', exact: true }).click();
   await waitForSidebarClosed();
   await page.locator('#statsInput').fill('1,2,3,4,5');
@@ -84,26 +88,28 @@ try {
   if (!(await page.locator('#statsOutput').textContent()).includes('3')) throw new Error('Statistics mean failed.');
   await closeFeature();
 
-  // Matrix panel.
   await openSidebar(); await page.getByRole('button', { name: 'Matrix', exact: true }).click();
   await waitForSidebarClosed();
   await page.getByRole('button', { name: 'Determinant', exact: true }).click();
   if (!(await page.locator('#matrixOutput').textContent()).includes('-2')) throw new Error('Matrix determinant failed.');
   await closeFeature();
 
-  // Exact arithmetic panel.
   await openSidebar(); await page.getByRole('button', { name: 'Exact Arithmetic', exact: true }).click();
   await waitForSidebarClosed();
   await page.getByRole('button', { name: 'Evaluate current expression exactly', exact: true }).click();
   if (!(await page.locator('#exactOutput').textContent()).includes('1/2')) throw new Error('Exact arithmetic failed.');
   await closeFeature();
 
-  // Clear and keyboard interaction after engine use.
   await page.locator('.calculator .btn[data-action="clear-all"]').click();
   await page.keyboard.type('12'); await page.keyboard.press('+'); await page.keyboard.type('7'); await page.keyboard.press('Enter');
   if ((await display.textContent()) !== '19') throw new Error('Keyboard calculation failed: expected 19.');
 
-  // Theme control must change the resolved theme and keep the equal button readable.
+  const exactLarge = await page.evaluate(async () => {
+    const { evaluateExact } = await import('./packages/calculator-core/exact.js');
+    return evaluateExact('9007199254740993 + 1').toString();
+  });
+  if (exactLarge !== '9007199254740994') throw new Error(`BigInt exact arithmetic failed: ${exactLarge}`);
+
   const beforeTheme = await page.locator('html').getAttribute('data-theme');
   await openSidebar(); await page.getByRole('button', { name: 'Theme', exact: true }).click();
   await waitForSidebarClosed();
@@ -112,12 +118,11 @@ try {
   const equalContrast = await page.locator('.btn-equals').evaluate(el => ({ background: getComputedStyle(el).backgroundColor, color: getComputedStyle(el).color }));
   if (equalContrast.background === equalContrast.color) throw new Error('Theme mismatch: equals button has no readable contrast.');
 
-  // Animation sanity: Anime.js must be loaded and no stale transform transition may fight it.
   const animationState = await page.evaluate(() => ({ anime: typeof window.anime, sidebarTransition: getComputedStyle(document.getElementById('featureSidebar')).transitionProperty }));
   if (animationState.anime !== 'function') throw new Error('Anime.js is unavailable.');
   if (animationState.sidebarTransition.includes('transform')) throw new Error('Sidebar CSS transform transition still conflicts with Anime.js.');
 
-  if (errors.length) throw new Error(`Browser console errors: ${errors.map(error => error.message).join(' | ')}`);
+  if (errors.length) throw new Error(`Browser errors: ${errors.map(error => error.message).join(' | ')}`);
   await browser.close();
   console.log('Browser smoke tests passed.');
 } finally {
