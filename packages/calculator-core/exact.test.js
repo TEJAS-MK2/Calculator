@@ -12,3 +12,8 @@ test('exact arithmetic exceeds Number safe integer range', () => {
 test('exact fraction rejects division by zero', () => {
   assert.throws(() => new ExactFraction(1n).divide(new ExactFraction(0n)), /Division by zero/);
 });
+
+test('exact exponentiation is resource-bounded', () => {
+  assert.throws(() => evaluateExact('2^100001'), /Exact exponent must be between/);
+  assert.equal(new ExactFraction(1n, 2n).toNumber(), 0.5);
+});
