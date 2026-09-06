@@ -48,7 +48,7 @@ jobs:
       - name: Validate required application assets
         run: |
           set -e
-          for file in index.html styles.css script.js calculator-core-ui.js anime-fallback.js sw.js manifest.json packages/calculator-core/index.js packages/calculator-core/advanced.js packages/calculator-core/exact.js; do
+          for file in index.html styles.css desktop.css script.js calculator-core-ui.js anime-fallback.js sw.js manifest.json packages/calculator-core/index.js packages/calculator-core/advanced.js packages/calculator-core/exact.js; do
             test -f "$file"
           done
 
@@ -75,7 +75,7 @@ jobs:
           set -e
           rm -rf _site
           mkdir -p _site/packages/calculator-core
-          cp index.html styles.css script.js calculator-core-ui.js anime-fallback.js sw.js manifest.json _site/
+          cp index.html styles.css desktop.css script.js calculator-core-ui.js anime-fallback.js sw.js manifest.json _site/
           cp packages/calculator-core/index.js packages/calculator-core/advanced.js packages/calculator-core/exact.js _site/packages/calculator-core/
           touch _site/.nojekyll
 
