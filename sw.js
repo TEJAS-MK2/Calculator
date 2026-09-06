@@ -1,8 +1,9 @@
-const CACHE_NAME = 'modern-calculator-v61';
+const CACHE_NAME = 'modern-calculator-v62';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
+  './desktop.css',
   './script.js',
   './calculator-core-ui.js',
   './anime-fallback.js',
