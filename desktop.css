@@ -1,0 +1,129 @@
+/* Desktop-first enhancements. Mobile/tablet styles remain in styles.css. */
+@media (min-width: 701px) {
+  :root { --desktop-calculator-width: 520px; }
+
+  body {
+    min-width: 760px;
+  }
+
+  .container-fluid {
+    padding: 32px;
+  }
+
+  .calculator-container {
+    width: min(var(--desktop-calculator-width), calc(100vw - 64px));
+  }
+
+  .calculator {
+    padding: 22px;
+    border-radius: 30px;
+  }
+
+  .display-container {
+    min-height: 158px;
+    margin-bottom: 20px;
+    padding: 24px;
+    border-radius: 22px;
+  }
+
+  .display-primary {
+    font-size: 3.35rem;
+  }
+
+  .display-secondary {
+    font-size: 17px;
+  }
+
+  .expression-preview {
+    font-size: 13px;
+  }
+
+  .button-grid {
+    gap: 13px;
+  }
+
+  .btn {
+    height: 72px;
+    border-radius: 20px;
+    font-size: 1.3rem;
+  }
+
+  .history-list {
+    max-height: 260px;
+  }
+
+  .history-item {
+    padding: 13px 15px;
+    font-size: 13px;
+  }
+
+  .sidebar-open {
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
+  .feature-sidebar {
+    top: 18px;
+    bottom: 18px;
+    left: 18px;
+    width: 320px;
+    padding: 18px;
+    border-radius: 24px;
+  }
+
+  .sidebar-title {
+    font-size: 15px;
+  }
+
+  .feature-item {
+    min-height: 48px;
+    padding: 0 15px;
+    font-size: .82rem;
+  }
+
+  .engine-panel {
+    padding: 15px;
+  }
+
+  body.sidebar-visible .container-fluid {
+    transform: translateX(170px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .container-fluid {
+    padding: 48px;
+  }
+
+  .calculator-container {
+    width: 560px;
+  }
+
+  .calculator {
+    padding: 24px;
+  }
+
+  .display-container {
+    min-height: 175px;
+  }
+
+  .display-primary {
+    font-size: 3.6rem;
+  }
+
+  .btn {
+    height: 76px;
+    font-size: 1.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calculator,
+  .container-fluid,
+  .btn {
+    transition: none !important;
+  }
+}
