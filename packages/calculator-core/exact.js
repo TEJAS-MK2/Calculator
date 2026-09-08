@@ -31,11 +31,11 @@ function tokenize(expression) {
   let i = 0;
   while (i < source.length) {
     const rest = source.slice(i);
-    const number = rest.match(/^\d+(?:\.\d+)?/);
+    const number = rest.match(/^(?:\d+(?:\.\d*)?|\.\d+)/);
     if (number) { tokens.push(number[0]); i += number[0].length; continue; }
     const identifier = rest.match(/^[A-Za-z_][A-Za-z0-9_]*/);
     if (identifier) { tokens.push(identifier[0]); i += identifier[0].length; continue; }
-    if ('()+-*/%^'.includes(source[i])) { tokens.push(source[i]); i++; continue; }
+    if ('()+-*/%^,'.includes(source[i])) { tokens.push(source[i]); i++; continue; }
     throw new SyntaxError(`Invalid character "${source[i]}"`);
   }
   return tokens;
@@ -46,65 +46,34 @@ export function evaluateExact(expression, options = {}) {
   const tokens = tokenize(expression);
   let i = 0;
   const primary = () => {
-    if (tokens[i] === '(') {
-      i++;
-      const value = add();
-      if (tokens[i++] !== ')') throw new SyntaxError('Missing closing parenthesis');
-      return value;
-    }
-    if (tokens[i] && /^\d/.test(tokens[i])) return decimal(tokens[i++]);
-    if (tokens[i] && /^[A-Za-z_]/.test(tokens[i])) {
-      const name = tokens[i++];
-      if (!Object.hasOwn(scope, name)) throw new SyntaxError(`Unknown identifier "${name}"`);
-      return decimal(String(scope[name]));
-    }
+    if (tokens[i] === '(') { i++; const value = add(); if (tokens[i++] !== ')') throw new SyntaxError('Missing closing parenthesis'); return value; }
+    if (tokens[i] && /^(?:\d|\.)/.test(tokens[i])) return decimal(tokens[i++]);
+    if (tokens[i] && /^[A-Za-z_]/.test(tokens[i])) { const name = tokens[i++]; if (!Object.hasOwn(scope, name)) throw new SyntaxError(`Unknown identifier "${name}"`); return decimal(String(scope[name])); }
     throw new SyntaxError('Expected exact number');
   };
   const postfix = () => {
-    const value = primary();
-    if (tokens[i] === '%') {
-      const next = tokens[i + 1];
-      const postfixPercent = next === undefined || next === ')' || '+-*/^%'.includes(next);
-      if (postfixPercent) { i++; return value.divide(new ExactFraction(100n)); }
-    }
+    let value = primary();
+    while (tokens[i] === '%') { const next = tokens[i + 1]; if (!(next === undefined || next === ')' || '+-*/^%'.includes(next))) break; i++; value = value.divide(new ExactFraction(100n)); }
     return value;
   };
-  const signedPower = () => {
-    if (tokens[i] === '-') { i++; return new ExactFraction(0n).subtract(signedPower()); }
-    if (tokens[i] === '+') { i++; return signedPower(); }
-    let value = postfix();
-    if (tokens[i] === '^') {
-      i++;
-      const exponent = signedPower();
-      if (exponent.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer');
-      value = value.pow(exponent.numerator, options);
-    }
+  const power = () => {
+    const value = postfix();
+    if (tokens[i] === '^') { i++; const exponent = unary(); if (exponent.denominator !== 1n) throw new SyntaxError('Exact exponent must be an integer'); return value.pow(exponent.numerator, options); }
     return value;
   };
-  const mul = () => {
-    let v = signedPower();
-    while ('*/%'.includes(tokens[i])) {
-      const op = tokens[i++], r = signedPower();
-      v = op === '*' ? v.multiply(r) : op === '/' ? v.divide(r) : v.modulo(r);
-    }
-    return v;
-  };
-  const add = () => {
-    let v = mul();
-    while ('+-'.includes(tokens[i])) {
-      const op = tokens[i++], r = mul();
-      v = op === '+' ? v.add(r) : v.subtract(r);
-    }
-    return v;
-  };
+  const unary = () => { if (tokens[i] === '-') { i++; return new ExactFraction(0n).subtract(unary()); } if (tokens[i] === '+') { i++; return unary(); } return power(); };
+  const mul = () => { let v = unary(); while ('*/%'.includes(tokens[i])) { const op = tokens[i++], r = unary(); v = op === '*' ? v.multiply(r) : op === '/' ? v.divide(r) : v.modulo(r); } return v; };
+  const add = () => { let v = mul(); while ('+-'.includes(tokens[i])) { const op = tokens[i++], r = mul(); v = op === '+' ? v.add(r) : v.subtract(r); } return v; };
   const result = add();
   if (i !== tokens.length) throw new SyntaxError('Invalid exact expression');
   return result;
 }
 
 function decimal(text) {
-  const m = String(text).match(/^(-?)(\d+)(?:\.(\d+))?$/);
+  const m = String(text).match(/^(\d+)(?:\.(\d*))?$/) || String(text).match(/^(\.)(\d+)$/);
   if (!m) throw new SyntaxError(`Invalid exact number: ${text}`);
-  const digits = BigInt(`${m[1] === '-' ? '-' : ''}${m[2]}${m[3] || ''}`);
-  return new ExactFraction(digits, 10n ** BigInt((m[3] || '').length));
+  let integer, fraction;
+  if (m[1] === '.') { integer = '0'; fraction = m[2]; } else { integer = m[1]; fraction = m[2] || ''; }
+  const digits = BigInt(integer + fraction);
+  return new ExactFraction(digits, 10n ** BigInt(fraction.length));
 }
