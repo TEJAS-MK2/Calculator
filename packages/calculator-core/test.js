@@ -13,6 +13,15 @@ test('supports nested parentheses', () => assert.equal(evaluate('(2 + 3) * (4 - 
 test('supports implicit multiplication', () => assert.equal(evaluate('2(5 + 3) + 4^2'), 32));
 test('supports implicit multiplication with functions', () => assert.ok(Math.abs(evaluate('2sin(pi / 2)') - 2) < 1e-12));
 test('supports scientific notation', () => assert.equal(evaluate('1.5e2 + 2.5e1'), 175));
+test('supports decimal edge forms', () => {
+  assert.equal(evaluate('5.'), 5);
+  assert.equal(evaluate('.5'), 0.5);
+  assert.equal(evaluate('1e3 + .5'), 1000.5);
+});
+test('rejects malformed decimal literals with a clear invalid-number error', () => {
+  assert.throws(() => evaluate('1..2'), /Invalid number/);
+  assert.throws(() => evaluate('1.2.3'), /Invalid number/);
+});
 test('supports advanced functions', () => assert.equal(evaluate('abs(-5) + floor(2.9) + ceil(3.1) + round(4.6)'), 16));
 test('supports scientific expressions', () => assert.ok(Math.abs(evaluate('sin(90)', {}, { angleMode: 'DEG' }) - 1) < 1e-12));
 test('supports inverse trig in degrees', () => assert.ok(Math.abs(evaluate('asin(1)', {}, { angleMode: 'DEG' }) - 90) < 1e-12));
